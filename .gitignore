@@ -1,0 +1,121 @@
+# compiled output
+csl_be_ty/dist
+csl_be_ty/node_modules
+
+# Logs
+csl_be_ty/logs
+csl_be_ty/*.log
+csl_be_ty/npm-debug.log*
+csl_be_ty/pnpm-debug.log*
+csl_be_ty/yarn-debug.log*
+csl_be_ty/yarn-error.log*
+csl_be_ty/lerna-debug.log*
+
+# OS
+csl_be_ty/.DS_Store
+
+# Tests
+csl_be_ty/coverage
+csl_be_ty/.nyc_output
+
+# IDEs and editors
+csl_be_ty/.idea
+csl_be_ty/.project
+csl_be_ty/.classpath
+csl_be_ty/.c9/
+csl_be_ty/*.launch
+csl_be_ty/.settings/
+csl_be_ty/*.sublime-workspace
+
+# IDE - VSCode
+csl_be_ty/.vscode/*
+csl_be_ty/!.vscode/settings.json
+csl_be_ty/!.vscode/tasks.json
+csl_be_ty/!.vscode/launch.json
+csl_be_ty/!.vscode/extensions.json
+
+# compiled output
+csl_be_pr/dist
+csl_be_pr/node_modules
+
+# Logs
+csl_be_pr/logs
+csl_be_pr/*.log
+csl_be_pr/npm-debug.log*
+csl_be_pr/pnpm-debug.log*
+csl_be_pr/yarn-debug.log*
+csl_be_pr/yarn-error.log*
+csl_be_pr/lerna-debug.log*
+
+# OS
+csl_be_pr/.DS_Store
+
+# Tests
+csl_be_pr/coverage
+csl_be_pr/.nyc_output
+
+# IDEs and editors
+csl_be_pr/.idea
+csl_be_pr/.project
+csl_be_pr/.classpath
+csl_be_pr/.c9/
+csl_be_pr/*.launch
+csl_be_pr/.settings/
+csl_be_pr/*.sublime-workspace
+
+# IDE - VSCode
+csl_be_pr/.vscode/*
+csl_be_pr/!.vscode/settings.json
+csl_be_pr/!.vscode/tasks.json
+csl_be_pr/!.vscode/launch.json
+csl_be_pr/!.vscode/extensions.json
+
+# Logs
+clsfreight/logs
+clsfreight/*.log
+clsfreight/npm-debug.log*
+clsfreight/yarn-debug.log*
+clsfreight/yarn-error.log*
+clsfreight/pnpm-debug.log*
+clsfreight/lerna-debug.log*
+
+clsfreight/node_modules
+clsfreight/dist
+clsfreight/dist-ssr
+clsfreight/*.local
+
+# Editor directories and files
+clsfreight/.vscode/*
+clsfreight/!.vscode/extensions.json
+clsfreight/.idea
+clsfreight/.DS_Store
+clsfreight/*.suo
+clsfreight/*.ntvs*
+clsfreight/*.njsproj
+clsfreight/*.sln
+clsfreight/*.sw?
+
+# Logs
+clsfreight_admin/logs
+clsfreight_admin/*.log
+clsfreight_admin/npm-debug.log*
+clsfreight_admin/yarn-debug.log*
+clsfreight_admin/yarn-error.log*
+clsfreight_admin/pnpm-debug.log*
+clsfreight_admin/lerna-debug.log*
+
+clsfreight_admin/node_modules
+clsfreight_admin/dist
+clsfreight_admin/dist-ssr
+clsfreight_admin/*.local
+
+# Editor directories and files
+clsfreight_admin/.vscode/*
+clsfreight_admin/!.vscode/extensions.json
+clsfreight_admin/.idea
+clsfreight_admin/.DS_Store
+clsfreight_admin/*.suo
+clsfreight_admin/*.ntvs*
+clsfreight_admin/*.njsproj
+clsfreight_admin/*.sln
+clsfreight_admin/*.sw?
