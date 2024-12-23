@@ -2,6 +2,8 @@
 csl_be_ty/dist
 csl_be_ty/node_modules
 
+csl_be_ty/.env
+
 # Logs
 csl_be_ty/logs
 csl_be_ty/*.log
@@ -37,6 +39,8 @@ csl_be_ty/!.vscode/extensions.json
 # compiled output
 csl_be_pr/dist
 csl_be_pr/node_modules
+
+csl_be_pr/.env
 
 # Logs
 csl_be_pr/logs
