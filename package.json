@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@tanstack/react-query": "^5.62.10",
-    "date-fns": "^4.1.0"
-  }
-}
