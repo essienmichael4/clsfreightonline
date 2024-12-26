@@ -1,6 +1,6 @@
 import { Body, ConflictException, Controller, HttpException, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import bcrypt from 'bcryptjs'
+import {compare, hash} from 'bcryptjs'
 import { UserSignUpRequest } from './dto/register.dto';
 import { UserAuthReponse } from './dto/response.dto';
 import { UserSignInRequest } from './dto/signin.dto';
@@ -16,10 +16,11 @@ export class AuthController {
     const userExists = await this.authService.findUser(body.email)
     if(userExists) throw new ConflictException("Email already exists")
     
-    const hashedPassword = await bcrypt.hash(body.password, 10)
+    const hashedPassword = await hash(body.password, 10)
 
     const createUser = await this.authService.register({name: body.name, email: body.email, password: hashedPassword})
-    const user = new UserAuthReponse(createUser)
+    const {password, ...result} = createUser
+    const user = new UserAuthReponse(result)
 
     return {user ,message: "User created successfully"}
   }
@@ -27,12 +28,14 @@ export class AuthController {
   @Post("signin")
   async signin(@Body() body:UserSignInRequest){
     const userExists = await this.authService.findUser(body.email)
-    if(userExists) throw new HttpException("Invalid credentials", 401)
+    if(!userExists) throw new HttpException("Invalid credentials", 401)
 
-    const isValidPassword = await bcrypt.compare(body.password, userExists.password)
+    const isValidPassword = await compare(body.password, userExists.password)
     if(!isValidPassword) throw new HttpException("Invalid credentials", 401)
+
+    const {password, ...result} = userExists
     
-    const user = new UserAuthReponse(userExists)
+    const user = new UserAuthReponse(result)
 
     const payload = {
       username: user.email,
