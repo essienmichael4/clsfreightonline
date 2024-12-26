@@ -100,8 +100,8 @@ const Login = () => {
                         {isPending && <Loader2 className='animate-spin' /> }
                     </button>
                     <div className='flex gap-2 mb-3 mt-2'>
-                        <p className='text-gray-400 text-xs 2xl:text-sm'>Don't have an account?</p>
-                        <span className='text-xs 2xl:text-sm text-blue-700'>See your administrator</span>
+                        <p className='text-gray-400 text-xs 2xl:text-sm'>Don't have an account? <span className='text-xs 2xl:text-sm text-blue-700'>See your administrator</span></p>
+                        
                         {/* <Link to={"../register"} className='text-xs 2xl:text-sm text-blue-300'>Register</Link> */}
                     </div>
                 </form>
