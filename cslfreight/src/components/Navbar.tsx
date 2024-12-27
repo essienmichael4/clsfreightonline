@@ -22,15 +22,15 @@ const Navbar = () => {
             <li>
               <Link to={"/"} className='text-neutral-500'>Home</Link>
             </li>
-            <li>
+            {/* <li>
               <Link to={"/"} className='text-neutral-500'>Services</Link>
-            </li>
+            </li> */}
             <li>
               <Link to={"/about"} className='text-neutral-500'>About</Link>
             </li>
           </ul>
           <div className="hidden lg:flex justify-center items-center space-x-4">
-            <p>(+233) 24 366 0662</p>
+            <p>(+233) 244 699 112</p>
             <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
               Contact Us
             </Link>
@@ -45,16 +45,16 @@ const Navbar = () => {
               <li className='py-4'>
                 <Link to={"/"}>Home</Link>
               </li>
-              <li className='py-4'>
+              {/* <li className='py-4'>
                 <Link to={"/gallery"}>Services</Link>
-              </li>
+              </li> */}
               <li className='py-4'>
-                <Link to={"/gallery"}>About</Link>
+                <Link to={"/about"}>About</Link>
               </li>
             </ul>
             <div className=" flex space-x-6">
             <p className='py-2 px-3 rounded-md border '>
-            (+233) 24 366 0662
+            (+233) 244 699 112
             </p>
             <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
               Contact Us
