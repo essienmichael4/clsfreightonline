@@ -1,67 +1,51 @@
-import { useState } from 'react'
-import logo from '../assets/logo.webp'
-import { Menu, X } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,  DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from './ui/button'
+import { LogOut, Menu, User } from 'lucide-react'
+import useAuth from '@/hooks/useAuth'
 
-const Navbar = () => {
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
 
-  const toggleNavbar = ()=>{
-    setMobileDrawerOpen(!mobileDrawerOpen)
-  }
+interface NavbarProps{
+  toggleNavbar: () => void
+}
+
+const Navbar = ({toggleNavbar}:NavbarProps) => {
+  const {setAuth} = useAuth()
 
   return (
     <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b border-neutral-100/80">
-      <div className="container px-4 mx-auto relative text-sm">
+      <div className="lg:container px-4 mx-auto relative text-sm">
         <div className="flex justify-between items-center">
-          <Link to={"/"} className="flex items-center flex-shrink-0">
-            <img src={logo} alt="logo" className='h-10 w-10 mr-2' />
-            <span className="text-xl tracking-tight">CSL Freight</span>
-          </Link>
-          <ul className="hidden lg:flex space-x-12">
-            <li>
-              <Link to={"/"} className='text-neutral-500'>Home</Link>
-            </li>
-            <li>
-              <Link to={"/"} className='text-neutral-500'>Services</Link>
-            </li>
-            <li>
-              <Link to={"/about"} className='text-neutral-500'>About</Link>
-            </li>
-          </ul>
-          <div className="hidden lg:flex justify-center items-center space-x-4">
-            <p>(+233) 24 366 0662</p>
-            <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
-              Contact Us
-            </Link>
+          <div className='flex items-center gap-4'>
+            <div className="hidden md:flex flex-col justify-end">
+              <button onClick={toggleNavbar}><Menu className='text-muted-foreground' /></button>
+            </div>
+            <h2 className="text-xl tracking-tight text-muted-foreground">Dashboard</h2>
           </div>
-          <div className="lg:hidden md:flex flex-col justify-end">
-            <button onClick={toggleNavbar}>{mobileDrawerOpen ? <X /> : <Menu />}</button>
+
+          <div className="flex items-center">
+                <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className='w-10 h-10 rounded-full'><User className="h-6 w-6 text-muted-foreground" /></Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={()=>{
+                            setAuth(undefined)
+                        }}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log out</span>
+                        <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
           </div>
         </div>
-        {mobileDrawerOpen && 
-          <div className="fixed right-0 z-20 w-full bg-white backdrop-blur-lg p-12 flex flex-col justify-center items-center lg:hidden">
-            <ul>
-              <li className='py-4'>
-                <Link to={"/"}>Home</Link>
-              </li>
-              <li className='py-4'>
-                <Link to={"/gallery"}>Services</Link>
-              </li>
-              <li className='py-4'>
-                <Link to={"/gallery"}>About</Link>
-              </li>
-            </ul>
-            <div className=" flex space-x-6">
-            <p className='py-2 px-3 rounded-md border '>
-            (+233) 24 366 0662
-            </p>
-            <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
-              Contact Us
-            </Link>
-            </div>
-          </div>
-        }
       </div>
 
     </nav>
