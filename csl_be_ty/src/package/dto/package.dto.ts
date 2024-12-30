@@ -1,7 +1,7 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
 import { Status } from "../entities/package.entity"
 
-export class CreatePackageDto {
+export class PackageRequest {
     @IsString()
     @IsNotEmpty()
     customer:string 
@@ -43,7 +43,4 @@ export class CreatePackageDto {
 
     @IsEnum(Status)
     status:Status
-
-    @IsNumber()
-    addedBy:number
 }

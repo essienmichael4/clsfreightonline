@@ -43,13 +43,19 @@ export class Package {
   @Column()
   vessel: string;
 
-  @Column()
+  @Column({
+    nullable:true
+  })
   loaded: Date;
 
-  @Column()
+  @Column({
+    nullable:true
+  })
   eta: Date;
 
-  @Column()
+  @Column({
+    nullable:true
+  })
   received: Date;
 
   @CreateDateColumn()
