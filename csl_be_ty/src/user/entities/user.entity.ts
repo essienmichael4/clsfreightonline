@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-export type Deleted = "TRUE" | "FALSE"
+import { Deleted, Package } from "src/package/entities/package.entity";
+import { PackageEdit } from "src/package/entities/packageEdits.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({name: "user"})
 export class User {
@@ -23,10 +24,12 @@ export class User {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 
-    @Column({
-        type: "enum",
-        enum: ["TRUE", "FALSE"],
-        default: "FALSE"
-    })
-    isDeleted:Deleted
+    @Column({ default: Deleted.FALSE })
+    isDeleted: Deleted;
+
+    @OneToMany(() => Package, (packageEntity) => packageEntity.user)
+    packages: Package[];
+
+    @OneToMany(() => PackageEdit, (packageEdit) => packageEdit.user)
+    packageEdits: PackageEdit[];
 }
