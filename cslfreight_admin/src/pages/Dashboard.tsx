@@ -1,5 +1,4 @@
 import ShippingReport from "@/components/ShippingReport"
-import useAuth from "@/hooks/useAuth"
 import { PackageCheck, PackageOpen, Truck } from "lucide-react"
 
 const Dashboard = () => {

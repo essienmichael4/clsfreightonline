@@ -23,5 +23,7 @@ export type Package = {
     quantity:number,
     loaded:Date,
     received:string,
-    vesselLine:string
+    vesselLine:string,
+    status:string,
+    createdAt:string
 }
