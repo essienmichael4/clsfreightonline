@@ -20,13 +20,30 @@ export type Package = {
     id:number,
     trackingNumber:string,
     cbm:string,
+    email:string,
+    phone?: string,
     customer: string
     quantity:number,
-    loaded:string,
-    received:string,
-    vessel:string,
+    loaded?:string,
+    received?:string,
+    vessel?:string,
     status:string,
     createdAt:string,
-    eta: string,
+    eta?: string,
     package:string
+}
+
+export type User = {
+    id: number | null,
+    name: string,
+    email: string,
+    role?: string,
+    createdAt?: string,
+    updatedAt?:string,
+}
+
+export type AnnouncementType = {
+    title?:number,
+    subject:string,
+    show: string
 }

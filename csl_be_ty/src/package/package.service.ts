@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Package } from './entities/package.entity';
+import { Package, Status } from './entities/package.entity';
 import { Repository } from 'typeorm';
 import { PackageEdit } from './entities/packageEdits.entity';
 
@@ -34,8 +34,38 @@ export class PackageService {
     return await this.packageRepo.findOneBy({trackingNumber});
   }
 
-  update(id: number, updatePackageDto: UpdatePackageDto) {
-    return `This action updates a #${id} package`;
+  async update(id: number, trackingNumber?:string, customer?:string, email?:string, phone?:string, vessel?:string, packageName?:string, cbm?:number, quantity?:number) {
+    return await this.packageRepo.update(id, {
+      ...(trackingNumber && { trackingNumber }),
+      ...(vessel && { vessel }),
+      ...(customer && { customer }),
+      ...(email && { email }),
+      ...(phone && { phone }),
+      ...(packageName && { package: packageName }),
+      ...(cbm && { cbm }),
+      ...(quantity && { quantity }),
+    });
+  }
+
+  async updateStatus(id: number, status: Status) {
+    return await this.packageRepo.update(id, {
+      status
+    });
+  }
+  async updateLoaded(id: number, loaded: string) {
+    return await this.packageRepo.update(id, {
+      loaded
+    });
+  }
+  async updateReceived(id: number, received: string) {
+    return await this.packageRepo.update(id, {
+      received
+    });
+  }
+  async updateEta(id: number, eta: string) {
+    return await this.packageRepo.update(id, {
+      eta
+    });
   }
 
   remove(id: number) {

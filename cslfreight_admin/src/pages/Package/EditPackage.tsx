@@ -18,10 +18,11 @@ import { Calendar } from '@/components/ui/calendar'
 
 interface Props{
     trigger?: React.ReactNode,
-    id:number
+    id:number,
+    trackingNumber:string
 }
 
-const EditPackage = ({id, trigger}:Props) => {
+const EditPackage = ({id, trackingNumber, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
 
@@ -34,9 +35,6 @@ const EditPackage = ({id, trigger}:Props) => {
             trackingNumber: "",
             vessel: "",
             customer: "",
-            loaded: new Date(),
-            eta: new Date(),
-            received: new Date()
         }
     })
 
@@ -62,9 +60,6 @@ const EditPackage = ({id, trigger}:Props) => {
                 trackingNumber: "",
                 vessel: "",
                 customer: "",
-                loaded: new Date(),
-                eta: new Date(),
-                received: new Date()
             })
 
             setOpen(prev => !prev)
@@ -94,7 +89,7 @@ const EditPackage = ({id, trigger}:Props) => {
             <DialogContent className='w-[90%] mx-auto rounded-2xl'>
                 <DialogHeader className='items-start'>
                     <DialogTitle>
-                        Edit Package: {id}
+                        Edit Package: {trackingNumber}
                     </DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
@@ -212,126 +207,6 @@ const EditPackage = ({id, trigger}:Props) => {
                                     )} 
                                 />
                             </div>
-                            <div className='w-full sm:w-1/2 px-1'>
-                                <FormField 
-                                    control={form.control}
-                                    name="received"
-                                    render={({field}) =>(
-                                        <FormItem className='flex flex-col'>
-                                            <FormLabel className='my-1 text-xs'>Received</FormLabel>
-                                            <Popover >
-                                                <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button 
-                                                        variant={'outline'}
-                                                        className={cn("w-[200px] pl-3 text-xs text-left font-normal", !field.value && 'text-muted-foreground')}>
-                                                            {field.value ? (
-                                                                format(field.value, "PPP")
-                                                            ) : (
-                                                                <span>Pick a date</span>
-                                                            )}
-                                                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                                                        </Button>
-                                                    </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className='p-0 w-auto'>
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value}
-                                                        onSelect={(value)=>{
-                                                            if(!value) return
-                                                            field.onChange(value)
-                                                        }}
-                                                        initialFocus
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                            {/* <FormDescription>Select a date for this transaction</FormDescription> */}
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className='w-full sm:w-1/2 px-1'>
-                            <FormField 
-                                    control={form.control}
-                                    name="loaded"
-                                    render={({field}) =>(
-                                        <FormItem className='flex flex-col'>
-                                            <FormLabel className='my-1 text-xs'>Loaded</FormLabel>
-                                            <Popover >
-                                                <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button 
-                                                        variant={'outline'}
-                                                        className={cn("w-[200px] pl-3 text-xs text-left font-normal", !field.value && 'text-muted-foreground')}>
-                                                            {field.value ? (
-                                                                format(field.value, "PPP")
-                                                            ) : (
-                                                                <span>Pick a date</span>
-                                                            )}
-                                                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                                                        </Button>
-                                                    </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className='p-0 w-auto'>
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value}
-                                                        onSelect={(value)=>{
-                                                            if(!value) return
-                                                            field.onChange(value)
-                                                        }}
-                                                        initialFocus
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                            {/* <FormDescription>Select a date for this transaction</FormDescription> */}
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className='w-full sm:w-1/2 px-1'>
-                                <FormField 
-                                    control={form.control}
-                                    name="eta"
-                                    render={({field}) =>(
-                                        <FormItem className='flex flex-col'>
-                                            <FormLabel className='my-1 text-xs'>ETA</FormLabel>
-                                            <Popover >
-                                                <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button 
-                                                        variant={'outline'}
-                                                        className={cn("w-[200px] pl-3 text-xs text-left font-normal", !field.value && 'text-muted-foreground')}>
-                                                            {field.value ? (
-                                                                format(field.value, "PPP")
-                                                            ) : (
-                                                                <span>Pick a date</span>
-                                                            )}
-                                                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                                                        </Button>
-                                                    </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className='p-0 w-auto'>
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value}
-                                                        onSelect={(value)=>{
-                                                            if(!value) return
-                                                            field.onChange(value)
-                                                        }}
-                                                        initialFocus
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                            {/* <FormDescription>Select a date for this transaction</FormDescription> */}
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
                         </div>
                     </form>
                 </Form>
@@ -348,7 +223,7 @@ const EditPackage = ({id, trigger}:Props) => {
                     </DialogClose>
                     <Button onClick={form.handleSubmit(onSubmit)} disabled={isPending} className='bg-gradient-to-r from-blue-500 to-blue-800 text-white'
                     >
-                        {!isPending && "Add Package"}
+                        {!isPending && "Edit Package"}
                         {isPending && <Loader2 className='animate-spin' /> }
                     </Button>
                 </DialogFooter>

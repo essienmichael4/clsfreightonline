@@ -2,9 +2,23 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntP
 import { PackageService } from './package.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
-import { PackageRequest } from './dto/package.dto';
+import { EditPackageRequest, PackageRequest } from './dto/package.dto';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { User, UserInfo } from 'src/decorators/user.decorator';
+import { Status } from './entities/package.entity';
+
+interface StatusRequest{
+  status:Status
+}
+interface LoadedRequest{
+  loaded:string
+}
+interface ReceivedRequest{
+  received:string
+}
+interface EtaRequest{
+  eta:string
+}
 
 @Controller('packages')
 export class PackageController {
@@ -44,14 +58,35 @@ export class PackageController {
 
   @UseGuards(JwtGuard)
   @Get(':trackingNumber')
-  findWithTrackingNumber(@Param('trackingNumber', ParseIntPipe) trackingNumber: string) {
+  findWithTrackingNumber(@Param('trackingNumber') trackingNumber: string) {
     return this.packageService.findOneByTrackingNumber(trackingNumber);
   }
 
   @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePackageDto: UpdatePackageDto) {
-    return this.packageService.update(+id, updatePackageDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() editPackageRequest: EditPackageRequest) {
+    return this.packageService.update(id, editPackageRequest.trackingNumber, editPackageRequest.customer, editPackageRequest.email, editPackageRequest.phone, editPackageRequest.vessel);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id/status')
+  updateStatus(@Param('id', ParseIntPipe) id: number, @Body() statusRequest: StatusRequest) {
+    return this.packageService.updateStatus(id, statusRequest.status);
+  }
+  @UseGuards(JwtGuard)
+  @Patch(':id/loaded')
+  updateloaded(@Param('id', ParseIntPipe) id: number, @Body() body: LoadedRequest) {
+    return this.packageService.updateLoaded(id, body.loaded);
+  }
+  @UseGuards(JwtGuard)
+  @Patch(':id/received')
+  updateReceived(@Param('id', ParseIntPipe) id: number, @Body() body: ReceivedRequest) {
+    return this.packageService.updateReceived(id, body.received);
+  }
+  @UseGuards(JwtGuard)
+  @Patch(':id/eta')
+  updateEta(@Param('id', ParseIntPipe) id: number, @Body() body: EtaRequest) {
+    return this.packageService.updateEta(id, body.eta);
   }
 
   @UseGuards(JwtGuard)
