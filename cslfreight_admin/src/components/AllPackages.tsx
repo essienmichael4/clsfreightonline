@@ -6,6 +6,8 @@ import { ColumnDef, getCoreRowModel, flexRender, useReactTable } from '@tanstack
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { FormattedDate } from '@/lib/helper'
+import { Edit, Trash2 } from 'lucide-react'
+import EditPackage from '@/pages/Package/EditPackage'
 
 const emptyData: any[]= []
 
@@ -43,22 +45,22 @@ const AllPackages = () => {
         accessorKey: "received",
         header:({column})=>(<DataTableColumnHeader column={column} title='Recceived' />),
         cell:({row}) => {
-            const date = new Date(row.original.received as string)
-            const formattedDate = FormattedDate(date)
+            // const date = new Date(row.original.received as string)
+            // const formattedDate = FormattedDate(date)
             
             return <div className='text-muted-foreground'>
-                {formattedDate}
+                {new Date(row.original.received as string).toDateString()}
             </div>
         }
     },{
         accessorKey: "loaded",
         header:({column})=>(<DataTableColumnHeader column={column} title='Loaded' />),
         cell:({row}) => {
-            const date = new Date(row.original.loaded as string)
-            const formattedDate = FormattedDate(date)
+            // const date = new Date(row.original.loaded as string)
+            // const formattedDate = FormattedDate(date)
             
             return <div className='text-muted-foreground'>
-                {formattedDate}
+                {new Date(row.original.loaded as string).toDateString()}
             </div>
         }
     },{
@@ -94,6 +96,15 @@ const AllPackages = () => {
         header:({column})=>(<DataTableColumnHeader column={column} title='CBM' />),
         cell:({row}) => <div>
             {row.original.cbm}
+        </div>
+    },{
+        accessorKey: "ids",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
+        cell:({row}) => <div>
+            <span className="flex gap-2 items-center"  >
+                <EditPackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<Edit className="w-4 h-4 text-emerald-400"/>} />
+                <Trash2 className="w-4 h-4 text-rose-400" /> 
+            </span> 
         </div>
     }
     // ,{

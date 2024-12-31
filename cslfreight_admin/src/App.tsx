@@ -5,8 +5,9 @@ import Home from './pages/Login/Home'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Packages from './pages/Package/Packages'
 import RequireAuth from './components/RequireAuth'
-import Users from './pages/Users'
+import Users from './pages/User/Users'
 import Package from './pages/Package/Package'
+import UserProfile from './pages/User/User'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
             <Route path='/packages' element={<Packages />} />
             <Route path='/packages/:id' element={<Package />} />
             <Route path='/users' element={<Users />} />
+            <Route path='/users/:id' element={<UserProfile />} />
           </Route>
         </Route>
       </Routes>

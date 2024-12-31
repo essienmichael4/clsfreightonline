@@ -58,5 +58,20 @@ export const EditPackageSchema = z.object({
     eta: z.coerce.date().optional()
 })
 
+export const EditPackageLoadedSchema = z.object({
+    loaded: z.coerce.date().optional(),
+})
+
+export const EditPackageReceivedSchema = z.object({
+    received: z.coerce.date().optional(),
+})
+
+export const EditPackageEtaSchema = z.object({
+    eta: z.coerce.date().optional(),
+})
+
 export type PackageSchemaType = z.infer<typeof PackageSchema>
 export type EditPackageSchemaType = z.infer<typeof EditPackageSchema>
+export type EditLoadedSchemaType = z.infer<typeof EditPackageLoadedSchema>
+export type EditReceivedSchemaType = z.infer<typeof EditPackageReceivedSchema>
+export type EditEtaSchemaType = z.infer<typeof EditPackageEtaSchema>
