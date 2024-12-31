@@ -18,16 +18,33 @@ export class UserService {
     return await this.userRepo.findOneBy({email})
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findUserById(id:number){
+    return await this.userRepo.findOneBy({id})
+  }
+
+  async updateUserPassword(id:number, password:string){
+    await this.userRepo.update(id, {
+      password
+    })
+
+    return await this.userRepo.findOneBy({id})
+  }
+
+  async findAllUsers() {
+    return await this.userRepo.find()
   }
 
   findOne(id: number) {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, name?:string, email?:string) {
+    await this.userRepo.update(id, {
+      ...(name && { name }),
+      ...(email && { email }),
+    })
+  
+    return await this.userRepo.findOneBy({id});
   }
 
   remove(id: number) {
