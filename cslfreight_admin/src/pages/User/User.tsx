@@ -19,10 +19,10 @@ const UserProfile = () => {
     const queryClient = useQueryClient()
     const axios_instance_token = useAxiosToken()
 
-    const userQuery = useQuery<User>({
-        queryKey: ["user"],
-        queryFn: async() => await axios_instance_token.get(`/users/${id}`).then(res => res.data)
-    })
+    // const userQuery = useQuery<User>({
+    //     queryKey: ["user"],
+    //     queryFn: async() => await axios_instance_token.get(`/users/${id}`).then(res => res.data)
+    // })
 
     const announcement = useQuery<AnnouncementType>({
         queryKey: ["announcements",],

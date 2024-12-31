@@ -5,7 +5,6 @@ import { DataTableColumnHeader } from './DataTable/ColumnHeader'
 import { ColumnDef, getCoreRowModel, flexRender, useReactTable } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import useAxiosToken from '@/hooks/useAxiosToken'
-import { FormattedDate } from '@/lib/helper'
 import { Edit, Trash2 } from 'lucide-react'
 import EditPackage from '@/pages/Package/EditPackage'
 
