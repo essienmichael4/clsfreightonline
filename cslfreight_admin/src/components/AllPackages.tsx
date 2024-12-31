@@ -13,33 +13,35 @@ const AllPackages = () => {
     const axios_instance_token = useAxiosToken()
 
     const orders = useQuery<Package[]>({
-        queryKey: ["summary-admin", "orders"],
-        queryFn: async() => await axios_instance_token.get(`/recent-orders-admin`).then(res => res.data)
+        queryKey: ["packages"],
+        queryFn: async() => await axios_instance_token.get(`/packages`).then(res => res.data)
     })
 
     const columns:ColumnDef<Package>[] =[{
-        accessorKey: "product",
+        accessorKey: "id",
         header:({column})=>(<DataTableColumnHeader column={column} title='No.' />),
         cell:({row}) => <div>
-            {row.original.cbm}
-        </div>
-    },{
-        accessorKey: "id",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Tracking ID' />),
-        cell:({row}) => <div>
-            <Link to={`../co/administrator/orders/${row.original.id}`}>
+            <Link to={`./${row.original.id}`}>
                 <span className='text-gray-400'>#</span>{row.original.id}
             </Link>
         </div>
     },{
-        accessorKey: "product",
+        accessorKey: "trackingNumber",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Tracking ID' />),
+        cell:({row}) => <div>
+            <Link to={`./${row.original.trackingNumber}`}>
+                {row.original.trackingNumber}
+            </Link>
+        </div>
+    },{
+        accessorKey: "customer",
         header:({column})=>(<DataTableColumnHeader column={column} title='Customer' />),
         cell:({row}) => <div>
-            {row.original.cbm}
+            {row.original.customer}
         </div>
     },{
-        accessorKey: "createdAt",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Date' />),
+        accessorKey: "received",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Recceived' />),
         cell:({row}) => {
             const date = new Date(row.original.received as string)
             const formattedDate = FormattedDate(date)
@@ -49,10 +51,10 @@ const AllPackages = () => {
             </div>
         }
     },{
-        accessorKey: "createdAt",
+        accessorKey: "loaded",
         header:({column})=>(<DataTableColumnHeader column={column} title='Loaded' />),
         cell:({row}) => {
-            const date = new Date(row.original.received as string)
+            const date = new Date(row.original.loaded as string)
             const formattedDate = FormattedDate(date)
             
             return <div className='text-muted-foreground'>
@@ -60,13 +62,13 @@ const AllPackages = () => {
             </div>
         }
     },{
-        accessorKey: "product",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Product' />),
+        accessorKey: "package",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Package' />),
         cell:({row}) => <div>
-            {row.original.cbm}
+            {row.original.package}
         </div>
     },{
-        accessorKey: "amount",
+        accessorKey: "quantity",
         header:({column})=>(<DataTableColumnHeader column={column} title='Quantity' />),
         cell:({row}) => {
             return <div>
@@ -74,16 +76,24 @@ const AllPackages = () => {
             </div>
         }
     },{
-        accessorKey: "recipient",
+        accessorKey: "vessel",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Vessel' />),
+        cell:({row}) => {
+            return <div>
+                {row.original.vessel}
+            </div>
+        }
+    },{
+        accessorKey: "status",
         header:({column})=>(<DataTableColumnHeader column={column} title='Status' />),
         cell:({row}) => <div>
-            {row.original.vesselLine}
+            {row.original.status}
         </div>
     },{
-        accessorKey: "account",
+        accessorKey: "cbm",
         header:({column})=>(<DataTableColumnHeader column={column} title='CBM' />),
         cell:({row}) => <div>
-            {row.original.quantity}
+            {row.original.cbm}
         </div>
     }
     // ,{
@@ -134,7 +144,7 @@ const AllPackages = () => {
                             data-state={row.getIsSelected() && "selected"}
                         >
                             {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell className='py-6' key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </TableCell>
                             ))}

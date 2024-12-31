@@ -27,6 +27,7 @@ export class CreatePackageDto {
     package:string
 
     @IsString()
+    @IsOptional()
     vessel:string
 
     @IsString()

@@ -40,7 +40,9 @@ export class Package {
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({
+    nullable:true
+  })
   vessel: string;
 
   @Column({
