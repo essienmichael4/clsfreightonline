@@ -1,5 +1,5 @@
-import shipping from "../assets/shipping.jpg"
-import logo from "../assets/logo.webp"
+import shipping from "../../assets/shipping.jpg"
+import logo from "../../assets/logo.webp"
 import Login from "@/components/Login"
 
 const Home = () => {

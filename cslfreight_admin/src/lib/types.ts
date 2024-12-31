@@ -20,10 +20,13 @@ export type Package = {
     id:number,
     trackingNumber:string,
     cbm:string,
+    customer: string
     quantity:number,
-    loaded:Date,
+    loaded:string,
     received:string,
-    vesselLine:string,
+    vessel:string,
     status:string,
-    createdAt:string
+    createdAt:string,
+    eta: string,
+    package:string
 }
