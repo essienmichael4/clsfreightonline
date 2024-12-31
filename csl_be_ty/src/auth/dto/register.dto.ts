@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator"
+import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from "class-validator"
+import { Role } from "src/user/entities/user.entity"
 
 export class UserSignUpRequest{
     @IsString()
@@ -8,7 +9,6 @@ export class UserSignUpRequest{
     @IsEmail()
     email:string
 
-    @IsString()
-    @MinLength(7)
-    password:string
+    @IsEnum(Role)
+    role:Role
 }

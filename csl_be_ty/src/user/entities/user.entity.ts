@@ -2,6 +2,11 @@ import { Deleted, Package } from "src/package/entities/package.entity";
 import { PackageEdit } from "src/package/entities/packageEdits.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+export enum Role {
+    ADMIN = 'ADMIN',
+    USER = 'USER',
+  }
+
 @Entity({name: "user"})
 export class User {
     @PrimaryGeneratedColumn()
@@ -26,6 +31,9 @@ export class User {
 
     @Column({ default: Deleted.FALSE })
     isDeleted: Deleted;
+
+    @Column({ default: Role.USER })
+    role: Role;
 
     @OneToMany(() => Package, (packageEntity) => packageEntity.user)
     packages: Package[];

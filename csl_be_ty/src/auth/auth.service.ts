@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { User } from 'src/user/entities/user.entity';
+import { Role, User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 
@@ -10,6 +10,7 @@ interface SignupParams{
     email:string
     name: string
     password: string
+    role: Role
 }
 interface PayloadParams{
     username: string,
@@ -31,8 +32,8 @@ export class AuthService {
         return await this.userService.findUserByEmail(email)
     }
 
-    async register({name, email, password}:SignupParams){
-        const user = await this.userService.create({email, name, password})
+    async register({name, email, password, role}:SignupParams){
+        const user = await this.userService.create({email, name, password, role})
         return user
     }
 

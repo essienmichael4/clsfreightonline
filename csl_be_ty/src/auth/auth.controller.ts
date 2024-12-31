@@ -16,9 +16,9 @@ export class AuthController {
     const userExists = await this.authService.findUser(body.email)
     if(userExists) throw new ConflictException("Email already exists")
     
-    const hashedPassword = await hash(body.password, 10)
+    const hashedPassword = await hash(process.env.ADMIN_PASSWORD, 10)
 
-    const createUser = await this.authService.register({name: body.name, email: body.email, password: hashedPassword})
+    const createUser = await this.authService.register({name: body.name, email: body.email, password: hashedPassword, role: body.role})
     const {password, ...result} = createUser
     const user = new UserAuthReponse(result)
 
