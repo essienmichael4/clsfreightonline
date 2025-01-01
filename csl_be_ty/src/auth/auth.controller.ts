@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, HttpException, Post, UseGuards } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, HttpException, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {compare, hash} from 'bcryptjs'
 import { UserSignUpRequest } from './dto/register.dto';
@@ -55,8 +55,11 @@ export class AuthController {
   }
 
   @UseGuards(RefreshJwtGuard)
-  @Post("refresh")
+  @Get("refresh")
     async refreshToken(@User() req:UserInfo){
-      return await {accessToken: await this.authService.signAuthPayload(req)}
+
+      const accessToken =  await {accessToken: await this.authService.signAuthPayload(req)}
+      
+      return accessToken
     }
 }

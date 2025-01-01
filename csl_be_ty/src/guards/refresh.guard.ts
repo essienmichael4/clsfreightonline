@@ -9,12 +9,14 @@ export class RefreshJwtGuard implements CanActivate{
     async canActivate(context: ExecutionContext): Promise<boolean>{
         const request = context.switchToHttp().getRequest()
         const token = this.extractTokenFromHeader(request)
+        
         if(!token) throw new UnauthorizedException()
 
         try{
-            const payload = this.jwtService.verifyAsync(token, {
+            const payload = await this.jwtService.verify(token, {
                 secret: process.env.JWT_REFRESH_KEY
             })
+            
             request.user = payload
         }catch{
             throw new UnauthorizedException()

@@ -59,7 +59,7 @@ const columns:ColumnDef<User>[] =[{
     <>
       <div className="container px-4 mx-auto">
         <div className="mt-4 flex items-center justify-between">
-          <h3>All Users</h3>
+          <h3 className="font-bold">All Users</h3>
           <div>
             <AddUser trigger={
               <button className="py-2 px-2 md:px-4 flex items-center rounded-md bg-gradient-to-r from-blue-500 to-blue-800 text-white">

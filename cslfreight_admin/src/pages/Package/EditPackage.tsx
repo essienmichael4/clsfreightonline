@@ -5,7 +5,7 @@ import { Input } from '../../components/ui/input'
 import { Button } from '../../components/ui/button'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { toast } from 'sonner'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EditPackageSchema, EditPackageSchemaType } from '@/schema/package'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,6 +21,7 @@ interface Props{
 const EditPackage = ({id, trackingNumber, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
+    const queryClient = useQueryClient()
 
     const form = useForm<EditPackageSchemaType>({
         resolver:zodResolver(EditPackageSchema),
@@ -35,7 +36,7 @@ const EditPackage = ({id, trackingNumber, trigger}:Props) => {
     })
 
     const addPackage = async (data:EditPackageSchemaType)=>{
-        const response = await axios_instance_token.patch(`/${id}`, {
+        const response = await axios_instance_token.patch(`/packages/${id}`, {
             ...data
         },)
 
@@ -48,6 +49,8 @@ const EditPackage = ({id, trackingNumber, trigger}:Props) => {
             toast.success("Package editted successfully", {
                 id: "edit-package"
             })
+
+            queryClient.invalidateQueries({queryKey: ["package", id]})
 
             form.reset({
                 package: "",

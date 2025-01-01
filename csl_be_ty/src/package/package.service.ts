@@ -26,6 +26,38 @@ export class PackageService {
     });
   }
 
+  async findRecent() {
+    return await this.packageRepo.find({
+      order: {
+        id: "DESC", 
+      },take:20
+    });
+  }
+
+  async findLoadedCount() {
+    return await this.packageRepo.count({
+      where: {
+        status : "ON_HOLD" as Status
+      }
+    });
+  }
+
+  async findEnroutCount() {
+    return await this.packageRepo.count({
+      where: {
+        status : "EN_ROUTE" as Status
+      }
+    });
+  }
+
+  async findArrivedCount() {
+    return await this.packageRepo.count({
+      where: {
+        status : "ARRIVED" as Status
+      }
+    });
+  }
+
   async findOneById(id: number) {
     return await this.packageRepo.findOneBy({id});
   }

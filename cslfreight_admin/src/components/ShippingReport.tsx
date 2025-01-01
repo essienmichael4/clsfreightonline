@@ -13,54 +13,87 @@ const ShippingReport = () => {
     const axios_instance_token = useAxiosToken()
 
     const orders = useQuery<Package[]>({
-        queryKey: ["summary-admin", "orders"],
-        queryFn: async() => await axios_instance_token.get(`/recent-orders-admin`).then(res => res.data)
+        queryKey: ["summary", "packages"],
+        queryFn: async() => await axios_instance_token.get(`/packages/dashboard`).then(res => res.data)
     })
 
     const columns:ColumnDef<Package>[] =[{
         accessorKey: "id",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Order ID' />),
+        header:({column})=>(<DataTableColumnHeader column={column} title='No.' />),
         cell:({row}) => <div>
-            <Link to={`../co/administrator/orders/${row.original.id}`}>
+            <Link to={`../packages/${row.original.id}`}>
                 <span className='text-gray-400'>#</span>{row.original.id}
             </Link>
         </div>
     },{
-        accessorKey: "createdAt",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Date' />),
+        accessorKey: "trackingNumber",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Tracking ID' />),
+        cell:({row}) => <div>
+            {/* <Link to={`./${row.original.trackingNumber}`}> */}
+                {row.original.trackingNumber}
+            {/* </Link> */}
+        </div>
+    },{
+        accessorKey: "customer",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Customer' />),
+        cell:({row}) => <div>
+            {row.original.customer}
+        </div>
+    },{
+        accessorKey: "received",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Recceived' />),
         cell:({row}) => {
-            const date = new Date(row.original.received as string)
-            const formattedDate = FormattedDate(date)
+            // const date = new Date(row.original.received as string)
+            // const formattedDate = FormattedDate(date)
             
-            return <div className='text-muted-foreground'>
-                {formattedDate}
+            return <div className='text-muted-foreground text-nowrap'>
+                {new Date(row.original.received as string).toDateString()}
             </div>
         }
     },{
-        accessorKey: "product",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Product' />),
+        accessorKey: "loaded",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Loaded' />),
+        cell:({row}) => {
+            // const date = new Date(row.original.loaded as string)
+            // const formattedDate = FormattedDate(date)
+            
+            return <div className='text-muted-foreground text-nowrap'>
+                {new Date(row.original.loaded as string).toDateString()}
+            </div>
+        }
+    },{
+        accessorKey: "package",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Package' />),
         cell:({row}) => <div>
-            {row.original.cbm}
+            {row.original.package}
         </div>
     },{
-        accessorKey: "amount",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Price' />),
+        accessorKey: "quantity",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Quantity' />),
         cell:({row}) => {
             return <div>
                 {row.original.quantity}
             </div>
         }
     },{
-        accessorKey: "recipient",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Recipient' />),
+        accessorKey: "vessel",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Vessel' />),
+        cell:({row}) => {
+            return <div>
+                {row.original.vessel}
+            </div>
+        }
+    },{
+        accessorKey: "status",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Status' />),
         cell:({row}) => <div>
-            {row.original.vesselLine}
+            <span className={`${row.original.status === "ON_HOLD" && 'bg-gray-300'} ${row.original.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${row.original.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${row.original.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-2 px-4 rounded-full text-xs`}>{row.original.status}</span>
         </div>
     },{
-        accessorKey: "account",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Account' />),
+        accessorKey: "cbm",
+        header:({column})=>(<DataTableColumnHeader column={column} title='CBM' />),
         cell:({row}) => <div>
-            {row.original.quantity}
+            {row.original.cbm}
         </div>
     }
     // ,{
@@ -114,7 +147,7 @@ const ShippingReport = () => {
                             data-state={row.getIsSelected() && "selected"}
                         >
                             {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell className='py-6' key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </TableCell>
                             ))}

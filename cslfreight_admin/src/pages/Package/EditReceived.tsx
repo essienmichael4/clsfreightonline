@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/button'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
@@ -24,6 +24,7 @@ interface Props{
 const EditReceived = ({id, trackingNumber, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
+    const queryClient = useQueryClient()
 
     const form = useForm<EditReceivedSchemaType>({
         resolver:zodResolver(EditPackageReceivedSchema),
@@ -33,7 +34,7 @@ const EditReceived = ({id, trackingNumber, trigger}:Props) => {
     })
 
     const addPackage = async (data:EditReceivedSchemaType)=>{
-        const response = await axios_instance_token.patch(`/${id}/received`, {
+        const response = await axios_instance_token.patch(`/packages/${id}/received`, {
             ...data
         },)
 
@@ -46,6 +47,8 @@ const EditReceived = ({id, trackingNumber, trigger}:Props) => {
             toast.success("Package updated successfully", {
                 id: "edit-package"
             })
+
+            queryClient.invalidateQueries({queryKey: ["package", id]})
 
             form.reset({
                 received: new Date()

@@ -51,6 +51,33 @@ export class PackageController {
   }
 
   @UseGuards(JwtGuard)
+  @Get('dashboard')
+  findForDashboard() {
+    return this.packageService.findRecent();
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('dashboard/loaded')
+  async findDashboardLoaded() {
+     const count = await this.packageService.findLoadedCount();
+     return {count}
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('dashboard/enroute')
+  async findDashboardEnRoute() {
+     const count = await this.packageService.findEnroutCount();     
+     return {count}
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('dashboard/arrived')
+  async findDashboardArrived() {
+     const count = await this.packageService.findArrivedCount();     
+     return {count}
+  }
+
+  @UseGuards(JwtGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.packageService.findOneById(+id);
@@ -73,16 +100,19 @@ export class PackageController {
   updateStatus(@Param('id', ParseIntPipe) id: number, @Body() statusRequest: StatusRequest) {
     return this.packageService.updateStatus(id, statusRequest.status);
   }
+
   @UseGuards(JwtGuard)
   @Patch(':id/loaded')
   updateloaded(@Param('id', ParseIntPipe) id: number, @Body() body: LoadedRequest) {
     return this.packageService.updateLoaded(id, body.loaded);
   }
+
   @UseGuards(JwtGuard)
   @Patch(':id/received')
   updateReceived(@Param('id', ParseIntPipe) id: number, @Body() body: ReceivedRequest) {
     return this.packageService.updateReceived(id, body.received);
   }
+
   @UseGuards(JwtGuard)
   @Patch(':id/eta')
   updateEta(@Param('id', ParseIntPipe) id: number, @Body() body: EtaRequest) {

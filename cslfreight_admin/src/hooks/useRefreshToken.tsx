@@ -6,7 +6,7 @@ const useRefreshToken = () => {
     const {auth, setAuth} = useAuth()
 
     const refresh = async ()=>{
-        const response = await axios.get(`https://api.rmbdeals.com/api/v1/auth/refresh-token`, {
+        const response = await axios.get(`http://localhost:3000/auth/refresh`, {
             headers: {
                 'Authorization': `Refresh ${auth?.backendTokens.refreshToken}`
             }

@@ -46,7 +46,7 @@ export class AuthService {
 
     async signRefreshPayload(payload:PayloadParams){
         return this.jwtService.sign(payload, {
-            expiresIn: "1h",
+            expiresIn: "7d",
             secret: process.env.JWT_REFRESH_KEY
         })
     }

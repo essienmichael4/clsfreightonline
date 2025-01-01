@@ -1,6 +1,6 @@
 import logo from '../assets/logo.webp'
 import { LayoutDashboard, Package, Users } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 interface SideNavProps{
     isToggled: boolean
@@ -15,18 +15,18 @@ const SideNav = ({isToggled}:SideNavProps) => {
             <img src={logo} alt="logo" className='h-10 w-10 mr-4' />
             <span className="text-xl tracking-tight text-nowrap">CSL Freight</span>
           </Link>
-            <Link to={"/dashboard"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-blue-700'>
+            <NavLink to={"/dashboard"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
                 <LayoutDashboard className='h-6 w-6 mr-6' />
                 <span className=''>Dashboard {isToggled}</span>
-            </Link>
-            <Link to={"/packages"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
+            </NavLink>
+            <NavLink to={"/packages"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
                 <Package className='h-6 w-6 mr-6' />
                 <span className=''>Packages</span>
-            </Link>
-            <Link to={"/users"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
+            </NavLink>
+            <NavLink to={"/users"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
                 <Users className='h-6 w-6 mr-6' />
                 <span className=''>Users</span>
-            </Link>
+            </NavLink>
             
           
           {/* <div className="lg:hidden md:flex flex-col justify-end">

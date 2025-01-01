@@ -1,7 +1,29 @@
 import ShippingReport from "@/components/ShippingReport"
+import useAxiosToken from "@/hooks/useAxiosToken"
+import { useQuery } from "@tanstack/react-query"
 import { PackageCheck, PackageOpen, Truck } from "lucide-react"
 
+interface countRequest {
+    count:number
+}
+
 const Dashboard = () => {
+    const axios_instance_token = useAxiosToken()
+
+    const loadedQuery = useQuery<countRequest>({
+        queryKey: ["packages", "loaded"],
+        queryFn: async() => await axios_instance_token.get(`/packages/dashboard/loaded`).then(res => res.data)
+    })
+
+    const enrouteQuery = useQuery<countRequest>({
+        queryKey: ["packages", "enroute"],
+        queryFn: async() => await axios_instance_token.get(`/packages/dashboard/enroute`).then(res => res.data)
+    })
+
+    const arrivedQuery = useQuery<countRequest>({
+        queryKey: ["packages", "arrived"],
+        queryFn: async() => await axios_instance_token.get(`/packages/dashboard/arrived`).then(res => res.data)
+    })
     return (
         <>
             <div className="lg:container w-full mx-auto mt-4 px-4 lg:px-0">
@@ -12,8 +34,8 @@ const Dashboard = () => {
                                 <Truck className="w-10 h-10 text-orange-500" />
                             </div>
                             <div>
-                                <h3 className="text-sm font-bold text-muted-foreground">On Going</h3>
-                                <p className="text-3xl">3000</p>
+                                <h3 className="text-sm font-bold text-muted-foreground">On Hold</h3>
+                                <p className="text-3xl">{loadedQuery.data?.count}</p>
                             </div>
                         </div>
                     </div>
@@ -24,7 +46,7 @@ const Dashboard = () => {
                             </div>
                             <div>
                                 <h3 className="text-sm font-bold text-muted-foreground">Shipped</h3>
-                                <p className="text-3xl">3000</p>
+                                <p className="text-3xl">{enrouteQuery.data?.count}</p>
                             </div>
                         </div>
                     </div>
@@ -34,8 +56,8 @@ const Dashboard = () => {
                                 <PackageCheck className="w-10 h-10 text-emerald-700" />
                             </div>
                             <div>
-                                <h3 className="text-sm font-bold text-muted-foreground">Completed</h3>
-                                <p className="text-3xl">3000</p>
+                                <h3 className="text-sm font-bold text-muted-foreground">Arrived</h3>
+                                <p className="text-3xl">{arrivedQuery.data?.count}</p>
                             </div>
                         </div>
                     </div>

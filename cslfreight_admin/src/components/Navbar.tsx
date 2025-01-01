@@ -2,6 +2,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from './ui/button'
 import { LogOut, Menu, User } from 'lucide-react'
 import useAuth from '@/hooks/useAuth'
+import { useResolvedPath } from "react-router-dom"
 
 
 interface NavbarProps{
@@ -10,6 +11,8 @@ interface NavbarProps{
 
 const Navbar = ({toggleNavbar}:NavbarProps) => {
   const {setAuth} = useAuth()
+  // const path = useResolvedPath().pathname.split("/")[1]
+  const path = useResolvedPath().pathname.split("/")[1].toLocaleUpperCase()
 
   return (
     <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b border-neutral-100/80">
@@ -19,7 +22,7 @@ const Navbar = ({toggleNavbar}:NavbarProps) => {
             <div className="hidden md:flex flex-col justify-end">
               <button onClick={toggleNavbar}><Menu className='text-muted-foreground' /></button>
             </div>
-            <h2 className="text-xl tracking-tight text-muted-foreground">Dashboard</h2>
+            <h2 className="text-xl tracking-tight text-muted-foreground">{path}</h2>
           </div>
 
           <div className="flex items-center">

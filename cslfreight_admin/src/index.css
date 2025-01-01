@@ -105,4 +105,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  a.active{
+    @apply text-blue-700
+  }
 }
