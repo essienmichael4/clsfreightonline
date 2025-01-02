@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
 import { PackageService } from './package.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
@@ -48,6 +48,12 @@ export class PackageController {
   @Get()
   findAll() {
     return this.packageService.findAll();
+  }
+
+  @Get("search")
+  findPakages(@Query("filter") filter:string) {
+    const search = filter.split(',')
+    return this.packageService.findAllWithTrackingNumbers(search);
   }
 
   @UseGuards(JwtGuard)
@@ -121,7 +127,7 @@ export class PackageController {
 
   @UseGuards(JwtGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.packageService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.packageService.remove(id);
   }
 }

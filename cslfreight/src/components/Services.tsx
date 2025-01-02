@@ -46,7 +46,7 @@ const Services = () => {
                     <div className="w-full sm:w-1/2 lg:w-1/3 p-2">
                         <img src={land} alt="" className="rounded-lg aspect-video hover:aspect-auto"/>
                         <div className="mt-4 text-left">
-                            <h3 className="text-2xl mb-2">Land Express</h3>
+                            <h3 className="text-2xl mb-2">Customs Clearance</h3>
                             <div className="text-neutral-500">
                                 <p className="mb-3">
                                     Expert assistance with customs clearance to ensure smooth and timely delivery.

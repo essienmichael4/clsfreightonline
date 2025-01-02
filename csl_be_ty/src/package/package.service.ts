@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Package, Status } from './entities/package.entity';
-import { Repository } from 'typeorm';
+import { Deleted, Package, Status } from './entities/package.entity';
+import { In, Not, Repository } from 'typeorm';
 import { PackageEdit } from './entities/packageEdits.entity';
 
 @Injectable()
@@ -20,8 +20,19 @@ export class PackageService {
 
   async findAll() {
     return await this.packageRepo.find({
+      where:{
+        isDeleted: Not("FALSE" as Deleted)
+      },
       order: {
         id: "DESC", 
+      },
+    });
+  }
+
+  async findAllWithTrackingNumbers(trackingNumbers:string[]) {
+    return await this.packageRepo.find({
+      where:{
+        trackingNumber: In(trackingNumbers)
       },
     });
   }
@@ -100,7 +111,9 @@ export class PackageService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} package`;
+  async remove(id: number) {
+    return await this.packageRepo.update(id, {
+      isDeleted: Deleted.TRUE
+    });
   }
 }

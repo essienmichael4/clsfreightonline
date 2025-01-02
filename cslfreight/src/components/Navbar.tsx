@@ -28,9 +28,12 @@ const Navbar = () => {
             <li>
               <Link to={"/about"} className='text-neutral-500'>About</Link>
             </li>
+            <li>
+              <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
+            </li>
           </ul>
           <div className="hidden lg:flex justify-center items-center space-x-4">
-            <p>(+233) 244 699 112</p>
+            <p>(+233) 552 902 556</p>
             <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
               Contact Us
             </Link>
@@ -45,16 +48,17 @@ const Navbar = () => {
               <li className='py-4'>
                 <Link to={"/"}>Home</Link>
               </li>
-              {/* <li className='py-4'>
-                <Link to={"/gallery"}>Services</Link>
-              </li> */}
+              
               <li className='py-4'>
                 <Link to={"/about"}>About</Link>
               </li>
+              <li>
+                <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
+              </li>
             </ul>
-            <div className=" flex space-x-6">
+            <div className=" flex flex-col items-center">
             <p className='py-2 px-3 rounded-md border '>
-            (+233) 244 699 112
+            (+233) 552 902 556
             </p>
             <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
               Contact Us

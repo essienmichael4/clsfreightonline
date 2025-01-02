@@ -8,6 +8,7 @@ import useAxiosToken from '@/hooks/useAxiosToken'
 import { Edit, Trash2 } from 'lucide-react'
 import EditPackage from '@/pages/Package/EditPackage'
 import { Button } from './ui/button'
+import DeletePackage from '@/pages/Package/DeletePackage'
 
 interface FilterProps{
     filtering:string
@@ -107,7 +108,7 @@ const AllPackages = ({filtering}:FilterProps) => {
         cell:({row}) => <div>
             <span className="flex gap-2 items-center"  >
                 <EditPackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<Edit className="w-4 h-4 text-emerald-400"/>} />
-                <Trash2 className="w-4 h-4 text-rose-400" /> 
+                <DeletePackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<Trash2 className="w-4 h-4 text-rose-400" />} /> 
             </span> 
         </div>
     }

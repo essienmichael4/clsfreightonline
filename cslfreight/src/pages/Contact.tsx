@@ -24,31 +24,35 @@ const Contact = () => {
                 </h2>
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 lg:w-1/4 sm:px-4 py-2 mb-8">
-                        <div className="border border-gray-300 p-4">
+                        <div className="border h-full border-gray-300 p-4">
                             <div className="bg-blue-300/50 w-10 h-10 flex items-center justify-center rounded-full">
                                 <MailCheck className="text-blue-800 w-5 h-5"/>
                             </div>
                             <p className="font-bold mt-12 text-lg">Send us a message</p>
                             <p className="text-xs mt-3">Chat with our friendly team</p>
-                            <p className="test-sm mt-8">contact@rmbdeals.com</p>
+                            <p className="test-sm mt-8">info@clixmartonline.com</p>
                         </div>
                     </div>
                     <div className="w-full md:w-1/2 lg:w-1/4 sm:px-4 py-2 mb-8">
-                        <div className="border border-gray-300 p-4">
+                        <div className="border h-full border-gray-300 p-4">
                             <div className="bg-blue-300/50 w-10 h-10 flex items-center justify-center rounded-full">
                                 <PhoneCall className="text-blue-800 w-5 h-5"/>
                             </div>
                             <p className="font-bold mt-12 text-lg">Call us</p>
                             <p className="text-xs mt-3">Mon-Sat, 8:00am - 8:00pm (GMT).</p>
-                            <p className="test-sm mt-8">(+233) 244 699 112</p>
+                            <p className="text-xs mt-8">Customer Care</p>
+                            <p className="test-sm mt-2">(+233) 552 902 556</p>
+                            <p className="test-sm mt-2">(+233) 546 548 705</p>
+                            <p className="text-xs mt-8">Invoices & Payments</p>
+                            <p className="test-sm mt-2">(+233) 244 699 112</p>
                         </div>
                     </div>
                     <div className="w-full lg:w-2/4 sm:px-4 py-2 mb-8">
-                        <div className="border border-gray-300 p-4">
+                        <div className="border h-full border-gray-300 p-4">
                             <div className="bg-blue-300/50 w-10 h-10 flex items-center justify-center rounded-full">
                                 <MapPinned className="text-blue-800 w-5 h-5"/>
                             </div>
-                            <p className="font-bold mt-2 text-lg">Vists our office</p>
+                            <p className="font-bold mt-2 text-lg">Visit our office</p>
                         </div>
                     </div>
                 </div>
