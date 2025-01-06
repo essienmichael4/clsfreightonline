@@ -29,12 +29,18 @@ const Navbar = () => {
               <Link to={"/about"} className='text-neutral-500'>About</Link>
             </li>
             <li>
+              <Link to={"/address"} className='text-neutral-500'>Shipping Address</Link>
+            </li>
+            <li>
+              <Link to={"/terms"} className='text-neutral-500'>T & C's</Link>
+            </li>
+            <li>
               <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
             </li>
           </ul>
           <div className="hidden lg:flex justify-center items-center space-x-4">
-            <p>(+233) 552 902 556</p>
-            <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
+            <a href="https://forms.gle/cMHhPURSKERJ2BhM6" target="_blank" className="py-2 px-3 rounded-md text-blue-700 border border-blue-700 hover:text-white hover:border-white hover:bg-blue-700" >Register</a>
+            <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md hover:text-blue-700 hover:bg-white hover:border hover:border-blue-700'>
               Contact Us
             </Link>
           </div>
@@ -43,26 +49,30 @@ const Navbar = () => {
           </div>
         </div>
         {mobileDrawerOpen && 
-          <div className="fixed right-0 z-20 w-full bg-white backdrop-blur-lg p-12 flex flex-col justify-center items-center lg:hidden">
-            <ul>
+          <div className="fixed right-0 z-20 w-full bg-white backdrop-blur-lg p-6 flex flex-col justify-center items-center lg:hidden">
+            <ul className='flex items-center flex-col'>
               <li className='py-4'>
-                <Link to={"/"}>Home</Link>
+                <Link to={"/"} onClick={toggleNavbar} className='text-neutral-500'>Home</Link>
               </li>
               
               <li className='py-4'>
-                <Link to={"/about"}>About</Link>
+                <Link to={"/about"} onClick={toggleNavbar} className='text-neutral-500'>About</Link>
               </li>
-              <li>
-                <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
+              <li className='py-4'>
+                <Link to={"/address"} onClick={toggleNavbar} className='text-neutral-500'>Shipping Address</Link>
+              </li>
+              <li className='py-4'>
+                <Link to={"/terms"} onClick={toggleNavbar} className='text-neutral-500'>T & C's</Link>
+              </li>
+              <li className='py-4'>
+                <a href="https://rmbdeals.com" onClick={toggleNavbar} target="_blank" className="text-neutral-500" >Buy RMB</a>
               </li>
             </ul>
-            <div className=" flex flex-col items-center">
-            <p className='py-2 px-3 rounded-md border '>
-            (+233) 552 902 556
-            </p>
-            <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
-              Contact Us
-            </Link>
+            <div className="flex flex-col gap-6 mt-2">
+              <a href="https://forms.gle/cMHhPURSKERJ2BhM6" onClick={toggleNavbar} target="_blank" className="text-center py-2 px-3 rounded-md text-blue-700 border border-blue-700" >Register</a>
+              <Link to={"/contact"} onClick={toggleNavbar} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
+                Contact Us
+              </Link>
             </div>
           </div>
         }

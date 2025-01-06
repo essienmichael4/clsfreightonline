@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -25,10 +25,10 @@ const StatusPicker = ({onChange}:Props) => {
 
     const selectedCategory = stat.find((status:"ON_HOLD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=> status === value)
 
-    const successCallback = useCallback((status:"ON_HOLD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=>{
-        setValue(status)
-        setOpen(prev => !prev)
-    },[setValue, setOpen])
+    // const successCallback = useCallback((status:"ON_HOLD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=>{
+    //     setValue(status)
+    //     setOpen(prev => !prev)
+    // },[setValue, setOpen])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

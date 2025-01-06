@@ -6,7 +6,7 @@ const useRefreshToken = () => {
     const {auth, setAuth} = useAuth()
 
     const refresh = async ()=>{
-        const response = await axios.get(`http://localhost:3000/auth/refresh`, {
+        const response = await axios.get(`"https://api.cslfreightgh.com/auth/refresh`, {
             headers: {
                 'Authorization': `Refresh ${auth?.backendTokens.refreshToken}`
             }

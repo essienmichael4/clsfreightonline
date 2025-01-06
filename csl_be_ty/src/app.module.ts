@@ -7,6 +7,8 @@ import { join } from 'path';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { PackageModule } from './package/package.module';
+import { AnnouncementModule } from './announcement/announcement.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
   imports: [ConfigModule.forRoot(),
@@ -14,9 +16,9 @@ import { PackageModule } from './package/package.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+        type: 'mysql',
         host: configService.get("DB_HOST"),
-        port: +configService.get("DB_PORT"),
+        // port: +configService.get("DB_PORT"),
         username: configService.get("DB_USERNAME"),
         password: configService.get("DB_PASSWORD"),
         database: configService.get("DB_NAME"),
@@ -27,7 +29,9 @@ import { PackageModule } from './package/package.module';
     }),
     UserModule,
     PackageModule,
-    AuthModule
+    AuthModule,
+    AnnouncementModule,
+    AddressModule
   ],
   controllers: [AppController],
   providers: [AppService],

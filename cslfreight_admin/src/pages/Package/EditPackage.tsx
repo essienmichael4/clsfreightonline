@@ -11,14 +11,15 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
+import { Package } from '@/lib/types'
+import { Textarea } from '@/components/ui/textarea'
 
 interface Props{
     trigger?: React.ReactNode,
-    id:number,
-    trackingNumber:string
+    item:Package
 }
 
-const EditPackage = ({id, trackingNumber, trigger}:Props) => {
+const EditPackage = ({item, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
@@ -26,17 +27,22 @@ const EditPackage = ({id, trackingNumber, trigger}:Props) => {
     const form = useForm<EditPackageSchemaType>({
         resolver:zodResolver(EditPackageSchema),
         defaultValues:{
-            package: "",
-            email: "",
-            phone: "",
-            trackingNumber: "",
-            vessel: "",
-            customer: "",
+            package: item.package,
+            email: item.email,
+            phone: item.phone,
+            trackingNumber: item.trackingNumber,
+            vessel: item.vessel,
+            customer: item.customer,
+            cbm: Number(item.cbm),
+            quantity: Number(item.quantity),
+            description: item.description || ""
         }
     })
 
     const addPackage = async (data:EditPackageSchemaType)=>{
-        const response = await axios_instance_token.patch(`/packages/${id}`, {
+        console.log(data);
+        
+        const response = await axios_instance_token.patch(`/packages/${item.id}`, {
             ...data
         },)
 
@@ -50,21 +56,24 @@ const EditPackage = ({id, trackingNumber, trigger}:Props) => {
                 id: "edit-package"
             })
 
-            queryClient.invalidateQueries({queryKey: ["package", id]})
+            queryClient.invalidateQueries({queryKey: ["package", Number(item.id)]})
+            queryClient.invalidateQueries({queryKey: ["packages"]})
 
             form.reset({
-                package: "",
-                email: "",
-                phone: "",
-                trackingNumber: "",
-                vessel: "",
-                customer: "",
+                package: item.package,
+                email: item.email,
+                phone: item.phone,
+                trackingNumber: item.trackingNumber,
+                vessel: item.vessel,
+                customer: item.customer,
+                cbm: Number(item.cbm),
+                quantity: Number(item.quantity)
             })
 
             setOpen(prev => !prev)
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
-                toast.error(err?.response?.data?.error, {
+                toast.error(err?.response?.data?.message, {
                     id: "edit-package"
                 })
             }else{
@@ -88,7 +97,7 @@ const EditPackage = ({id, trackingNumber, trigger}:Props) => {
             <DialogContent className='w-[90%] mx-auto rounded-2xl'>
                 <DialogHeader className='items-start'>
                     <DialogTitle>
-                        Edit Package: {trackingNumber}
+                        Edit Package: {item.trackingNumber}
                     </DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
@@ -207,6 +216,20 @@ const EditPackage = ({id, trackingNumber, trigger}:Props) => {
                                 />
                             </div>
                         </div>
+
+                        <FormField 
+                            control={form.control}
+                            name="description"
+                            render={({field}) =>(
+                                <FormItem className='flex mt-y flex-col px-2'>
+                                    <FormLabel className='mr-2 text-xs 2xl:text-sm font-bold'>Notes</FormLabel>
+                                    <FormControl>
+                                        <Textarea {...field} />
+                                    </FormControl>
+                                    {/* <FormDescription>Special notes for delivery.</FormDescription> */}
+                                </FormItem>
+                            )}
+                        />
                     </form>
                 </Form>
                 <DialogFooter >
@@ -215,7 +238,16 @@ const EditPackage = ({id, trackingNumber, trigger}:Props) => {
                             type='button'
                             variant={"secondary"}
                             onClick={()=>{
-                                form.reset()
+                                form.reset({
+                                    package: item.package,
+                                    email: item.email,
+                                    phone: item.phone,
+                                    trackingNumber: item.trackingNumber,
+                                    vessel: item.vessel,
+                                    customer: item.customer,
+                                    cbm: Number(item.cbm),
+                                    quantity: Number(item.quantity)
+                                })
                             }} >
                                 Cancel
                         </Button>

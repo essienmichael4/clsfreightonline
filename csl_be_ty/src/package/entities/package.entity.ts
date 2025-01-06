@@ -34,6 +34,9 @@ export class Package {
   @Column({ nullable: true })
   phone: string;
 
+  @Column({ nullable: true, type: "text" })
+  description: string;
+
   @Column({ nullable: true })
   package: string;
 

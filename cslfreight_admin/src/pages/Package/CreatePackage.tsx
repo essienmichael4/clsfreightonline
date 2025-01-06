@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/button'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { PackageSchema, PackageSchemaType } from '@/schema/package'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import StatusPicker from './StatusPicker'
+import { Textarea } from '@/components/ui/textarea'
 
 interface Props{
     trigger?: React.ReactNode,
@@ -24,6 +25,7 @@ interface Props{
 const CreatePackage = ({trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
+    const queryClient = useQueryClient()
 
     const form = useForm<PackageSchemaType>({
         resolver:zodResolver(PackageSchema),
@@ -70,13 +72,16 @@ const CreatePackage = ({trigger}:Props) => {
                 customer: "",
                 loaded: new Date(),
                 eta: new Date(),
-                received: new Date()
+                received: new Date(),
+                description: ""
             })
+
+            queryClient.invalidateQueries({queryKey: ["packages"]})
 
             setOpen(prev => !prev)
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
-                toast.error(err?.response?.data?.error, {
+                toast.error(err?.response?.data?.message, {
                     id: "add-package"
                 })
             }else{
@@ -259,7 +264,7 @@ const CreatePackage = ({trigger}:Props) => {
                                 />
                             </div>
                             <div className='w-full sm:w-1/2 px-1'>
-                            <FormField 
+                                <FormField 
                                     control={form.control}
                                     name="loaded"
                                     render={({field}) =>(
@@ -343,7 +348,7 @@ const CreatePackage = ({trigger}:Props) => {
                             <FormField 
                                 control={form.control}
                                 name="vessel"
-                                render={({field}) =>(
+                                render={({}) =>(
                                     <FormItem className='flex flex-col'>
                                     <FormLabel className='my-1 text-xs'>Status</FormLabel>
                                     <FormControl>
@@ -352,6 +357,20 @@ const CreatePackage = ({trigger}:Props) => {
                                     <FormDescription>Select a status</FormDescription>
                                 </FormItem>
                                 )} 
+                            />
+
+                            <FormField 
+                                control={form.control}
+                                name="description"
+                                render={({field}) =>(
+                                    <FormItem className='flex mt-y flex-col'>
+                                        <FormLabel className='mr-2 text-xs 2xl:text-sm font-bold'>Notes</FormLabel>
+                                        <FormControl>
+                                            <Textarea {...field} />
+                                        </FormControl>
+                                        {/* <FormDescription>Special notes for delivery.</FormDescription> */}
+                                    </FormItem>
+                                )}
                             />
                         </div>
                     </form>

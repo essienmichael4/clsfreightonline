@@ -31,7 +31,7 @@ const EditAnnouncement = ({trigger}:Props) => {
     })
 
     const editAnnouncement = async (data:EditAnnouncementSchemaType)=>{
-        const response = await axios_instance_token.put(`/announcements/1`, {
+        const response = await axios_instance_token.patch(`/announcements/1`, {
             ...data
         },)
 
@@ -55,7 +55,7 @@ const EditAnnouncement = ({trigger}:Props) => {
             setOpen(prev => !prev)
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
-                toast.error(err?.response?.data?.error, {
+                toast.error(err?.response?.data?.message, {
                     id: "edit-announcement"
                 })
             }else{

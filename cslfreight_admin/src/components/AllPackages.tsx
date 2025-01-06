@@ -48,11 +48,8 @@ const AllPackages = ({filtering}:FilterProps) => {
         </div>
     },{
         accessorKey: "received",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Recceived' />),
+        header:({column})=>(<DataTableColumnHeader column={column} title='Received' />),
         cell:({row}) => {
-            // const date = new Date(row.original.received as string)
-            // const formattedDate = FormattedDate(date)
-            
             return <div className='text-muted-foreground text-nowrap'>
                 {new Date(row.original.received as string).toDateString()}
             </div>
@@ -61,9 +58,6 @@ const AllPackages = ({filtering}:FilterProps) => {
         accessorKey: "loaded",
         header:({column})=>(<DataTableColumnHeader column={column} title='Loaded' />),
         cell:({row}) => {
-            // const date = new Date(row.original.loaded as string)
-            // const formattedDate = FormattedDate(date)
-            
             return <div className='text-muted-foreground text-nowrap'>
                 {new Date(row.original.loaded as string).toDateString()}
             </div>
@@ -107,21 +101,11 @@ const AllPackages = ({filtering}:FilterProps) => {
         header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
         cell:({row}) => <div>
             <span className="flex gap-2 items-center"  >
-                <EditPackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<Edit className="w-4 h-4 text-emerald-400"/>} />
-                <DeletePackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<Trash2 className="w-4 h-4 text-rose-400" />} /> 
+                <EditPackage item={row.original} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
+                <DeletePackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} /> 
             </span> 
         </div>
-    }
-    // ,{
-    //     accessorKey: "status",
-    //     header:({column})=>(<DataTableColumnHeader column={column} title='Status' />),
-    //     cell:({row}) => <div>
-    //         <span className={`${row.original.status === "HELD" && 'bg-gray-300'} ${row.original.status === "COMPLETED" && 'bg-emerald-300 text-emerald-700'} ${row.original.status === "CANCELLED" && 'bg-rose-300 text-rose-700'} ${row.original.status === "PENDING" && 'bg-blue-300 text-blue-700'} p-2 rounded-lg`}>
-    //             {row.original.status}
-    //         </span>
-    //     </div>
-    // }
-    ]
+    }]
 
     const table = useReactTable({
         data: orders.data || emptyData,

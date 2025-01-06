@@ -5,7 +5,6 @@ import { DataTableColumnHeader } from './DataTable/ColumnHeader'
 import { ColumnDef, getCoreRowModel, flexRender, useReactTable } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import useAxiosToken from '@/hooks/useAxiosToken'
-import { FormattedDate } from '@/lib/helper'
 
 const emptyData: any[]= []
 
@@ -41,7 +40,7 @@ const ShippingReport = () => {
         </div>
     },{
         accessorKey: "received",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Recceived' />),
+        header:({column})=>(<DataTableColumnHeader column={column} title='Received' />),
         cell:({row}) => {
             // const date = new Date(row.original.received as string)
             // const formattedDate = FormattedDate(date)

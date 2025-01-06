@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+// import { Link } from "react-router-dom"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
 
 const Faqs = () => {
@@ -10,9 +10,9 @@ const Faqs = () => {
                 <div className="w-full lg:w-[80%]">
                     <p className="text-neutral-500">Find answers to some of the most common questions we receive from our customers. If you don’t find what you need, feel free to contact us directly.</p>
                 </div>
-                <div className="mt-8">
+                {/* <div className="mt-8">
                     <Link to={"/contact"} className="mt-4 py-2 px-4 bg-blue-700 rounded-lg text-white">Contact Us</Link>
-                </div>
+                </div> */}
             </div>
             <div className="p-2 w-full lg:w-1/2 space-y-4">
                 <div className="">

@@ -58,7 +58,7 @@ export class AuthController {
   @Get("refresh")
     async refreshToken(@User() req:UserInfo){
 
-      const accessToken =  await {accessToken: await this.authService.signAuthPayload(req)}
+      const accessToken =  await {accessToken: await this.authService.resignAuthPayload(req)}
       
       return accessToken
     }

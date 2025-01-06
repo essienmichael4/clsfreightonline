@@ -32,7 +32,7 @@ const ChangePassword = ({id, trigger}:Props) => {
     })
 
     const updatePassword = async (data:UserPasswordUpdateSchemaType)=>{
-        const response = await axios_instance_token.put(`/users/password/${id}`, {
+        const response = await axios_instance_token.patch(`/users/password/${id}`, {
             ...data
         },)
 
@@ -55,7 +55,7 @@ const ChangePassword = ({id, trigger}:Props) => {
             setOpen(prev => !prev)
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
-                toast.error(err?.response?.data?.error, {
+                toast.error(err?.response?.data?.message, {
                     id: "password-update"
                 })
             }else{

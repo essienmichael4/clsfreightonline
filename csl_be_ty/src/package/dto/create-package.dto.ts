@@ -40,6 +40,10 @@ export class CreatePackageDto {
 
     @IsString()
     @IsOptional()
+    description:string
+
+    @IsString()
+    @IsOptional()
     eta:string
 
     @IsEnum(Status)

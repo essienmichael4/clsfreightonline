@@ -26,7 +26,7 @@ const Dashboard = () => {
     })
     return (
         <>
-            <div className="lg:container w-full mx-auto mt-4 px-4 lg:px-0">
+            <div className="container w-full mx-auto mt-4 px-4">
                 <div className="w-full flex flex-wrap">
                     <div className='w-full sm:w-1/2 lg:w-1/3 px-2 py-2'>
                         <div className="flex gap-4 items-center h-full rounded-md p-6 text-md border border-neutral-300">

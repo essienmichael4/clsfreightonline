@@ -15,6 +15,10 @@ export class PackageRequest {
     phone?:string
 
     @IsString()
+    @IsOptional()
+    description?:string
+
+    @IsString()
     trackingNumber:string
 
     @IsNumber()
@@ -78,16 +82,4 @@ export class EditPackageRequest {
     @IsString()
     @IsOptional()
     vessel?:string
-
-    @IsString()
-    @IsOptional()
-    loaded?:string
-
-    @IsString()
-    @IsOptional()
-    received?:string
-
-    @IsString()
-    @IsOptional()
-    eta?:string
 }

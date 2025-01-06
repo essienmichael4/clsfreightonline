@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Dialog, DialogTitle, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -11,12 +11,15 @@ import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { RegisterUserSchema, RegisterUserSchemaType } from '@/schema/user'
+import useAuth from '@/hooks/useAuth'
+import RolePicker from './RolePicker'
 
 interface Props{
     trigger?: React.ReactNode,
 }
 
 const AddUser = ({trigger}:Props) => {
+    const {auth} = useAuth()
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
@@ -29,6 +32,10 @@ const AddUser = ({trigger}:Props) => {
             role: "USER"
         }
     })
+
+    const handleRoleChange = (value:"ADMIN" | "USER")=>{
+        form.setValue("role", value)        
+    }
 
     const addAdmin = async (data:RegisterUserSchemaType)=>{
         const response = await axios_instance_token.post(`/auth/signup`, {
@@ -55,7 +62,7 @@ const AddUser = ({trigger}:Props) => {
             setOpen(prev => !prev)
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
-                toast.error(err?.response?.data?.error, {
+                toast.error(err?.response?.data?.message, {
                     id: "add-admin"
                 })
             }else{
@@ -109,18 +116,19 @@ const AddUser = ({trigger}:Props) => {
                                 </FormItem>
                             )} 
                         />
-                        {/* <FormField 
+                        {auth?.user.role === "ADMIN" && <FormField 
                             control={form.control}
-                            name="confirmPassword"
-                            render={({field}) =>(
-                                <FormItem>
-                                    <FormLabel className='text-xs'>Confirm New Password</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                </FormItem>
+                            name="role"
+                            render={({}) =>(
+                                <FormItem className='flex flex-col'>
+                                <FormLabel className='my-1 text-xs'>Role</FormLabel>
+                                <FormControl>
+                                    <RolePicker onChange={handleRoleChange}/>
+                                </FormControl>
+                                <FormDescription>Select a role</FormDescription>
+                            </FormItem>
                             )} 
-                        /> */}
+                        />}
                     </form>
                 </Form>
                 <DialogFooter >

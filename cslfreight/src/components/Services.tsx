@@ -1,7 +1,7 @@
 import ocean from "../assets/ocean.jpg"
 import land from "../assets/land.jpg"
 import air from "../assets/air.jpg"
-import { Link } from "react-router-dom"
+// import { Link } from "react-router-dom"
 
 const Services = () => {
   return (
@@ -23,9 +23,9 @@ const Services = () => {
                                 <p className="mb-3">
                                     Fast and efficient air freight services for time-sensitive shipments
                                 </p>
-                                <Link to={"/contact"} className='text-white  bg-blue-700 py-2 px-3 rounded-md'>
+                                {/* <Link to={"/contact"} className='text-white  bg-blue-700 py-2 px-3 rounded-md'>
                                     Contact Us
-                                </Link>
+                                </Link> */}
                             </div>
                         </div>
                     </div>
@@ -37,9 +37,9 @@ const Services = () => {
                                 <p className="mb-3">
                                     Reliable and cost-effective ocean freight services for large shipments
                                 </p>
-                                <Link to={"/contact"} className='text-white  bg-blue-700 py-2 px-3 rounded-md'>
+                                {/* <Link to={"/contact"} className='text-white  bg-blue-700 py-2 px-3 rounded-md'>
                                     Contact Us
-                                </Link>
+                                </Link> */}
                             </div>
                         </div>
                     </div>
@@ -51,9 +51,9 @@ const Services = () => {
                                 <p className="mb-3">
                                     Expert assistance with customs clearance to ensure smooth and timely delivery.
                                 </p>
-                                <Link to={"/contact"} className='text-white  bg-blue-700 py-2 px-3 rounded-md'>
+                                {/* <Link to={"/contact"} className='text-white  bg-blue-700 py-2 px-3 rounded-md'>
                                     Contact Us
-                                </Link>
+                                </Link> */}
                             </div>
                         </div>
                     </div>

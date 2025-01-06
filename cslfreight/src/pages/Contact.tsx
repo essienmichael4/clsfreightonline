@@ -30,7 +30,7 @@ const Contact = () => {
                             </div>
                             <p className="font-bold mt-12 text-lg">Send us a message</p>
                             <p className="text-xs mt-3">Chat with our friendly team</p>
-                            <p className="test-sm mt-8">info@clixmartonline.com</p>
+                            <p className="test-sm mt-8">cslfreightgh@gmail.com</p>
                         </div>
                     </div>
                     <div className="w-full md:w-1/2 lg:w-1/4 sm:px-4 py-2 mb-8">
@@ -52,36 +52,23 @@ const Contact = () => {
                             <div className="bg-blue-300/50 w-10 h-10 flex items-center justify-center rounded-full">
                                 <MapPinned className="text-blue-800 w-5 h-5"/>
                             </div>
-                            <p className="font-bold mt-2 text-lg">Visit our office</p>
+                            <p className="font-bold mt-12 text-lg">Visit our office</p>
+                            <div className="mt-8 flex flex-col gap-6">
+                                <p>Accra: Tabora Junction around Lapaz</p>
+                                <p>Sunyani: Estate Experimental Junction</p>
+                                <p>Kumasi: Atonsu S-line</p>
+                                <p>Koforidua: Old Estate</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="mt-20 px-6">
+            {/* <div className="mt-20 px-6">
                 <h2 className="text-3xl sm:text-5xl lg:text-6xl tracking-wide mb-12">
                     Meet the management team
                 </h2>
-                {/* <div className="flex flex-wrap">
-                    <div className="w-full md:w-1/2 lg:w-1/4 sm:px-4 py-2 mb-8">
-                        <div className="w-full h-96 bg-black rounded-xl">
-                            
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-3xl mt-4">Kojo Savage</h3>
-                            <p className="text-lg mt-2">Chief Operating Officer</p>
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/2 lg:w-1/4 sm:px-4 py-2 mb-8">
-                        <div className="w-full h-96 bg-black rounded-xl">
-                            
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-3xl mt-4">Kojo Savage</h3>
-                            <p className="text-lg mt-2">Chief Operating Officer</p>
-                        </div>
-                    </div>
-                </div> */}
-            </div>
+                
+            </div> */}
         </div>
         <Footer />
     </>

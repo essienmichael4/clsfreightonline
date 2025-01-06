@@ -2,7 +2,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from './ui/button'
 import { LogOut, Menu, User } from 'lucide-react'
 import useAuth from '@/hooks/useAuth'
-import { useResolvedPath } from "react-router-dom"
+import { useNavigate, useResolvedPath } from "react-router-dom"
 
 
 interface NavbarProps{
@@ -10,8 +10,9 @@ interface NavbarProps{
 }
 
 const Navbar = ({toggleNavbar}:NavbarProps) => {
-  const {setAuth} = useAuth()
-  // const path = useResolvedPath().pathname.split("/")[1]
+  const {auth, setAuth} = useAuth()
+  const navigate = useNavigate()
+  // @ts-ignore comment
   const path = useResolvedPath().pathname.split("/")[1].toLocaleUpperCase()
 
   return (
@@ -33,7 +34,7 @@ const Navbar = ({toggleNavbar}:NavbarProps) => {
                 <DropdownMenuContent className="w-56">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={()=>{navigate(`../users/${auth!.user.id}`)}}>
                         <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>

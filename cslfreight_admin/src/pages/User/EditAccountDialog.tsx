@@ -13,13 +13,14 @@ import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { UserUpdateSchema, UserUpdateSchemaType } from '@/schema/user'
+import { User } from '@/lib/types'
 
 interface Props{
-    id:number,
+    user:User,
     trigger?: React.ReactNode,
 }
 
-const EditAccountDialog = ({id, trigger}:Props) => {
+const EditAccountDialog = ({user, trigger}:Props) => {
     const {setAuth} = useAuth()
     const axios_instance_token = useAxiosToken()
     const [open, setOpen] = useState(false)
@@ -33,7 +34,7 @@ const EditAccountDialog = ({id, trigger}:Props) => {
     })
 
     const updateUser = async (data:UserUpdateSchemaType)=>{
-        const response = await axios_instance_token.patch(`/users/${id}`, {
+        const response = await axios_instance_token.patch(`/users/${user.id}`, {
             ...data
         },)
 
@@ -57,7 +58,7 @@ const EditAccountDialog = ({id, trigger}:Props) => {
             setOpen(prev => !prev)
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
-                toast.error(err?.response?.data?.error, {
+                toast.error(err?.response?.data?.massage, {
                     id: "user-update"
                 })
             }else{

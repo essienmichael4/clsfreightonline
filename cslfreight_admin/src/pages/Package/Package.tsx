@@ -21,8 +21,6 @@ const PackageDetails = () => {
     const packageDetail = useQuery<Package>({
         queryKey: ["package", id],
         queryFn: async() => await axios_instance_token.get(`/packages/${id}`).then(res => {
-            console.log(res.data);
-            
             return res.data
         })
     })
@@ -46,7 +44,7 @@ const PackageDetails = () => {
             
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
-                toast.error(err?.response?.data?.error, {
+                toast.error(err?.response?.data?.message, {
                     id: "package-update"
                 })
             }else{
@@ -87,7 +85,7 @@ const PackageDetails = () => {
                         <EditLoaded trackingNumber={packageDetail.data?.trackingNumber as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Loaded</Button>} />
                         <EditReceived trackingNumber={packageDetail.data?.trackingNumber as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Received</Button>} />
                         <EditEta trackingNumber={packageDetail.data?.trackingNumber as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>ETA</Button>} />
-                        <EditPackage trackingNumber={packageDetail.data?.trackingNumber as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Package</Button>} />
+                        {packageDetail.data && <EditPackage item={packageDetail!.data as Package}  trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Package</Button>} /> }
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {packageDetail.data?.status !== "ON_HOLD" && <Button className="border bg-gray-700 hover:bg-gray-500" onClick={()=>{onPackageUpdate("ON_HOLD")}} disabled={isPending}>On Hold</Button>}
@@ -144,6 +142,12 @@ const PackageDetails = () => {
                 <div>
                     <h4 className='text-xs text-gray-400 mb-2'>Vessel Line</h4>
                     <p>{packageDetail.data?.vessel ? packageDetail.data?.vessel : "-"}</p>
+                </div>
+            </div>
+            <div className="px-4 flex flex-wrap gap-8 mt-8">
+                <div>
+                    <h4 className='text-xs text-gray-400 mb-2'>Notes</h4>
+                    <p>{packageDetail.data?.description ? packageDetail.data?.description : "-"}</p>
                 </div>
             </div>
         </div>

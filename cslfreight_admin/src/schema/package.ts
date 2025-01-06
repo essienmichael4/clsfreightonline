@@ -6,20 +6,21 @@ export const PackageSchema = z.object({
     }).optional(),
     phone: z.string().min(9, {
         message: "Must be a valid phone number."
-    }).optional(),
+    }).optional().or(z.literal('')),
     trackingNumber: z.string({
         message: "Must be a valid tracking number."
     }),
     package: z.string({
         message: "Must be a valid package number."
     }).optional(),
+    description: z.string().optional().or(z.literal('')),
     vessel: z.string().min(2, {
         message: "Must be a valid vessel name."
-    }).optional(),
+    }).optional().or(z.literal('')),
     customer: z.string().min(2, {
         message: "Must be a valid name."
     }),
-    cbm: z.coerce.number().positive().min(0.1),
+    cbm: z.coerce.number().positive().min(0.001),
     quantity: z.coerce.number().positive().min(0),
     loaded: z.coerce.date(),
     received: z.coerce.date(),
@@ -35,23 +36,26 @@ export const PackageSchema = z.object({
 export const EditPackageSchema = z.object({
     email: z.string().email({
         message: "Email must be a valid email."
-    }).optional(),
+    }).optional().or(z.literal('')),
     phone: z.string().min(9, {
         message: "Must be a valid phone number."
-    }).optional(),
+    }).optional().or(z.literal('')),
     trackingNumber: z.string({
         message: "Must be a valid tracking number."
-    }).optional(),
+    }).optional().or(z.literal('')),
     package: z.string({
-        message: "Must be a valid package number."
-    }).optional(),
+        message: "Must be a valid package."
+    }).optional().or(z.literal("")),
+    description: z.string({
+        message: "Must be a valid package desccription."
+    }).optional().or(z.literal('')),
     vessel: z.string().min(2, {
         message: "Must be a valid vessel name."
-    }).optional(),
+    }).optional().or(z.literal('')),
     customer: z.string().min(2, {
         message: "Must be a valid name."
-    }).optional(),
-    cbm: z.coerce.number().positive().min(0.1).optional(),
+    }).optional().or(z.literal('')),
+    cbm: z.coerce.number().positive().min(0.001).optional(),
     quantity: z.coerce.number().positive().min(0).optional(),
     loaded: z.coerce.date().optional(),
     received: z.coerce.date().optional(),

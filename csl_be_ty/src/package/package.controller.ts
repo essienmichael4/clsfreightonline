@@ -40,7 +40,8 @@ export class PackageController {
       addedBy: user.sub.id,
       loaded: body.loaded,
       eta: body.eta,
-      received: body.received
+      received: body.received,
+      description: body.description
     });
   }
 
@@ -86,7 +87,7 @@ export class PackageController {
   @UseGuards(JwtGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.packageService.findOneById(+id);
+    return this.packageService.findOneById(id);
   }
 
   @UseGuards(JwtGuard)
@@ -97,8 +98,8 @@ export class PackageController {
 
   @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() editPackageRequest: EditPackageRequest) {
-    return this.packageService.update(id, editPackageRequest.trackingNumber, editPackageRequest.customer, editPackageRequest.email, editPackageRequest.phone, editPackageRequest.vessel);
+  async updatePackage(@Param('id', ParseIntPipe) id: number, @Body() editPackageRequest: EditPackageRequest) {
+    return await this.packageService.update(id, editPackageRequest.trackingNumber, editPackageRequest.customer, editPackageRequest.email, editPackageRequest.phone, editPackageRequest.vessel, editPackageRequest.package, editPackageRequest.cbm,editPackageRequest.quantity);
   }
 
   @UseGuards(JwtGuard)

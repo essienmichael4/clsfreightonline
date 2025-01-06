@@ -1,3 +1,5 @@
+import { Address } from "src/address/entities/address.entity";
+import { Announcement } from "src/announcement/entities/announcement.entity";
 import { Deleted, Package } from "src/package/entities/package.entity";
 import { PackageEdit } from "src/package/entities/packageEdits.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -5,7 +7,7 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Up
 export enum Role {
     ADMIN = 'ADMIN',
     USER = 'USER',
-  }
+}
 
 @Entity({name: "user"})
 export class User {
@@ -40,4 +42,10 @@ export class User {
 
     @OneToMany(() => PackageEdit, (packageEdit) => packageEdit.user)
     packageEdits: PackageEdit[];
+
+    @OneToMany(()=> Announcement, (announcement) => announcement.updatedBy)
+    announcements: Announcement[]
+
+    @OneToMany(()=> Address, (address) => address.updatedBy)
+    address: Address[]
 }

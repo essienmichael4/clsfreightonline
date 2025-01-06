@@ -21,7 +21,7 @@ export class PackageService {
   async findAll() {
     return await this.packageRepo.find({
       where:{
-        isDeleted: Not("FALSE" as Deleted)
+        isDeleted: Not("TRUE" as Deleted)
       },
       order: {
         id: "DESC", 
@@ -77,7 +77,7 @@ export class PackageService {
     return await this.packageRepo.findOneBy({trackingNumber});
   }
 
-  async update(id: number, trackingNumber?:string, customer?:string, email?:string, phone?:string, vessel?:string, packageName?:string, cbm?:number, quantity?:number) {
+  async update(id: number, trackingNumber?:string, customer?:string, email?:string, phone?:string, vessel?:string, packageName?:string, cbm?:number, quantity?:number, description?:string) {
     return await this.packageRepo.update(id, {
       ...(trackingNumber && { trackingNumber }),
       ...(vessel && { vessel }),
@@ -87,7 +87,10 @@ export class PackageService {
       ...(packageName && { package: packageName }),
       ...(cbm && { cbm }),
       ...(quantity && { quantity }),
+      ...(description && { description }),
     });
+
+    // return this.packageEditRepo.findOneBy({id})
   }
 
   async updateStatus(id: number, status: Status) {

@@ -34,7 +34,7 @@ const EditEta = ({id, trackingNumber, trigger}:Props) => {
     })
 
     const addPackage = async (data:EditEtaSchemaType)=>{
-        const response = await axios_instance_token.patch(`/packages/${id}/received`, {
+        const response = await axios_instance_token.patch(`/packages/${id}/eta`, {
             ...data
         },)
 
@@ -56,7 +56,7 @@ const EditEta = ({id, trackingNumber, trigger}:Props) => {
             setOpen(prev => !prev)
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
-                toast.error(err?.response?.data?.error, {
+                toast.error(err?.response?.data?.message, {
                     id: "edit-package"
                 })
             }else{

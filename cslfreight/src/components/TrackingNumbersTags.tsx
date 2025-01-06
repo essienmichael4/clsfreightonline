@@ -39,7 +39,7 @@ const TrackingNumbersTags = ({handleChange, tag, tags, handleKeyDown, removeTag}
           <Search className="h-5 w-5 text-gray-400 pointer-events-none" />
           <input type="text" onChange={handleChange}
             onKeyDown={handleKeyDown}
-            value={tag} placeholder="Plur 890987645368" className="outline-none w-full"/>
+            value={tag} placeholder="Enter 890987645368" className="outline-none w-full bg-white"/>
         </div>
         <button className="text-white bg-blue-700 h-full px-6 rounded-e-md" onClick={handleSearch}>Track</button>
       </div>

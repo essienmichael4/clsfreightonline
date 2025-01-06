@@ -8,6 +8,7 @@ import RequireAuth from './components/RequireAuth'
 import Users from './pages/User/Users'
 import Package from './pages/Package/Package'
 import UserProfile from './pages/User/User'
+import NotFound from './pages/NotFound/NotFound'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
             <Route path='/users/:id' element={<UserProfile />} />
           </Route>
         </Route>
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </>
   )

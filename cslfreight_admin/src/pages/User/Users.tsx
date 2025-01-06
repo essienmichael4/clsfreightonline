@@ -7,15 +7,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Edit, Plus, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
 import AddUser from "./AddUser"
+import useAuth from "@/hooks/useAuth"
+import EditAccountDialog from "./EditAccountDialog"
+import DeleteUser from "./DeleteUser"
 
 const emptyData: any[]= []
 
 const Users = () => {
-  const axios_instance_token = useAxiosToken()
-  const usersQuery = useQuery<User[]>({
-    queryKey: ["users"],
-    queryFn: async() => await axios_instance_token.get(`/users`).then(res => {
-      return res.data
+    const {auth} = useAuth()
+    const axios_instance_token = useAxiosToken()
+    const usersQuery = useQuery<User[]>({
+        queryKey: ["users"],
+        queryFn: async() => await axios_instance_token.get(`/users`).then(res => {
+        return res.data
     })
 })
 
@@ -23,9 +27,13 @@ const columns:ColumnDef<User>[] =[{
     accessorKey: "id",
     header:({column})=>(<DataTableColumnHeader column={column} title='ID' />),
     cell:({row}) => <div>
-        <Link to={`./${row.original.id}`}>
-            <span className='text-gray-400'>#</span>{row.original.id}
-        </Link>
+        {auth?.user.role === "ADMIN" ? 
+            <Link to={`./${row.original.id}`}>
+                <span className='text-gray-400'>#</span>{row.original.id}
+            </Link> : auth?.user.email === row.original.email ? <Link to={`./${row.original.id}`}>
+                <span className='text-gray-400'>#</span>{row.original.id}
+            </Link> : <span><span className='text-gray-400'>#</span>{row.original.id} </span>
+        }
     </div>
 },{
     accessorKey: "name",
@@ -37,16 +45,25 @@ const columns:ColumnDef<User>[] =[{
 },{
     accessorKey: "createdAt",
     header:({column})=>(<DataTableColumnHeader column={column} title='Day Created' />),
-    cell:({row}) => <div>
-        <span 
-            > {row.original.createdAt} </span> 
+    cell:({row}) => <div className='text-muted-foreground text-nowrap'>
+        {new Date(row.original.createdAt as string).toDateString()}
     </div>
 },{
   accessorKey: "updatedAt",
   header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
-  cell:({}) => <div>
-      <span 
-        className="flex gap-2 items-center"  ><Edit className="w-4 h-4 text-emerald-400"/> <Trash2 className="w-4 h-4 text-rose-400" /> </span> 
+  cell:({row}) => <div>
+        {auth?.user.role === "ADMIN" ? 
+            <span className="flex gap-2 items-center">
+                <EditAccountDialog user={row.original} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
+                <DeleteUser user={row.original} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} />
+            </span>
+            : auth?.user.email === row.original.email ? 
+                <span className="flex gap-2 items-center">
+                    <EditAccountDialog user={row.original} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
+                    <DeleteUser user={row.original} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} />
+                </span>  
+                : <span>...</span>
+        }
   </div>
 }]
 

@@ -3,7 +3,9 @@ import { Dispatch, SetStateAction } from "react"
 export type AuthType = {
     user:{
         name: string,
-        email: string
+        email: string,
+        role?: string,
+        id: number | undefined
     },
     backendTokens: {
         accessToken: string,
@@ -31,6 +33,7 @@ export type Package = {
     createdAt:string,
     eta?: string,
     package:string
+    description?:string
 }
 
 export type User = {
@@ -43,7 +46,15 @@ export type User = {
 }
 
 export type AnnouncementType = {
-    title?:number,
-    subject:string,
+    title?:string,
+    body:string,
     show: string
+}
+
+export type AddressType = {
+    id: number,
+    name:string,
+    contact:string,
+    mobile: string,
+    address: string
 }
