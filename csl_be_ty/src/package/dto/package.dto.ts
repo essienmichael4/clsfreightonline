@@ -82,4 +82,8 @@ export class EditPackageRequest {
     @IsString()
     @IsOptional()
     vessel?:string
+
+    @IsString()
+    @IsOptional()
+    description?:string
 }

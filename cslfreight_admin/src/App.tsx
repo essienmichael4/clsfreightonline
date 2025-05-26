@@ -9,6 +9,7 @@ import Users from './pages/User/Users'
 import Package from './pages/Package/Package'
 import UserProfile from './pages/User/User'
 import NotFound from './pages/NotFound/NotFound'
+import Loading from './pages/Loading/Loading'
 
 function App() {
 
@@ -21,6 +22,8 @@ function App() {
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/packages' element={<Packages />} />
             <Route path='/packages/:id' element={<Package />} />
+            <Route path='/loadings' element={<Loading />} />
+            <Route path='/loadings/:id' element={<Package />} />
             <Route path='/users' element={<Users />} />
             <Route path='/users/:id' element={<UserProfile />} />
           </Route>

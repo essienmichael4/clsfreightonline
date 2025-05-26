@@ -12,12 +12,14 @@ import useAxiosToken from '@/hooks/useAxiosToken'
 import { useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { EditAnnouncementSchema, EditAnnouncementSchemaType } from '@/schema/announcement'
+import { AnnouncementType } from '@/lib/types'
 
 interface Props{
+    announcement:AnnouncementType,
     trigger?: React.ReactNode,
 }
 
-const EditAnnouncement = ({trigger}:Props) => {
+const EditAnnouncement = ({announcement, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
@@ -25,8 +27,8 @@ const EditAnnouncement = ({trigger}:Props) => {
     const form = useForm<EditAnnouncementSchemaType>({
         resolver:zodResolver(EditAnnouncementSchema),
         defaultValues:{
-            title: "",
-            subject: "",
+            title: announcement.title,
+            subject: announcement.body,
         }
     })
 

@@ -26,7 +26,8 @@ const Faqs = () => {
                         <AccordionItem value="item-2" className="md:py-8">
                             <AccordionTrigger className="md:text-xl">Where are your warehouses located?</AccordionTrigger>
                             <AccordionContent>
-                            We have Warehouses in Lapaz Nyamekye, Ghana, and Guangzhou, China.
+                            Our main Ghana Warehouse is located in Accra Tabora Junction same street with Chickenman Pizzaman restaurant. 
+                            Our China Warehouse is located in Guangdong Province, Foshan City.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3" className="md:py-8">
@@ -38,7 +39,8 @@ const Faqs = () => {
                         <AccordionItem value="item-3" className="md:py-8">
                             <AccordionTrigger className="md:text-xl">I am not in Accra, how do I get my packages when they arrive?</AccordionTrigger>
                             <AccordionContent>
-                            Our 3 Main Direct Delivery Zones are Accra / Tema, Kumasi, and Sunyani. We will send your packages to various cargo stations for free for all other areas.
+                            All containers are first offloaded in Accra. Packages in Kumasi, Sunyani & Koforidua will be sent to our warehouses in these locations. 
+                            If you are not in any of these areas, your packages will be sent to your cargo station for free.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>

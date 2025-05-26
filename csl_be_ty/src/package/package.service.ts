@@ -29,6 +29,18 @@ export class PackageService {
     });
   }
 
+  async findAllByStatus(status:Status) {
+    return await this.packageRepo.find({
+      where:{
+        isDeleted: Not("TRUE" as Deleted),
+        status
+      },
+      order: {
+        id: "DESC", 
+      },
+    });
+  }
+
   async findAllWithTrackingNumbers(trackingNumbers:string[]) {
     return await this.packageRepo.find({
       where:{
@@ -48,7 +60,7 @@ export class PackageService {
   async findLoadedCount() {
     return await this.packageRepo.count({
       where: {
-        status : "ON_HOLD" as Status
+        status : "YET_TO_LOAD" as Status
       }
     });
   }
@@ -87,7 +99,7 @@ export class PackageService {
       ...(packageName && { package: packageName }),
       ...(cbm && { cbm }),
       ...(quantity && { quantity }),
-      ...(description && { description }),
+      description :  description || "",
     });
 
     // return this.packageEditRepo.findOneBy({id})
@@ -103,20 +115,26 @@ export class PackageService {
       loaded
     });
   }
+
   async updateReceived(id: number, received: string) {
     return await this.packageRepo.update(id, {
       received
     });
   }
+
   async updateEta(id: number, eta: string) {
     return await this.packageRepo.update(id, {
       eta
     });
   }
 
-  async remove(id: number) {
+  async updateDeparture(id: number, departure: string) {
     return await this.packageRepo.update(id, {
-      isDeleted: Deleted.TRUE
+      departure
     });
+  }
+
+  async remove(id: number) {
+    return await this.packageRepo.delete(id);
   }
 }

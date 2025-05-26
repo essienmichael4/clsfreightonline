@@ -35,7 +35,7 @@ const EditPackage = ({item, trigger}:Props) => {
             customer: item.customer,
             cbm: Number(item.cbm),
             quantity: Number(item.quantity),
-            description: item.description || ""
+            description: item.description
         }
     })
 
@@ -67,7 +67,8 @@ const EditPackage = ({item, trigger}:Props) => {
                 vessel: item.vessel,
                 customer: item.customer,
                 cbm: Number(item.cbm),
-                quantity: Number(item.quantity)
+                quantity: Number(item.quantity),
+                description: item.description
             })
 
             setOpen(prev => !prev)
@@ -246,7 +247,8 @@ const EditPackage = ({item, trigger}:Props) => {
                                     vessel: item.vessel,
                                     customer: item.customer,
                                     cbm: Number(item.cbm),
-                                    quantity: Number(item.quantity)
+                                    quantity: Number(item.quantity),
+                                    description: item.description
                                 })
                             }} >
                                 Cancel

@@ -10,6 +10,7 @@ import Address from './pages/Address'
 import Terms from './pages/Terms'
 import Calculator from './components/Calculator'
 import NotFound from './pages/NotFound/NotFound'
+import Loading from './pages/Loading'
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
             <Route path='/search' element={<Search />} />
             <Route path='/address' element={<Address />} />
             <Route path='/terms' element={<Terms />} />
+            <Route path='/container-loadings' element={<Loading />} />
             <Route path='*' element={<NotFound />} />
           </Route>
         </Route>

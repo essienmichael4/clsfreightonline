@@ -8,7 +8,7 @@ export class UserAuthReponse{
     updatedAt:Date 
 
     @Exclude()
-    password :string
+    password:string
 
     constructor(partial:Partial<UserAuthReponse>){
         Object.assign(this, partial)

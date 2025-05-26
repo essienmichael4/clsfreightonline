@@ -32,7 +32,7 @@ const CreatePackage = ({trigger}:Props) => {
         defaultValues:{
             package: "",
             email: "",
-            status: "ON_HOLD",
+            status: "YET_TO_LOAD",
             phone: "",
             trackingNumber: "",
             vessel: "",
@@ -43,7 +43,7 @@ const CreatePackage = ({trigger}:Props) => {
         }
     })
 
-    const handleStatusChange = (value:"ON_HOLD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=>{
+    const handleStatusChange = (value:"YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=>{
         form.setValue("status", value)        
     }
 
@@ -65,7 +65,7 @@ const CreatePackage = ({trigger}:Props) => {
             form.reset({
                 package: "",
                 email: "",
-                status: "ON_HOLD",
+                status: "YET_TO_LOAD",
                 phone: "",
                 trackingNumber: "",
                 vessel: "",

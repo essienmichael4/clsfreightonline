@@ -18,10 +18,11 @@ import { EditPackageEtaSchema, EditEtaSchemaType} from '@/schema/package'
 interface Props{
     trigger?: React.ReactNode,
     id:number,
-    trackingNumber:string
+    trackingNumber:string,
+    date:string
 }
 
-const EditEta = ({id, trackingNumber, trigger}:Props) => {
+const EditEta = ({date, id, trackingNumber, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
@@ -49,6 +50,7 @@ const EditEta = ({id, trackingNumber, trigger}:Props) => {
             })
 
             queryClient.invalidateQueries({queryKey: ["package", id]})
+            queryClient.invalidateQueries({queryKey: ["packages"]})
             form.reset({
                 eta: new Date()
             })
@@ -90,7 +92,7 @@ const EditEta = ({id, trackingNumber, trigger}:Props) => {
                             name="eta"
                             render={({field}) =>(
                                 <FormItem className='flex flex-col w-full'>
-                                    <FormLabel className='my-1 text-xs'>ETA</FormLabel>
+                                    <FormLabel className='my-1 text-xs'>ETA: {new Date(date).toDateString()}</FormLabel>
                                     <Popover >
                                         <PopoverTrigger asChild>
                                             <FormControl>

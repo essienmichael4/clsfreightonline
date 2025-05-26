@@ -47,8 +47,12 @@ export class PackageController {
 
   @UseGuards(JwtGuard)
   @Get()
-  findAll() {
-    return this.packageService.findAll();
+  findAll(@Query("status") status?:Status) {
+    if(status){
+      return this.packageService.findAllByStatus(status);
+    }else{
+      return this.packageService.findAll();
+    }
   }
 
   @Get("search")
@@ -99,7 +103,7 @@ export class PackageController {
   @UseGuards(JwtGuard)
   @Patch(':id')
   async updatePackage(@Param('id', ParseIntPipe) id: number, @Body() editPackageRequest: EditPackageRequest) {
-    return await this.packageService.update(id, editPackageRequest.trackingNumber, editPackageRequest.customer, editPackageRequest.email, editPackageRequest.phone, editPackageRequest.vessel, editPackageRequest.package, editPackageRequest.cbm,editPackageRequest.quantity);
+    return await this.packageService.update(id, editPackageRequest.trackingNumber, editPackageRequest.customer, editPackageRequest.email, editPackageRequest.phone, editPackageRequest.vessel, editPackageRequest.package, editPackageRequest.cbm,editPackageRequest.quantity, editPackageRequest.description);
   }
 
   @UseGuards(JwtGuard)
@@ -124,6 +128,12 @@ export class PackageController {
   @Patch(':id/eta')
   updateEta(@Param('id', ParseIntPipe) id: number, @Body() body: EtaRequest) {
     return this.packageService.updateEta(id, body.eta);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id/departure')
+  updateDeparture(@Param('id', ParseIntPipe) id: number, @Body() body: EtaRequest) {
+    return this.packageService.updateDeparture(id, body.eta);
   }
 
   @UseGuards(JwtGuard)

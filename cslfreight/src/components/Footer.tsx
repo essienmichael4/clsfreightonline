@@ -12,8 +12,8 @@ const Footer = () => {
                         <h2 className='text-2xl md:text-4xl pr-2 md:pr-4 '>CSL Freight Forwarding</h2>
                     </div>
                     <div className="mt-8 space-y-2">
-                        <p>cslfreightgh@gmail.com</p>
-                        <p>(+233) 552 902 556</p>
+                        <p>contact@cslfreightgh.com</p>
+                        <p>(+233) 503 333 889</p>
                     </div>
                     <div className="mt-8 italic flex flex-col gap-2">
                         <p>First Storey Building on the Right</p>

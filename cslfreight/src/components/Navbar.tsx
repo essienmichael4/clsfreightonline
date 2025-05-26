@@ -32,7 +32,7 @@ const Navbar = () => {
               <Link to={"/address"} className='text-neutral-500'>Shipping Address</Link>
             </li>
             <li>
-              <Link to={"/terms"} className='text-neutral-500'>T & C's</Link>
+              <Link to={"/container-loadings"} className='text-neutral-500'>Container Loadings</Link>
             </li>
             <li>
               <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
@@ -62,7 +62,7 @@ const Navbar = () => {
                 <Link to={"/address"} onClick={toggleNavbar} className='text-neutral-500'>Shipping Address</Link>
               </li>
               <li className='py-4'>
-                <Link to={"/terms"} onClick={toggleNavbar} className='text-neutral-500'>T & C's</Link>
+                <Link to={"/container-loadings"} onClick={toggleNavbar} className='text-neutral-500'>Container Loadings</Link>
               </li>
               <li className='py-4'>
                 <a href="https://rmbdeals.com" onClick={toggleNavbar} target="_blank" className="text-neutral-500" >Buy RMB</a>

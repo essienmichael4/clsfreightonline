@@ -49,7 +49,7 @@ const Search = () => {
                                 </div>
                                 <div>
                                     <h4 className='text-xs text-gray-400 mb-2 '>Status</h4>
-                                    <p ><span className={`${item.status === "ON_HOLD" && 'bg-gray-300'} ${item.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${item.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${item.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-1 px-4 rounded-full text-xs`}>{item.status}</span></p>
+                                    <p ><span className={`${item.status === "YET_TO_LOAD" && 'bg-gray-300'} ${item.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${item.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${item.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-1 px-4 rounded-full text-xs`}>{item.status}</span></p>
                                 </div>
                             </div>
                             <div className="px-4 flex flex-wrap gap-8 mt-8">
@@ -65,7 +65,7 @@ const Search = () => {
                                     <h4 className='text-xs text-gray-400 mb-2'>Quantity</h4>
                                     <p>{item.quantity}</p>
                                 </div>
-                                {item.status !== "ON_HOLD" && <div>
+                                {item.status !== "YET_TO_LOAD" && <div>
                                         <h4 className='text-xs text-gray-400 mb-2'>Vessel Line</h4>
                                         <p>{item?.vessel ? item?.vessel : "-"}</p>
                                     </div>
@@ -74,11 +74,15 @@ const Search = () => {
                                     <h4 className='text-xs text-gray-400 mb-2'>Received</h4>
                                     <p>{item?.received ? new Date(item?.received).toDateString() : "-"}</p>
                                 </div>
-                                {item.status !== "ON_HOLD" && <div>
+                                <div>
+                                    <h4 className='text-xs text-gray-400 mb-2'>Departure</h4>
+                                    <p>{item?.departure ? new Date(item?.departure).toDateString() : "-"}</p>
+                                </div>
+                                {item.status !== "YET_TO_LOAD" && <div>
                                     <h4 className='text-xs text-gray-400 mb-2'>Loaded</h4>
                                     <p>{item?.loaded ? new Date(item?.loaded).toDateString() : "-"}</p>
                                 </div> }
-                                {item.status !== "ON_HOLD" && <div>
+                                {item.status !== "YET_TO_LOAD" && <div>
                                     <h4 className='text-xs text-gray-400 mb-2'>ETA</h4>
                                     <p>{item?.eta ? new Date(item?.eta).toDateString() : "-"}</p>
                                 </div> }

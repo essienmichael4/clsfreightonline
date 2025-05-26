@@ -13,7 +13,7 @@ const Address = () => {
     return (<>
         <div className="container mx-auto">
             <div className="mt-12">
-            <div className="px-6 mt-10 rounded-lg">
+            <div className="px-4 sm:px-6 mt-10 rounded-lg">
                 <h2 className="font-bold text-3xl sm:font-normal sm:text-6xl tracking-wide">Our Shipping Adresses</h2>
                 <div className="">
                     <p><span className='text-red-500 mr-2 text-xl'>&#9888;</span>Please put your Shipping mark on all your packages with your name and contact at (XXX)</p>

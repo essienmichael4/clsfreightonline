@@ -11,9 +11,10 @@ import EditPackage from "./EditPackage"
 import EditLoaded from "./EditLoaded"
 import EditReceived from "./EditReceived"
 import EditEta from "./EditEta"
+import EditDeparture from "./EditDeparture"
 
 const PackageDetails = () => {
-    const {id} =useParams()
+    const {id} = useParams()
     const navigate = useNavigate()
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
@@ -41,6 +42,7 @@ const PackageDetails = () => {
             })
 
             queryClient.invalidateQueries({queryKey: ["package", id]})
+            queryClient.invalidateQueries({queryKey: ["packages"]})
             
         },onError: (err:any) => {
             if (axios.isAxiosError(err)){
@@ -82,13 +84,14 @@ const PackageDetails = () => {
                 </div>
                 <div className="flex flex-col flex-wrap justify-self-end gap-2">
                     <div className="flex flex-wrap gap-2">
-                        <EditLoaded trackingNumber={packageDetail.data?.trackingNumber as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Loaded</Button>} />
-                        <EditReceived trackingNumber={packageDetail.data?.trackingNumber as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Received</Button>} />
-                        <EditEta trackingNumber={packageDetail.data?.trackingNumber as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>ETA</Button>} />
-                        {packageDetail.data && <EditPackage item={packageDetail!.data as Package}  trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Package</Button>} /> }
+                        <EditLoaded trackingNumber={packageDetail.data?.trackingNumber as string} date={packageDetail.data?.loaded as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Loaded</Button>} />
+                        <EditReceived trackingNumber={packageDetail.data?.trackingNumber as string} date={packageDetail.data?.received as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Received</Button>} />
+                        <EditEta trackingNumber={packageDetail.data?.trackingNumber as string} date={packageDetail.data?.eta as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>ETA</Button>} />
+                        <EditDeparture trackingNumber={packageDetail.data?.trackingNumber as string} date={packageDetail.data?.departure as string} id={Number(id)} trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Departure</Button>} />
+                        {packageDetail.data && <EditPackage item={packageDetail.data}  trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Package</Button>} /> }
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        {packageDetail.data?.status !== "ON_HOLD" && <Button className="border bg-gray-700 hover:bg-gray-500" onClick={()=>{onPackageUpdate("ON_HOLD")}} disabled={isPending}>On Hold</Button>}
+                        {packageDetail.data?.status !== "YET_TO_LOAD" && <Button className="border bg-gray-700 hover:bg-gray-500" onClick={()=>{onPackageUpdate("ON_HOLD")}} disabled={isPending}>Yet to Load</Button>}
                         {packageDetail.data?.status !== "EN_ROUTE" && <Button className="border bg-yellow-700 hover:bg-yellow-500" onClick={()=>{onPackageUpdate("EN_ROUTE")}} disabled={isPending}>En Route</Button>}
                         {packageDetail.data?.status !== "ARRIVED" && <Button className="border bg-emerald-700 hover:bg-emerald-500" onClick={()=>{onPackageUpdate("ARRIVED")}} disabled={isPending}>Arrived</Button>}
                         {packageDetail.data?.status !== "DELIVERED" && <Button className="border bg-blue-700 hover:bg-blue-500" onClick={()=>{onPackageUpdate("DELIVERED")}} disabled={isPending}>Delivered</Button>}
@@ -98,15 +101,15 @@ const PackageDetails = () => {
             </div>
             <div className="px-4 flex flex-wrap gap-8 mt-8">
                 <div>
-                    <h4 className='text-xs text-gray-400 mb-2 '>Custormer name</h4>
+                    <h4 className='text-xs text-gray-400 mb-2 '>Customer name</h4>
                     <p>{packageDetail.data?.customer}</p>
                 </div>
                 <div>
-                    <h4 className='text-xs text-gray-400 mb-2 '>Custormer email</h4>
+                    <h4 className='text-xs text-gray-400 mb-2 '>Customer email</h4>
                     <p>{packageDetail.data?.email}</p>
                 </div>
                 <div>
-                    <h4 className='text-xs text-gray-400 mb-2 '>Custormer phone</h4>
+                    <h4 className='text-xs text-gray-400 mb-2 '>Customer phone</h4>
                     <p>{packageDetail.data?.phone}</p>
                 </div>
                 <div>
@@ -126,6 +129,10 @@ const PackageDetails = () => {
                 <div>
                     <h4 className='text-xs text-gray-400 mb-2'>Quantity</h4>
                     <p>{packageDetail.data?.quantity}</p>
+                </div>
+                <div>
+                    <h4 className='text-xs text-gray-400 mb-2'>Departure</h4>
+                    <p>{packageDetail.data?.departure ? new Date(packageDetail.data?.departure).toDateString() : "-"}</p>
                 </div>
                 <div>
                     <h4 className='text-xs text-gray-400 mb-2'>Received</h4>

@@ -32,6 +32,7 @@ export type Package = {
     status:string,
     createdAt:string,
     eta?: string,
+    departure?: string,
     package:string
     description?:string
 }
@@ -57,4 +58,12 @@ export type AddressType = {
     contact:string,
     mobile: string,
     address: string
+}
+
+export type LoadingType = {
+    id: number,
+    vessel?:string,
+    loaded?:string,
+    eta?: string,
+    status: "IN_TRANSIT" | "ARRIVED" | "DELIVERED"
 }

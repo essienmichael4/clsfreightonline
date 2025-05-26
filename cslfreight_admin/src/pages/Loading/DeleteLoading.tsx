@@ -9,11 +9,10 @@ import { Loader2 } from 'lucide-react'
 
 interface Props{
     trigger?: React.ReactNode,
-    id:number,
-    trackingNumber:string
+    id:number
 }
 
-const DeletePackage = ({id, trackingNumber, trigger}:Props) => {
+const DeleteLoading = ({id, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
@@ -21,7 +20,7 @@ const DeletePackage = ({id, trackingNumber, trigger}:Props) => {
     
 
     const addPackage = async ()=>{
-        const response = await axios_instance_token.delete(`/packages/${id}`)
+        const response = await axios_instance_token.delete(`/loadings/${id}`)
 
         return response.data
     }
@@ -29,11 +28,11 @@ const DeletePackage = ({id, trackingNumber, trigger}:Props) => {
     const {mutate, isPending} = useMutation({
         mutationFn: addPackage,
         onSuccess: ()=>{
-            toast.success("Package deleted successfully", {
+            toast.success("Container loading deleted successfully", {
                 id: "edit-package"
             })
 
-            queryClient.invalidateQueries({queryKey: ["packages"]})
+            queryClient.invalidateQueries({queryKey: ["loadings"]})
 
             setOpen(prev => !prev)
         },onError: (err:any) => {
@@ -50,7 +49,7 @@ const DeletePackage = ({id, trackingNumber, trigger}:Props) => {
     })
 
     const onSubmit = ()=>{
-        toast.loading("Deleting package...", {
+        toast.loading("Deleting container loading...", {
             id: "edit-package"
         })
         mutate()
@@ -62,11 +61,11 @@ const DeletePackage = ({id, trackingNumber, trigger}:Props) => {
             <DialogContent className='w-[90%] mx-auto rounded-2xl'>
                 <DialogHeader className='items-start'>
                     <DialogTitle>
-                        Delete Package: {trackingNumber}
+                        Delete Loading
                     </DialogTitle>
                 </DialogHeader>
                 <div>
-                    Are you sure you want to delete this package?
+                    Are you sure you want to delete this container loading? Note that this action is not reversible!!!
                 </div>
                 <DialogFooter >
                     <DialogClose asChild>
@@ -79,7 +78,7 @@ const DeletePackage = ({id, trackingNumber, trigger}:Props) => {
                     </DialogClose>
                     <Button onClick={onSubmit} disabled={isPending} className='bg-gradient-to-r from-rose-500 to-rose-800 text-white'
                     >
-                        {!isPending && "Delete Package"}
+                        {!isPending && "Delete Loading"}
                         {isPending && <Loader2 className='animate-spin' /> }
                     </Button>
                 </DialogFooter>
@@ -88,4 +87,4 @@ const DeletePackage = ({id, trackingNumber, trigger}:Props) => {
     )
 }
 
-export default DeletePackage
+export default DeleteLoading

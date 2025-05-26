@@ -110,7 +110,7 @@ const UserProfile = () => {
                   } />
                 }
                 {announcement.data && 
-                  <EditAnnouncement trigger={
+                  <EditAnnouncement announcement={announcement.data} trigger={
                     <Button className="text-xs lg:text-sm border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white bg-transparent">Edit Announcement</Button>
                   } />
                 }

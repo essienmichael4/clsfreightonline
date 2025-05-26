@@ -46,7 +46,6 @@ export class AuthService {
 
     async resignAuthPayload(payload:PayloadParams){
         return this.jwtService.sign(payload, {
-            // expiresIn: "1h",
             secret: process.env.JWT_SECRET_KEY
         })
     }

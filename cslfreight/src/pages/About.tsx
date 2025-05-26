@@ -33,7 +33,7 @@ const About = () => {
               </div>
               <p className="text-neutral-500 text-center lg:text-start">Great experience with CSL Freight.  Reliable and efficient service.</p>
             </div>
-            <div className="p-2 w-full h-full lg:w-1/2">
+            <div className="p-2 aspect-auto w-full h-full lg:w-1/2">
                 <img src={team} alt="" className="rounded-lg h-full"/>
             </div>
           </div>

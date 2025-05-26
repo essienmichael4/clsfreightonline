@@ -56,10 +56,10 @@ export class AuthController {
 
   @UseGuards(RefreshJwtGuard)
   @Get("refresh")
-    async refreshToken(@User() req:UserInfo){
+  async refreshToken(@User() req:UserInfo){
 
-      const accessToken =  await {accessToken: await this.authService.resignAuthPayload(req)}
-      
-      return accessToken
-    }
+    const accessToken =  await {accessToken: await this.authService.resignAuthPayload(req)}
+    
+    return accessToken
+  }
 }

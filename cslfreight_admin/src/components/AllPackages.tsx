@@ -11,17 +11,18 @@ import { Button } from './ui/button'
 import DeletePackage from '@/pages/Package/DeletePackage'
 
 interface FilterProps{
-    filtering:string
+    filtering:string,
+    status:string
 }
 
 const emptyData: any[]= []
 
-const AllPackages = ({filtering}:FilterProps) => {
+const AllPackages = ({status, filtering}:FilterProps) => {
     const axios_instance_token = useAxiosToken()
 
     const orders = useQuery<Package[]>({
-        queryKey: ["packages"],
-        queryFn: async() => await axios_instance_token.get(`/packages`).then(res => res.data)
+        queryKey: ["packages", status],
+        queryFn: async() => await axios_instance_token.get(`/packages?status=${status}`).then(res => res.data)
     })
 
     const columns:ColumnDef<Package>[] =[{
@@ -88,7 +89,7 @@ const AllPackages = ({filtering}:FilterProps) => {
         accessorKey: "status",
         header:({column})=>(<DataTableColumnHeader column={column} title='Status' />),
         cell:({row}) => <div>
-            <span className={`${row.original.status === "ON_HOLD" && 'bg-gray-300'} ${row.original.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${row.original.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${row.original.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-2 px-4 rounded-full text-xs`}>{row.original.status}</span>
+            <span className={`${row.original.status === "YET_TO_LOAD" && 'bg-gray-300'} ${row.original.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${row.original.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${row.original.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-2 px-4 rounded-full text-xs`}>{row.original.status}</span>
         </div>
     },{
         accessorKey: "cbm",

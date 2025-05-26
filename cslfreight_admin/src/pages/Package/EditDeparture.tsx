@@ -13,7 +13,7 @@ import { CalendarIcon, Loader2 } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
-import { EditPackageReceivedSchema, EditReceivedSchemaType} from '@/schema/package'
+import { EditDepartureSchemaType, EditPackageDepartureSchema} from '@/schema/package'
 
 interface Props{
     trigger?: React.ReactNode,
@@ -22,20 +22,20 @@ interface Props{
     date:string
 }
 
-const EditReceived = ({date, id, trackingNumber, trigger}:Props) => {
+const EditEta = ({date, id, trackingNumber, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
 
-    const form = useForm<EditReceivedSchemaType>({
-        resolver:zodResolver(EditPackageReceivedSchema),
+    const form = useForm<EditDepartureSchemaType>({
+        resolver:zodResolver(EditPackageDepartureSchema),
         defaultValues:{
-            received: new Date()
+            departure: new Date()
         }
     })
 
-    const addPackage = async (data:EditReceivedSchemaType)=>{
-        const response = await axios_instance_token.patch(`/packages/${id}/received`, {
+    const addPackage = async (data:EditDepartureSchemaType)=>{
+        const response = await axios_instance_token.patch(`/packages/${id}/departure`, {
             ...data
         },)
 
@@ -51,9 +51,8 @@ const EditReceived = ({date, id, trackingNumber, trigger}:Props) => {
 
             queryClient.invalidateQueries({queryKey: ["package", id]})
             queryClient.invalidateQueries({queryKey: ["packages"]})
-
             form.reset({
-                received: new Date(date)
+                departure: new Date()
             })
 
             setOpen(prev => !prev)
@@ -70,7 +69,7 @@ const EditReceived = ({date, id, trackingNumber, trigger}:Props) => {
         }
     })
 
-    const onSubmit = (data:EditReceivedSchemaType)=>{
+    const onSubmit = (data:EditDepartureSchemaType)=>{
         toast.loading("Editing package...", {
             id: "edit-package"
         })
@@ -90,10 +89,10 @@ const EditReceived = ({date, id, trackingNumber, trigger}:Props) => {
                     <form className='space-y-1 w-full'>
                         <FormField 
                             control={form.control}
-                            name="received"
+                            name="departure"
                             render={({field}) =>(
                                 <FormItem className='flex flex-col w-full'>
-                                    <FormLabel className='my-1 text-xs'>Received: {new Date(date).toDateString()}</FormLabel>
+                                    <FormLabel className='my-1 text-xs'>Departure: {new Date(date).toDateString()}</FormLabel>
                                     <Popover >
                                         <PopoverTrigger asChild>
                                             <FormControl>
@@ -141,7 +140,7 @@ const EditReceived = ({date, id, trackingNumber, trigger}:Props) => {
                     </DialogClose>
                     <Button onClick={form.handleSubmit(onSubmit)} disabled={isPending} className='bg-gradient-to-r from-blue-500 to-blue-800 text-white'
                     >
-                        {!isPending && "Update Received"}
+                        {!isPending && "Update ETA"}
                         {isPending && <Loader2 className='animate-spin' /> }
                     </Button>
                 </DialogFooter>
@@ -150,4 +149,4 @@ const EditReceived = ({date, id, trackingNumber, trigger}:Props) => {
     )
 }
 
-export default EditReceived
+export default EditEta

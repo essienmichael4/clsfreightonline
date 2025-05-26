@@ -26,7 +26,7 @@ export const PackageSchema = z.object({
     received: z.coerce.date(),
     eta: z.coerce.date(),
     status:z.union([
-        z.literal("ON_HOLD"),
+        z.literal("YET_TO_LOAD"),
         z.literal("EN_ROUTE"),
         z.literal("ARRIVED"),
         z.literal("DELIVERED")
@@ -74,8 +74,13 @@ export const EditPackageEtaSchema = z.object({
     eta: z.coerce.date().optional(),
 })
 
+export const EditPackageDepartureSchema = z.object({
+    departure: z.coerce.date().optional(),
+})
+
 export type PackageSchemaType = z.infer<typeof PackageSchema>
 export type EditPackageSchemaType = z.infer<typeof EditPackageSchema>
 export type EditLoadedSchemaType = z.infer<typeof EditPackageLoadedSchema>
 export type EditReceivedSchemaType = z.infer<typeof EditPackageReceivedSchema>
 export type EditEtaSchemaType = z.infer<typeof EditPackageEtaSchema>
+export type EditDepartureSchemaType = z.infer<typeof EditPackageDepartureSchema>

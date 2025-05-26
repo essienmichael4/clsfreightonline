@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { PackageModule } from './package/package.module';
 import { AnnouncementModule } from './announcement/announcement.module';
 import { AddressModule } from './address/address.module';
+import { LoadingModule } from './loading/loading.module';
 
 @Module({
   imports: [ConfigModule.forRoot(),
@@ -31,7 +32,8 @@ import { AddressModule } from './address/address.module';
     PackageModule,
     AuthModule,
     AnnouncementModule,
-    AddressModule
+    AddressModule,
+    LoadingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

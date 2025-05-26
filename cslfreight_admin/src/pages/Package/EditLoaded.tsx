@@ -18,10 +18,11 @@ import { EditPackageLoadedSchema , EditLoadedSchemaType} from '@/schema/package'
 interface Props{
     trigger?: React.ReactNode,
     id:number,
-    trackingNumber:string
+    trackingNumber:string,
+    date:string
 }
 
-const EditLoaded = ({id, trackingNumber, trigger}:Props) => {
+const EditLoaded = ({date, id, trackingNumber, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
@@ -49,6 +50,7 @@ const EditLoaded = ({id, trackingNumber, trigger}:Props) => {
             })
 
             queryClient.invalidateQueries({queryKey: ["package", id]})
+            queryClient.invalidateQueries({queryKey: ["packages"]})
 
             form.reset({
                 loaded: new Date()
@@ -91,7 +93,7 @@ const EditLoaded = ({id, trackingNumber, trigger}:Props) => {
                             name="loaded"
                             render={({field}) =>(
                                 <FormItem className='flex flex-col w-full'>
-                                    <FormLabel className='my-1 text-xs'>Loaded</FormLabel>
+                                    <FormLabel className='my-1 text-xs'>Loaded: {new Date(date).toDateString()}</FormLabel>
                                     <Popover >
                                         <PopoverTrigger asChild>
                                             <FormControl>

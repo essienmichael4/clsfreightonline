@@ -30,7 +30,7 @@ const Contact = () => {
                             </div>
                             <p className="font-bold mt-12 text-lg">Send us a message</p>
                             <p className="text-xs mt-3">Chat with our friendly team</p>
-                            <p className="test-sm mt-8">cslfreightgh@gmail.com</p>
+                            <p className="test-sm mt-8">contact@cslfreightgh.com</p>
                         </div>
                     </div>
                     <div className="w-full md:w-1/2 lg:w-1/4 sm:px-4 py-2 mb-8">
@@ -41,6 +41,7 @@ const Contact = () => {
                             <p className="font-bold mt-12 text-lg">Call us</p>
                             <p className="text-xs mt-3">Mon-Sat, 8:00am - 8:00pm (GMT).</p>
                             <p className="text-xs mt-8">Customer Care</p>
+                            <p className="test-sm mt-2">(+233) 503 333 889</p>
                             <p className="test-sm mt-2">(+233) 552 902 556</p>
                             <p className="test-sm mt-2">(+233) 546 548 705</p>
                             <p className="text-xs mt-8">Invoices & Payments</p>

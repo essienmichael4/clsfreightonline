@@ -8,7 +8,7 @@ export enum Deleted {
   }
   
   export enum Status {
-    ON_HOLD = 'ON_HOLD',
+    YET_TO_LOAD = 'YET_TO_LOAD',
     EN_ROUTE = 'EN_ROUTE',
     ARRIVED = 'ARRIVED',
     DELIVERED = 'DELIVERED',
@@ -51,6 +51,11 @@ export class Package {
   @Column({
     nullable:true
   })
+  departure: Date;
+
+  @Column({
+    nullable:true
+  })
   loaded: Date;
 
   @Column({
@@ -72,7 +77,7 @@ export class Package {
   @Column({ default: Deleted.FALSE })
   isDeleted: Deleted;
 
-  @Column({ type: 'enum', enum: Status })
+  @Column({ type: 'enum', enum: Status, default: "YET_TO_LOAD" })
   status: Status;
 
   @Column()
