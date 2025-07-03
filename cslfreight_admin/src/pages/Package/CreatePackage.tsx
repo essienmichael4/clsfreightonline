@@ -17,6 +17,8 @@ import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import StatusPicker from './StatusPicker'
 import { Textarea } from '@/components/ui/textarea'
+import ShippingMark from './ShippingMarkPicker'
+import PackageTypePicker from './PackageTypePicker'
 
 interface Props{
     trigger?: React.ReactNode,
@@ -26,6 +28,8 @@ const CreatePackage = ({trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
+    const [shippingMark, setShippingMark] = useState("")
+    const [packageType, setPackageType] = useState("")
 
     const form = useForm<PackageSchemaType>({
         resolver:zodResolver(PackageSchema),
@@ -47,10 +51,18 @@ const CreatePackage = ({trigger}:Props) => {
         form.setValue("status", value)        
     }
 
+    const handleShippingChange = (value:string)=>{
+        setShippingMark(value)        
+    }
+
+    const handlePackageTypeChange = (value:string)=>{
+        setPackageType(value)        
+    }
+
     const addPackage = async (data:PackageSchemaType)=>{
         const response = await axios_instance_token.post(`/packages`, {
-            ...data
-        },)
+            ...data, shippingMark, packageType
+        })
 
         return response.data
     }
@@ -110,18 +122,35 @@ const CreatePackage = ({trigger}:Props) => {
                 </DialogHeader>
                 <Form {...form}>
                     <form className='space-y-1 h-72 overflow-y-scroll'>
-                        <FormField
-                            control={form.control}
-                            name="trackingNumber"
-                            render={({field}) =>(
-                                <FormItem className='flex-1 px-1'>
-                                    <FormLabel className='text-xs'>Tracking Number</FormLabel>
+                        <div className='px-1'>
+                            <FormField
+                                control={form.control}
+                                name="trackingNumber"
+                                render={({field}) =>(
+                                    <FormItem className='flex-1'>
+                                        <FormLabel className='text-xs'>Tracking Number</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )} 
+                            />
+                        </div>
+
+                        <div className='px-1'>
+                            <FormField 
+                                name="shipping"
+                                render={({}) =>(
+                                    <FormItem className='flex flex-col'>
+                                    <FormLabel className='my-1 text-xs'>Shipping Mark</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <ShippingMark onChange={handleShippingChange}/>
                                     </FormControl>
+                                    <FormDescription className='text-xs'>Optional: Select a shipping mark</FormDescription>
                                 </FormItem>
-                            )} 
-                        />
+                                )} 
+                            />
+                        </div>
 
                         <div className='flex flex-wrap'>
                             <div className='w-full sm:w-1/2 px-1'>
@@ -343,22 +372,37 @@ const CreatePackage = ({trigger}:Props) => {
                                     )}
                                 />
                             </div>
+                            <div className='w-full sm:w-1/2 px-1'>
+                                <FormField 
+                                    control={form.control}
+                                    name="vessel"
+                                    render={({}) =>(
+                                        <FormItem className='flex flex-col'>
+                                        <FormLabel className='my-1 text-xs'>Status</FormLabel>
+                                        <FormControl>
+                                            <StatusPicker onChange={handleStatusChange}/>
+                                        </FormControl>
+                                        <FormDescription className='text-xs'>Select a status</FormDescription>
+                                    </FormItem>
+                                    )} 
+                                />
+                            </div>
+                            <div className='w-full sm:w-1/2 px-1'>
+                                <FormField 
+                                    name="packageType"
+                                    render={({}) =>(
+                                        <FormItem className='flex flex-col'>
+                                        <FormLabel className='my-1 text-xs'>Package Type</FormLabel>
+                                        <FormControl>
+                                            <PackageTypePicker onChange={handlePackageTypeChange}/>
+                                        </FormControl>
+                                        <FormDescription className='text-xs'>Select a package type</FormDescription>
+                                    </FormItem>
+                                    )} 
+                                />
+                            </div>
                         </div>
                         <div className='px-1'>
-                            <FormField 
-                                control={form.control}
-                                name="vessel"
-                                render={({}) =>(
-                                    <FormItem className='flex flex-col'>
-                                    <FormLabel className='my-1 text-xs'>Status</FormLabel>
-                                    <FormControl>
-                                        <StatusPicker onChange={handleStatusChange}/>
-                                    </FormControl>
-                                    <FormDescription>Select a status</FormDescription>
-                                </FormItem>
-                                )} 
-                            />
-
                             <FormField 
                                 control={form.control}
                                 name="description"
@@ -372,7 +416,8 @@ const CreatePackage = ({trigger}:Props) => {
                                     </FormItem>
                                 )}
                             />
-                        </div>
+                        </div> 
+
                     </form>
                 </Form>
                 <DialogFooter >

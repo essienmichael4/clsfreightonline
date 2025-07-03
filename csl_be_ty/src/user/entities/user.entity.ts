@@ -1,5 +1,6 @@
 import { Address } from "src/address/entities/address.entity";
 import { Announcement } from "src/announcement/entities/announcement.entity";
+import { ClientAnnouncement } from "src/announcement/entities/clientAnnouncement.entity";
 import { Deleted, Package } from "src/package/entities/package.entity";
 import { PackageEdit } from "src/package/entities/packageEdits.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -45,6 +46,9 @@ export class User {
 
     @OneToMany(()=> Announcement, (announcement) => announcement.updatedBy)
     announcements: Announcement[]
+
+    @OneToMany(()=> ClientAnnouncement, (clientAnnouncement) => clientAnnouncement.updatedBy)
+    clientAnnouncements: ClientAnnouncement[]
 
     @OneToMany(()=> Address, (address) => address.updatedBy)
     address: Address[]

@@ -19,8 +19,6 @@ const Announcement = () => {
                     setShow(true)
                 }
             }
-            console.log(res.data);
-            
             return res.data
         })
     })

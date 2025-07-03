@@ -90,94 +90,94 @@ const UserProfile = () => {
                 </div>
             </div>
             <div className='bg-white my-4 border border-gray-300 rounded-lg h-full relative'>
-          <div className='w-full h-48 bg-gray-200 rounded-lg relative'>
-          </div>
-          <div className='px-4 pt-4 pb-8'>
-            <div className='absolute w-36 h-36 rounded-full bg-white border-4 border-gray-200 top-16 left-4'></div>
-            <h3 className="font-bold text-4xl">{user.data?.name}</h3>
-            <p className="mt-2 text-muted-foreground">{user.data?.email}</p>
-            <div className='flex flex-wrap gap-8'></div>
-          </div>
-        </div>
-        <div className="my-8 border flex flex-wrap gap-8 p-4 rounded-2xl">
-          <div className="flex-1">
-            <div className="flex items-center justify-between gap-4 mb-4">
-              <h4 className="text-lg lg:text-3xl">Announcement</h4>
-              <div className="flex gap-2">
-                {!announcement.data &&
-                  <AddAnnouncement trigger={
-                    <Button className="text-xs lg:text-sm border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white bg-transparent"><PlusCircle  className="w-4 h-4 mr-2"/> Add Announcement</Button>
-                  } />
-                }
-                {announcement.data && 
-                  <EditAnnouncement announcement={announcement.data} trigger={
-                    <Button className="text-xs lg:text-sm border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white bg-transparent">Edit Announcement</Button>
-                  } />
+              <div className='w-full h-48 bg-gray-200 rounded-lg relative'>
+              </div>
+              <div className='px-4 pt-4 pb-8'>
+                <div className='absolute w-36 h-36 rounded-full bg-white border-4 border-gray-200 top-16 left-4'></div>
+                <h3 className="font-bold text-4xl">{user.data?.name}</h3>
+                <p className="mt-2 text-muted-foreground">{user.data?.email}</p>
+                <div className='flex flex-wrap gap-8'></div>
+              </div>
+            </div>
+            <div className="my-8 border flex flex-wrap gap-8 p-4 rounded-2xl">
+              <div className="flex-1">
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <h4 className="text-lg lg:text-3xl">Announcement</h4>
+                  <div className="flex gap-2">
+                    {!announcement.data &&
+                      <AddAnnouncement trigger={
+                        <Button className="text-xs lg:text-sm border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white bg-transparent"><PlusCircle  className="w-4 h-4 mr-2"/> Add Announcement</Button>
+                      } />
+                    }
+                    {announcement.data && 
+                      <EditAnnouncement announcement={announcement.data} trigger={
+                        <Button className="text-xs lg:text-sm border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white bg-transparent">Edit Announcement</Button>
+                      } />
+                    }
+                  </div>
+                </div>
+                <hr />
+                <div className='h-2 w-36 lg:w-96 relative block bg-[#FFDD66] -top-1'></div>
+                {announcement.data &&
+                  <div className="mt-4">
+                    <h3 className="text-2xl font-bold mb-2">{announcement.data.title}</h3>
+                    <p className="mb-4 text-muted-foreground">{announcement.data.body}</p>
+                    {announcement.data.show === "TRUE" && 
+                      <button onClick={ ()=>onUpdate("FALSE")} disabled={isPending} className="py-2 px-4 bg-gray-600 hover:bg-gray-800 rounded-md flex text-white">
+                        {!isPending && "Remove Announcement"}
+                        {isPending && <Loader2 className='animate-spin' /> }
+                      </button>
+                    }
+                    {announcement.data.show === "FALSE" && 
+                      <button onClick={ ()=>onUpdate("TRUE")} disabled={isPending} className="py-2 px-4 bg-gray-600 hover:bg-gray-800 rounded-md flex text-white">
+                        {!isPending && "Show Announcement"}
+                        {isPending && <Loader2 className='animate-spin' /> }
+                      </button>
+                    }
+                  </div>
                 }
               </div>
             </div>
-            <hr />
-            <div className='h-2 w-36 lg:w-96 relative block bg-[#FFDD66] -top-1'></div>
-            {announcement.data &&
-              <div className="mt-4">
-                <h3 className="text-2xl font-bold mb-2">{announcement.data.title}</h3>
-                <p className="mb-4 text-muted-foreground">{announcement.data.body}</p>
-                {announcement.data.show === "TRUE" && 
-                  <button onClick={ ()=>onUpdate("FALSE")} disabled={isPending} className="py-2 px-4 bg-gray-600 hover:bg-gray-800 rounded-md flex text-white">
-                    {!isPending && "Remove Announcement"}
-                    {isPending && <Loader2 className='animate-spin' /> }
-                  </button>
-                }
-                {announcement.data.show === "FALSE" && 
-                  <button onClick={ ()=>onUpdate("TRUE")} disabled={isPending} className="py-2 px-4 bg-gray-600 hover:bg-gray-800 rounded-md flex text-white">
-                    {!isPending && "Show Announcement"}
-                    {isPending && <Loader2 className='animate-spin' /> }
-                  </button>
-                }
+          <div className="mt-12">
+            <div className="px-6 mt-10 rounded-lg">
+              <div className='flex items-center justify-between+'>
+                <h2 className="font-bold text-lg lg:text-3xl ">Shipping Adresses</h2>
+                <AddAddress trigger={
+                <button className="py-2 px-2 md:px-4 flex items-center rounded-md bg-gradient-to-r from-blue-500 to-blue-800 text-white">
+                  <Plus className="w-4 h-4 mr-2 text-white"/> <span className="text-xs md:text-sm">Add New Address</span>
+                </button>
+                } />
               </div>
-            }
-          </div>
-        </div>
-         <div className="mt-12">
-          <div className="px-6 mt-10 rounded-lg">
-            <div className='flex items-center justify-between+'>
-              <h2 className="font-bold text-lg lg:text-3xl ">Shipping Adresses</h2>
-              <AddAddress trigger={
-              <button className="py-2 px-2 md:px-4 flex items-center rounded-md bg-gradient-to-r from-blue-500 to-blue-800 text-white">
-                <Plus className="w-4 h-4 mr-2 text-white"/> <span className="text-xs md:text-sm">Add New Address</span>
-              </button>
-              } />
+              {dataAvailable && <div className="flex flex-wrap mt-12">
+                  {address.data?.map((add)=>(<div className="w-full sm:w-1/2 p-2">
+                      <div className="border h-full p-8 rounded-lg">
+                      
+                          <p className="text-2xl font-bold">{add.name}</p>
+                          <div className="mt-4">
+                              <h4 className="text-xs">Contact:</h4>
+                              <p className="text-lg">
+                                {add.contact}
+                              </p>
+                          </div>
+                          <div className="mt-4">
+                              <h4 className="text-xs">Mobile:</h4>
+                              <p className="text-lg">
+                                {add.mobile}
+                              </p>
+                          </div>
+                          <div className="mt-4">
+                              <h4 className="text-xs">Warehouse Address:</h4>
+                              <p className="text-lg">
+                                {add.address}
+                              </p>
+                          </div>
+                      </div>
+                  </div>))}
+                  
+              </div>}
+              
             </div>
-            {dataAvailable && <div className="flex flex-wrap mt-12">
-                {address.data?.map((add)=>(<div className="w-full sm:w-1/2 p-2">
-                    <div className="border h-full p-8 rounded-lg">
-                    
-                        <p className="text-2xl font-bold">{add.name}</p>
-                        <div className="mt-4">
-                            <h4 className="text-xs">Contact:</h4>
-                            <p className="text-lg">
-                              {add.contact}
-                            </p>
-                        </div>
-                        <div className="mt-4">
-                            <h4 className="text-xs">Mobile:</h4>
-                            <p className="text-lg">
-                              {add.mobile}
-                            </p>
-                        </div>
-                        <div className="mt-4">
-                            <h4 className="text-xs">Warehouse Address:</h4>
-                            <p className="text-lg">
-                              {add.address}
-                            </p>
-                        </div>
-                    </div>
-                </div>))}
-                
-            </div>}
-            
           </div>
-        </div>
         </div>
     )
 }

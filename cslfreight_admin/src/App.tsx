@@ -10,6 +10,9 @@ import Package from './pages/Package/Package'
 import UserProfile from './pages/User/User'
 import NotFound from './pages/NotFound/NotFound'
 import Loading from './pages/Loading/Loading'
+import Settings from './pages/Settings/Settings'
+import Clients from './pages/Client/Clients'
+import ClientDetails from './pages/Client/ClientDetails'
 
 function App() {
 
@@ -26,6 +29,9 @@ function App() {
             <Route path='/loadings/:id' element={<Package />} />
             <Route path='/users' element={<Users />} />
             <Route path='/users/:id' element={<UserProfile />} />
+            <Route path='/clients' element={<Clients />} />
+            <Route path='/clients/:id' element={<ClientDetails />} />
+            <Route path='/settings' element={<Settings />} />
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />

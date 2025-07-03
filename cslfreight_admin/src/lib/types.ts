@@ -18,6 +18,17 @@ export type AuthContextType = {
     setAuth: Dispatch<SetStateAction<AuthType | undefined>>;
 }
 
+export type Client = {
+    id: number | null,
+    name?: string,
+    email: string,
+    phone?: string,
+    shippingMark: string,
+    createdAt?: string,
+    updatedAt?:string,
+    packages: Package[]
+}
+
 export type Package = {
     id:number,
     trackingNumber:string,
@@ -34,7 +45,17 @@ export type Package = {
     eta?: string,
     departure?: string,
     package:string
-    description?:string
+    description?:string,
+    client?: Client
+}
+
+export type PackageTypeAndRate = {
+    id: number,
+    description:string,
+    rate:number,
+    cedisRate:number,
+    createdAt:string,
+    updatedAt:string,
 }
 
 export type User = {

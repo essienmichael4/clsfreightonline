@@ -1,0 +1,47 @@
+import { Package } from "src/package/entities/package.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Details } from "./details.entity";
+
+export enum Deleted {
+    TRUE = 'TRUE',
+    FALSE = 'FALSE',
+}
+
+@Entity({name: "client"})
+export class Client {
+    @PrimaryGeneratedColumn()
+    id: number
+
+    @Column({nullable: true})
+    name:string
+
+    @Column({unique: true})
+    shippingMark:string
+
+    @Column({
+        unique: true
+    })
+    email:string
+
+    @Column()
+    password:string
+
+    @Column({nullable: true})
+    phone:string
+
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt: Date;
+
+    @Column({ default: Deleted.FALSE })
+    isDeleted: Deleted;
+
+    @OneToMany(() => Package, (packageEntity) => packageEntity.user)
+    packages: Package[];
+
+    @OneToOne(()=> Details, (details)=> details.client , { cascade: true })
+    @JoinColumn({ name: 'clientAddress' })
+    clientDetails: Details
+}

@@ -5,12 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { JwtService } from '@nestjs/jwt';
+import { Client } from 'src/user/entities/client.entity';
 // import { JwtModule } from '@nestjs/jwt';
 // import { jwtConfig } from 'src/config/jwt.config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]), 
+    TypeOrmModule.forFeature([User, Client]), 
     // JwtModule.registerAsync(jwtConfig),
     UserModule
   ],

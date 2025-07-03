@@ -1,6 +1,8 @@
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { PackageEdit } from "./packageEdits.entity";
+import { Client } from "src/user/entities/client.entity";
+import { PackageType } from "./packageType.entity";
 
 export enum Deleted {
     TRUE = 'TRUE',
@@ -8,6 +10,7 @@ export enum Deleted {
   }
   
   export enum Status {
+    ON_HOLD = 'ON_HOLD',
     YET_TO_LOAD = 'YET_TO_LOAD',
     EN_ROUTE = 'EN_ROUTE',
     ARRIVED = 'ARRIVED',
@@ -87,6 +90,14 @@ export class Package {
   @JoinColumn({ name: 'addedBy' })
   user: User;
 
+  @ManyToOne(() => Client, (client) => client.packages)
+  @JoinColumn({ name: 'owner' })
+  client: Client;
+
   @OneToMany(() => PackageEdit, (packageEdit) => packageEdit.package)
   edits: PackageEdit[];
+
+  @ManyToOne(() => PackageType, (packageType) => packageType.packages)
+  @JoinColumn({ name: 'packageTypes' })
+  packageType: PackageType;
 }

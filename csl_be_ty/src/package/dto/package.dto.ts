@@ -19,6 +19,14 @@ export class PackageRequest {
     description?:string
 
     @IsString()
+    @IsOptional()
+    shippingMark?:string
+    
+    @IsString()
+    @IsOptional()
+    packageType?:string
+
+    @IsString()
     trackingNumber:string
 
     @IsNumber()
@@ -61,6 +69,14 @@ export class EditPackageRequest {
 
     @IsString()
     @IsOptional()
+    shippingMark?:string
+
+    @IsString()
+    @IsOptional()
+    packageType?:string
+
+    @IsString()
+    @IsOptional()
     phone?:string
 
     @IsString()
@@ -86,4 +102,16 @@ export class EditPackageRequest {
     @IsString()
     @IsOptional()
     description?:string
+}
+
+export class PackageRateRequest {
+    @IsString()
+    @IsNotEmpty()
+    description:string 
+
+    @IsNumber()
+    rate:number
+
+    @IsNumber()
+    cedisRate:number
 }

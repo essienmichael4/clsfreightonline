@@ -102,7 +102,7 @@ const AllPackages = ({status, filtering}:FilterProps) => {
         header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
         cell:({row}) => <div>
             <span className="flex gap-2 items-center"  >
-                <EditPackage item={row.original} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
+                <EditPackage item={row.original} status={status} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
                 <DeletePackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} /> 
             </span> 
         </div>

@@ -1,3 +1,28 @@
+export type AuthType = {
+    email: string,
+    id: number | undefined,
+    backendTokens: {
+        accessToken: string,
+        refreshToken: string
+    }
+}
+
+export type Client = {
+    id: number,
+    email:string,
+    phone?: string,
+    shippingMark: string,
+    clientDetails?:Details
+}
+
+export type Details = {
+    id: number,
+    dob?: string,
+    location: string,
+    nextOfKin: string,
+    nextOfKinPhone: string
+}
+
 export type Package = {
     id:number,
     trackingNumber:string,

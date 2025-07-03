@@ -5,9 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Package } from './entities/package.entity';
 import { PackageEdit } from './entities/packageEdits.entity';
 import { JwtService } from '@nestjs/jwt';
+import { Client } from 'src/user/entities/client.entity';
+import { PackageType } from './entities/packageType.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Package, PackageEdit])],
+  imports: [TypeOrmModule.forFeature([Client, Package, PackageEdit, PackageType])],
   controllers: [PackageController],
   providers: [PackageService, JwtService],
 })

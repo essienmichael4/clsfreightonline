@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-// import { UserUpdateSchema, UserUpdateSchemaType } from '@/schema/user'
 import { useMutation } from '@tanstack/react-query'
 import useAuth from '@/hooks/useAuth'
 import { toast } from 'sonner'
@@ -70,7 +69,7 @@ const EditAccountDialog = ({user, trigger}:Props) => {
     })
 
     const onSubmit = (data:UserUpdateSchemaType)=>{
-        toast.loading("upadating account...", {
+        toast.loading("Updating account...", {
             id: "user-update"
         })
         mutate(data)

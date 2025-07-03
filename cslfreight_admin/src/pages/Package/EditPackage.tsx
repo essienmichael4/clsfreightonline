@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '../../components/ui/form'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '../../components/ui/form'
 import { Input } from '../../components/ui/input'
 import { Button } from '../../components/ui/button'
 import useAxiosToken from '@/hooks/useAxiosToken'
@@ -13,16 +13,21 @@ import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import { Package } from '@/lib/types'
 import { Textarea } from '@/components/ui/textarea'
+import ShippingMark from './ShippingMarkPicker'
+import PackageTypePicker from './PackageTypePicker'
 
 interface Props{
     trigger?: React.ReactNode,
-    item:Package
+    item:Package,
+    status?:string
 }
 
-const EditPackage = ({item, trigger}:Props) => {
+const EditPackage = ({item, status, trigger}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
+    const [shippingMark, setShippingMark] = useState(item?.client?.shippingMark)
+    const [packageType, setPackageType] = useState("")
 
     const form = useForm<EditPackageSchemaType>({
         resolver:zodResolver(EditPackageSchema),
@@ -39,13 +44,20 @@ const EditPackage = ({item, trigger}:Props) => {
         }
     })
 
+    const handleShippingChange = (value:string)=>{
+        setShippingMark(value)        
+    }
+
+    const handlePackageTypeChange = (value:string)=>{
+        setPackageType(value)        
+    }
+
     const addPackage = async (data:EditPackageSchemaType)=>{
         console.log(data);
         
         const response = await axios_instance_token.patch(`/packages/${item.id}`, {
-            ...data
+            ...data, shippingMark, packageType
         },)
-
         return response.data
     }
 
@@ -57,7 +69,7 @@ const EditPackage = ({item, trigger}:Props) => {
             })
 
             queryClient.invalidateQueries({queryKey: ["package", Number(item.id)]})
-            queryClient.invalidateQueries({queryKey: ["packages"]})
+            queryClient.invalidateQueries({queryKey: ["packages", status]})
 
             form.reset({
                 package: item.package,
@@ -103,18 +115,35 @@ const EditPackage = ({item, trigger}:Props) => {
                 </DialogHeader>
                 <Form {...form}>
                     <form className='space-y-1 h-72 overflow-y-scroll'>
-                        <FormField
-                            control={form.control}
-                            name="trackingNumber"
-                            render={({field}) =>(
-                                <FormItem className='flex-1 px-1'>
-                                    <FormLabel className='text-xs'>Tracking Number</FormLabel>
+                        <div className='px-1'>
+                            <FormField
+                                control={form.control}
+                                name="trackingNumber"
+                                render={({field}) =>(
+                                    <FormItem className='flex-1'>
+                                        <FormLabel className='text-xs'>Tracking Number</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )} 
+                            />
+                        </div>
+
+                        <div className='px-1'>
+                            <FormField 
+                                name="shippingMark"
+                                render={({}) =>(
+                                    <FormItem className='flex flex-col'>
+                                    <FormLabel className='my-1 text-xs'>Shipping Mark</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <ShippingMark onChange={handleShippingChange}/>
                                     </FormControl>
+                                    <FormDescription className='text-xs'>Optional: Select a shipping mark</FormDescription>
                                 </FormItem>
-                            )} 
-                        />
+                                )} 
+                            />
+                        </div>
 
                         <div className='flex flex-wrap'>
                             <div className='w-full sm:w-1/2 px-1'>
@@ -213,6 +242,20 @@ const EditPackage = ({item, trigger}:Props) => {
                                                 <Input {...field} />
                                             </FormControl>
                                         </FormItem>
+                                    )} 
+                                />
+                            </div>
+                            <div className='w-full sm:w-1/2 px-1'>
+                                <FormField 
+                                    name="packageType"
+                                    render={({}) =>(
+                                        <FormItem className='flex flex-col'>
+                                        <FormLabel className='my-1 text-xs'>Package Type</FormLabel>
+                                        <FormControl>
+                                            <PackageTypePicker onChange={handlePackageTypeChange}/>
+                                        </FormControl>
+                                        <FormDescription className='text-xs'>Select a package type</FormDescription>
+                                    </FormItem>
                                     )} 
                                 />
                             </div>

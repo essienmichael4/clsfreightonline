@@ -78,9 +78,27 @@ export const EditPackageDepartureSchema = z.object({
     departure: z.coerce.date().optional(),
 })
 
+export const PackageRate = z.object({
+    description: z.string({
+        message: "Must be a valid description."
+    }),
+    rate: z.coerce.number().positive().min(0),
+    cedisRate: z.coerce.number().positive().min(0),
+})
+
+export const EditPackageRate = z.object({
+    description: z.string({
+        message: "Must be a valid description."
+    }).optional(),
+    rate: z.coerce.number().positive().min(0),
+    cedisRate: z.coerce.number().positive().min(0),
+})
+
 export type PackageSchemaType = z.infer<typeof PackageSchema>
 export type EditPackageSchemaType = z.infer<typeof EditPackageSchema>
 export type EditLoadedSchemaType = z.infer<typeof EditPackageLoadedSchema>
 export type EditReceivedSchemaType = z.infer<typeof EditPackageReceivedSchema>
 export type EditEtaSchemaType = z.infer<typeof EditPackageEtaSchema>
 export type EditDepartureSchemaType = z.infer<typeof EditPackageDepartureSchema>
+export type PackageRateType = z.infer<typeof PackageRate>
+export type EditPackageRateType = z.infer<typeof EditPackageRate>

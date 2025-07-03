@@ -1,5 +1,5 @@
 import logo from '../assets/logo.webp'
-import { LayoutDashboard, Package, Ship, Users } from 'lucide-react'
+import { LayoutDashboard, Package, Settings, Ship, User, Users } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 
 interface SideNavProps{
@@ -27,9 +27,17 @@ const SideNav = ({isToggled}:SideNavProps) => {
                 <Ship className='h-6 w-6 mr-6' />
                 <span className=''>Loadings</span>
             </NavLink>
+            <NavLink to={"/clients"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
+                <User className='h-6 w-6 mr-6' />
+                <span className=''>Clients</span>
+            </NavLink>
             <NavLink to={"/users"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
                 <Users className='h-6 w-6 mr-6' />
                 <span className=''>Users</span>
+            </NavLink>
+            <NavLink to={"/settings"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
+                <Settings className='h-6 w-6 mr-6' />
+                <span className=''>Settings</span>
             </NavLink>
             
           

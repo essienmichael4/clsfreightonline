@@ -22,9 +22,6 @@ const Navbar = () => {
             <li>
               <Link to={"/"} className='text-neutral-500'>Home</Link>
             </li>
-            {/* <li>
-              <Link to={"/"} className='text-neutral-500'>Services</Link>
-            </li> */}
             <li>
               <Link to={"/about"} className='text-neutral-500'>About</Link>
             </li>
@@ -38,9 +35,10 @@ const Navbar = () => {
               <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
             </li>
           </ul>
-          <div className="hidden lg:flex justify-center items-center space-x-4">
-            <a href="https://forms.gle/cMHhPURSKERJ2BhM6" target="_blank" className="py-2 px-3 rounded-md text-blue-700 border border-blue-700 hover:text-white hover:border-white hover:bg-blue-700" >Register</a>
-            <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md hover:text-blue-700 hover:bg-white hover:border hover:border-blue-700'>
+          <div className="hidden lg:flex justify-center items-center space-x-3">
+            {/* <a href="https://forms.gle/cMHhPURSKERJ2BhM6" target="_blank" className="py-2 px-3 rounded-md text-blue-700 border border-blue-700 hover:text-white hover:border-white hover:bg-blue-700" >Register</a> */}
+            <Link to={"/login"} className="py-2 px-3 rounded-md text-blue-700 border border-blue-700 hover:text-white hover:border-white hover:bg-blue-700" >Login</Link>
+            <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md hover:text-blue-700 hover:bg-white border border-blue-700'>
               Contact Us
             </Link>
           </div>
@@ -69,7 +67,7 @@ const Navbar = () => {
               </li>
             </ul>
             <div className="flex flex-col gap-6 mt-2">
-              <a href="https://forms.gle/cMHhPURSKERJ2BhM6" onClick={toggleNavbar} target="_blank" className="text-center py-2 px-3 rounded-md text-blue-700 border border-blue-700" >Register</a>
+              <Link className='text-white bg-blue-700 py-2 px-3 rounded-md' to={"/login"}>Login</Link>
               <Link to={"/contact"} onClick={toggleNavbar} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
                 Contact Us
               </Link>
