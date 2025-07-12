@@ -1,27 +1,23 @@
 import { DataTableColumnHeader } from "@/components/DataTable/ColumnHeader"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import useAxiosToken from "@/hooks/useAxiosToken"
 import { Client } from "@/lib/types"
-import { useQuery } from "@tanstack/react-query"
-import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
+import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Link } from "react-router-dom"
 import EditClientDialog from "./_components/EditClient"
-import { Edit, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Search } from "lucide-react"
 import { useState } from "react"
+import { useClients } from "@/hooks/useClients"
+import { useDebounce } from "use-debounce"
 
 const emptyData: any[]= []
 
 const Clients = () => {
-  const axios_instance_token = useAxiosToken()
-  const [filtering, setFiltering] = useState("")
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(20)
+  const [search, setSearch] = useState("")
+  const [debouncedValue] = useDebounce(search, 500)
   
-  const clientsQuery = useQuery<Client[]>({
-      queryKey: ["clients"],
-      queryFn: async() => await axios_instance_token.get(`/users/clients`).then(res => {
-      return res.data
-    })
-  })
+  const clientsQuery = useClients(page, limit, debouncedValue)
 
   const columns:ColumnDef<Client>[] =[{
       accessorKey: "id",
@@ -60,26 +56,25 @@ const Clients = () => {
     header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
     cell:({row}) => <div>
       <span className="flex gap-2 items-center">
-          <EditClientDialog client={row.original} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
+          <EditClientDialog page={page} limit={limit} search={debouncedValue} client={row.original} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
           {/* <DeleteUser user={row.original} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} /> */}
       </span>
     </div>
   }]
 
   const table = useReactTable({
-    data: clientsQuery.data || emptyData,
+    data: clientsQuery.data?.data || emptyData,
     columns,
+    manualPagination: true,
     getCoreRowModel: getCoreRowModel(), 
-    initialState: {
+    state:{
       pagination: {
-        pageSize: 20
+        pageIndex: page - 1,
+        pageSize: limit,
       }
     },
-    state:{
-      globalFilter: filtering
-    },
+    pageCount: clientsQuery.data?.meta?.pageCount,
     getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   })
 
     return (
@@ -90,7 +85,12 @@ const Clients = () => {
               <div className="w-full sm:w-[320px]">
                 <div className="flex w-full border h-full items-center px-2 py-2 gap-2 rounded-md focus-within:border-gray-500">
                   <Search className="h-5 w-5 text-gray-400 pointer-events-none" />
-                  <input type="text" placeholder="Plur 890987645368" onChange={e => setFiltering(e.target.value)} className="outline-none text-sm w-full"/>
+                  <input type="text" placeholder="Plur 890987645368" 
+                    onChange={e => {
+                      setSearch(e.target.value)
+                      setPage(1)
+                      }
+                    } className="outline-none text-sm w-full"/>
                 </div>
               </div>
             </div>
@@ -140,7 +140,66 @@ const Clients = () => {
                         </TableBody>
                     </Table>
                 </div>
-                <div className="flex items-center justify-end space-x-2 py-4">
+                <div className="flex items-center justify-between space-x-2 py-4 mt-4">
+                  <div>
+                    <span className="mr-2">Items per page</span>
+                    <select 
+                      className="border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2"
+                      value={limit}
+                      onChange={e=> {setLimit(Number(e.target.value))}} >
+
+                      {[10,20,50,100].map((pageSize)=>(
+                        <option key={pageSize} value={pageSize}>
+                          {pageSize}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex space-x-2">
+                      <button
+                        className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                        onClick={()=>setPage(1)}
+                        disabled={page === 1}>
+                        <ChevronsLeft size={20} />
+                      </button>
+                      <button
+                        className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                        onClick={()=>setPage(page - 1)}
+                        disabled={page === 1}>
+                        <ChevronLeft size={20} />
+                      </button>
+
+                      <span className="flex items-center">
+                        <input 
+                          className="w-16 p-2 rounded-md border border-gray-300 text-center"
+                          min={1}
+                          max={table.getPageCount()}
+                          type="number"
+                          value={table.getState().pagination.pageIndex + 1}
+                          onChange={e=> {
+                            const page = e.target.value ? Number(e.target.value) - 1 : 0
+                            setPage(page)
+                          }}
+                        />
+                        <span className="ml-1">of {clientsQuery.data?.meta.pageCount}</span>
+                      </span>
+
+                      <button
+                        className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                        onClick={()=>setPage(page + 1)}
+                        disabled={ page === Number(clientsQuery.data?.meta.pageCount) }>
+                        <ChevronRight size={20} />
+                      </button>
+                      <button
+                        className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                        onClick={()=>setPage(Number(clientsQuery.data?.meta.pageCount))}
+                        disabled={page === Number(clientsQuery.data?.meta.pageCount)}>
+                        <ChevronsRight size={20} />
+                      </button>
+                  </div>
+
+                  {/* <div className="flex space-x-2">
                     <Button
                     variant="outline"
                     size="sm"
@@ -157,6 +216,7 @@ const Clients = () => {
                     >
                     Next
                     </Button>
+                  </div> */}
                 </div>
             </div>
         </div>

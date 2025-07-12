@@ -56,19 +56,19 @@ const Profile = () => {
         <div className="flex flex-wrap gap-8 mt-4">
           <div>
             <h6 className="font-bold text-xs">Date of Birth</h6>
-            <p>-</p>
+            <p>{user.data?.clientDetails?.dob ? user.data?.clientDetails?.dob : "-"}</p>
           </div>
           <div>
             <h6 className="font-bold text-xs">Location</h6>
-            <p>-</p>
+            <p>{user.data?.clientDetails?.location ? user.data?.clientDetails?.location : "-"}</p>
           </div>
           <div>
             <h6 className="font-bold text-xs">Next of Kin (Name)</h6>
-            <p>-</p>
+            <p>{user.data?.clientDetails?.nextOfKin ? user.data?.clientDetails?.nextOfKin : "-"}</p>
           </div>
           <div>
             <h6 className="font-bold text-xs">Next of Kin (Phone)</h6>
-            <p>-</p>
+            <p>{user.data?.clientDetails?.nextOfKinPhone ? user.data?.clientDetails?.nextOfKinPhone : "-"}</p>
           </div>
         </div>
       </div>

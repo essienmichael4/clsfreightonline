@@ -1,15 +1,55 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, UnauthorizedException, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus, Req, BadRequestException, NotFoundException, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { AttachmentDto, CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { uuid } from 'uuidv4';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { User, UserInfo } from 'src/decorators/user.decorator';
 import { ClientInfoUpdateRequest, ClientUpdateRequest, UpdateUserPasswordRequest, UpdateUserRequest } from './dto/updateUser.dto';
 import { compare, hash } from 'bcryptjs';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ImageFileFilter } from 'src/helpers/file-helper';
+import { PaginationDto } from './dto/request.dto';
+import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
+
+const MAX_IMAGE_SIZE_IN_BYTE = 2 * 1024 * 1024
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post('clients/:id/upload')
+  @UseInterceptors(
+    FileInterceptor("file", {
+      fileFilter: ImageFileFilter
+    })
+  )
+  public async uploadFile(@Param('id', ParseIntPipe) id: number, @Body() body: AttachmentDto, @Req() req:any,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+      .addMaxSizeValidator({maxSize: MAX_IMAGE_SIZE_IN_BYTE})
+      .build({errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY})
+  ) file: Express.Multer.File){
+    if(!file || req.fileValidationError){
+      throw new BadRequestException("Invalid file provided, [Image | pdf | doc files allowed]")
+    }
+    console.log(file);
+    console.log(body.filename);
+    
+    
+    // const category = await this.categoryService.findOneById(id)
+    // if(!category) return new NotFoundException("Category not found")
+
+    // if( category.url ){
+    //   await this.uploadService.deleteCategoryImage(category.url)
+    // }
+    
+    const buffer = file.buffer
+    // const filename = `${uuid()}-${file.originalname.replace(/\s+/g,'')}`
+    // const upload = await this.uploadService.addCategoryImage(buffer, filename) 
+    
+    // return this.categoryService.updateCategoryImage(id, filename) 
+  }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -36,8 +76,8 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Get("clients")
-  findClients() {
-    return this.userService.findClients();
+  findClients(@Query() pageOptionsDto:PageOptionsDto, @Query("search") search?: string) {
+    return this.userService.findClients(pageOptionsDto, search);
   }
 
   @UseGuards(JwtGuard)

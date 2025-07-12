@@ -9,12 +9,19 @@ import { axios_instance_token } from '@/api/axios'
 import { Client } from '@/lib/types'
 
 interface Props {
-    onChange: (value: string)=>void
+    onChange: (value: string)=>void,
+    defaultValue?: string
 }
 
-const ShippingMark = ({onChange}:Props) => {
+const ShippingMark = ({onChange, defaultValue}:Props) => {
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState<string>("")
+
+    useEffect(() => {
+        if (defaultValue) {
+            setValue(defaultValue);
+        }
+    }, [defaultValue]);
 
     useEffect(()=>{
         if(!value) return

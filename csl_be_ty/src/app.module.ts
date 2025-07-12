@@ -12,6 +12,7 @@ import { AddressModule } from './address/address.module';
 import { LoadingModule } from './loading/loading.module';
 import { MailModule } from './mailer/mailer.module';
 import { UploadModule } from './upload/upload.module';
+import { StatisticsModule } from './statistics/statistics.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
@@ -41,6 +42,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     LoadingModule,
     MailModule,
     UploadModule,
+    StatisticsModule
   ],
   controllers: [AppController],
   providers: [AppService],

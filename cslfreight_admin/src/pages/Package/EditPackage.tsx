@@ -20,14 +20,17 @@ interface Props{
     trigger?: React.ReactNode,
     item:Package,
     status?:string
+    page: number, 
+    limit: number, 
+    search: string
 }
 
-const EditPackage = ({item, status, trigger}:Props) => {
+const EditPackage = ({item, status, trigger, page, limit, search}:Props) => {
     const [open, setOpen] = useState(false)
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
     const [shippingMark, setShippingMark] = useState(item?.client?.shippingMark)
-    const [packageType, setPackageType] = useState("")
+    const [packageType, setPackageType] = useState(item.packageType?.description)
 
     const form = useForm<EditPackageSchemaType>({
         resolver:zodResolver(EditPackageSchema),
@@ -69,7 +72,7 @@ const EditPackage = ({item, status, trigger}:Props) => {
             })
 
             queryClient.invalidateQueries({queryKey: ["package", Number(item.id)]})
-            queryClient.invalidateQueries({queryKey: ["packages", status]})
+            queryClient.invalidateQueries({queryKey: ["packages", status, page, limit, search]})
 
             form.reset({
                 package: item.package,
@@ -137,7 +140,7 @@ const EditPackage = ({item, status, trigger}:Props) => {
                                     <FormItem className='flex flex-col'>
                                     <FormLabel className='my-1 text-xs'>Shipping Mark</FormLabel>
                                     <FormControl>
-                                        <ShippingMark onChange={handleShippingChange}/>
+                                        <ShippingMark onChange={handleShippingChange} defaultValue={item.client?.shippingMark} />
                                     </FormControl>
                                     <FormDescription className='text-xs'>Optional: Select a shipping mark</FormDescription>
                                 </FormItem>
@@ -252,7 +255,7 @@ const EditPackage = ({item, status, trigger}:Props) => {
                                         <FormItem className='flex flex-col'>
                                         <FormLabel className='my-1 text-xs'>Package Type</FormLabel>
                                         <FormControl>
-                                            <PackageTypePicker onChange={handlePackageTypeChange}/>
+                                            <PackageTypePicker onChange={handlePackageTypeChange} defaultValue={item.packageType?.description}/>
                                         </FormControl>
                                         <FormDescription className='text-xs'>Select a package type</FormDescription>
                                     </FormItem>

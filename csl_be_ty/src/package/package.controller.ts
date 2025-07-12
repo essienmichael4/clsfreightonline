@@ -4,6 +4,7 @@ import { EditPackageRequest, PackageRateRequest, PackageRequest } from './dto/pa
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { User, UserInfo } from 'src/decorators/user.decorator';
 import { Status } from './entities/package.entity';
+import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 
 interface StatusRequest{
   status:Status
@@ -57,12 +58,8 @@ export class PackageController {
 
   @UseGuards(JwtGuard)
   @Get()
-  findAll(@Query("status") status?:Status) {
-    if(status){
-      return this.packageService.findAllByStatus(status);
-    }else{
-      return this.packageService.findAll();
-    }
+  findAll(@Query() pageOptionsDto:PageOptionsDto, @Query("search") search?: string,@Query("status") status?:Status) {
+    return this.packageService.findAll(pageOptionsDto, search, status);
   }
 
   @Get("search")

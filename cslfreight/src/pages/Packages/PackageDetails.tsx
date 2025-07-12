@@ -2,12 +2,14 @@ import useAxiosToken from "@/hooks/useAxiosToken"
 import { FormattedDate, FormattedTime } from "@/lib/helper"
 import { Package } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
+import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
 const PackageDetails = () => {
     const {id} = useParams()
     const navigate = useNavigate()
     const axios_instance_token = useAxiosToken()
+    const [state, setState] = useState<"USD"|"GHS">("USD")
 
     const packageDetail = useQuery<Package>({
         queryKey: ["package", id],
@@ -16,6 +18,13 @@ const PackageDetails = () => {
         })
     })
 
+    const handleCurrencyChange = (value:"USD"|"GHS") => {
+        if(value === "GHS"){
+            setState("USD")
+        }else{
+            setState("GHS")
+        }
+    }
     
     return (
         <div className="container mx-auto">
@@ -30,9 +39,22 @@ const PackageDetails = () => {
                                 <h4 className="text-3xl font-semibold mb-2">Package ID: #{id}</h4>
                                 <p>Tracking Number: {packageDetail.data?.trackingNumber}</p>
                             </div>
-                            <span className={`${packageDetail.data?.status === "ON_HOLD" && 'bg-gray-300'} ${packageDetail.data?.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${packageDetail.data?.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${packageDetail.data?.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-1 px-4 rounded-full text-xs`}>{packageDetail.data?.status}</span>
+                            <span className={`${packageDetail.data?.status === "YET_TO_LOAD" && 'bg-gray-300'} ${packageDetail.data?.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${packageDetail.data?.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${packageDetail.data?.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-1 px-4 rounded-full text-xs`}>{packageDetail.data?.status}</span>
                         </div>
                         <p className="mb-2 text-xs lg:text-sm text-muted-foreground">{FormattedDate(new Date(packageDetail.data?.createdAt as string))} at {FormattedTime(new Date(packageDetail.data?.createdAt as string))} from drafts</p>
+                    </div>
+                </div>
+            </div>
+            <div className="px-4">
+                <div className="flex w-full md:w-[420px] flex-col p-3 rounded-2xl border bg-gradient-to-r from-orange-50 to-orange-500">
+                    <div className="flex gap-8 justify-between items-center">
+                        <h4 className=" font-bold">Est. Shipping Fees</h4>
+                        <button onClick={()=>handleCurrencyChange(state)} className="text-nowrap border border-white bg-white hover:bg-black hover:text-white hover:border-black py-2 px-4 rounded-full text-black text-xs">To {state === "GHS" ? "USD" : "GHS"}</button>
+                    </div>
+                    <div className="flex gap-8 flex-wrap">
+                        <div>
+                            <p className="text-2xl mt-2">{state === "GHS" ? `¢ ${packageDetail.data?.cedisEstimate}` : `$ ${packageDetail.data?.dollarEstimate}`}</p>
+                        </div>
                     </div>
                 </div>
             </div>

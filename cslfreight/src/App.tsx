@@ -50,6 +50,7 @@ function App() {
               <Route path='/our-policies' element={<Terms />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/packages" element={<Packages />} />
+              <Route path="/shipping-address" element={<Address />} />
               <Route path="/packages/:id" element={<PackageDetails />} />
               <Route path="/profile/:id" element={<Profile />} />
             </Route>

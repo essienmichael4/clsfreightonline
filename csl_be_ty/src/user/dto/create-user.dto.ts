@@ -1,4 +1,4 @@
-import { IsDefined, IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from "class-validator"
+import { IsDefined, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator"
 import { Role } from "../entities/user.entity"
 
 export class CreateUserDto {
@@ -32,4 +32,10 @@ export class CreateClientDto {
     @IsString()
     @IsDefined()
     phone?:string
+}
+
+export class AttachmentDto{
+    @IsString()
+    @IsOptional()
+    filename?:string
 }

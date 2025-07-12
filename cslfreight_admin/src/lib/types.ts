@@ -27,8 +27,30 @@ export type Client = {
     createdAt?: string,
     updatedAt?:string,
     packages: Package[]
+    clientDetails?:Details
 }
 
+export type Data = {
+    data: Client[] | Package[],
+    meta: Meta
+}
+
+export type Meta = {
+    page: number
+    take: number
+    itemCount: number
+    pageCount: number
+    hasPreviousPage: boolean
+    hasNextPage: boolean
+}
+
+export type Details = {
+    id: number,
+    dob?: string,
+    location: string,
+    nextOfKin: string,
+    nextOfKinPhone: string
+}
 export type Package = {
     id:number,
     trackingNumber:string,
@@ -46,7 +68,8 @@ export type Package = {
     departure?: string,
     package:string
     description?:string,
-    client?: Client
+    client?: Client,
+    packageType?:PackageTypeAndRate
 }
 
 export type PackageTypeAndRate = {

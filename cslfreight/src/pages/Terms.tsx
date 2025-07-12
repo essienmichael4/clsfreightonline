@@ -21,7 +21,7 @@ const Terms = () => {
                     </div>
                     <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
                         <h4 className="text-3xl text-gray-500"># 03</h4>
-                        <p>Our Minimum bill is pegged at USD 10 even if your total CBM is not up to the minimum bill.</p>
+                        <p>Our minimum CBM is pegged at 0.01cbm and you are billed per consolidated LCL invoice. For FCL, please reach out to our admin for arrangements.</p>
                     </div>
                     <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
                         <h4 className="text-3xl text-gray-500"># 04</h4>
@@ -39,7 +39,7 @@ const Terms = () => {
                     </div>
                     <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
                         <h4 className="text-3xl text-gray-500"># 07</h4>
-                        <p>Payment deposit of up to 50% after cargo departure is allowed for all items.</p>
+                        <p>You shall pay at least 50% deposit of your total invoice 7 days after loading and full payment on container/vessel arrival at Tema port before customs clearance is completed. This is to make funds available for timely shipment & clearance for your own benefit.</p>
                     </div>
                     <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
                         <h4 className="text-3xl text-gray-500"># 08</h4>

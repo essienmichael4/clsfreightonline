@@ -18,9 +18,12 @@ import "react-phone-input-2/lib/style.css"
 interface Props {
     client:Client,
     trigger?: React.ReactNode,
+    page: number, 
+    limit: number, 
+    search: string
 }
 
-const EditClientDialog = ({client, trigger}:Props) => {
+const EditClientDialog = ({client, trigger, page, limit, search}:Props) => {
     const [phone, setPhone] = useState(client.phone || "")
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
@@ -50,7 +53,7 @@ const EditClientDialog = ({client, trigger}:Props) => {
             })
 
             form.reset({})
-            queryClient.invalidateQueries({queryKey: ["clients"]})
+            queryClient.invalidateQueries({queryKey: ["clients", page, limit, search]})
 
             setOpen(prev => !prev)
         },onError: (err:any) => {

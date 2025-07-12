@@ -2,10 +2,14 @@ import AllPackages from "@/components/AllPackages"
 import { Plus, Search } from "lucide-react"
 import CreatePackage from "./CreatePackage"
 import { useState } from "react"
+import {useDebounce} from "use-debounce"
 
 const Packages = () => {
   const [status, setStatus] = useState("")
-  const [filtering, setFiltering] = useState("")
+  const [search, setSearch] = useState("")
+  const [debouncedValue] = useDebounce(search, 500)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(20)
 
   return (
     <>
@@ -32,13 +36,18 @@ const Packages = () => {
           <div className="w-full sm:w-[320px]">
             <div className="flex w-full border h-full items-center px-2 py-2 gap-2 rounded-md focus-within:border-gray-500">
               <Search className="h-5 w-5 text-gray-400 pointer-events-none" />
-              <input type="text" placeholder="Plur 890987645368" onChange={e => setFiltering(e.target.value)} className="outline-none text-sm w-full"/>
+              <input type="text" placeholder="Plur 890987645368" 
+                onChange={e => {
+                    setSearch(e.target.value)
+                    setPage(1)
+                  }
+                } className="outline-none text-sm w-full"/>
             </div>
           </div>
         </div>
 
         <div>
-          <AllPackages status={status} filtering={filtering}/>
+          <AllPackages page={page} setPage={setPage} setLimit={setLimit} limit={limit} status={status} search={debouncedValue}/>
         </div>
       </div>
     </>

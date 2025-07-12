@@ -8,6 +8,9 @@ import { Client } from './entities/client.entity';
 import { hash } from 'bcryptjs';
 import { ClientInfoUpdateRequest } from './dto/updateUser.dto';
 import { Details } from './entities/details.entity';
+import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
+import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
+import { PageDto } from 'src/common/dto/page.dto';
 
 @Injectable()
 export class UserService {
@@ -27,8 +30,23 @@ export class UserService {
     return await this.clientRepo.save(user)
   }
 
-  async findClients(){
-    return await this.clientRepo.find()
+  async findClients(pageOptionsDto:PageOptionsDto, search?:string){
+    const query = this.clientRepo.createQueryBuilder("client");
+
+    if (search) {
+      query.where("client.shippingMark ILIKE :search", { search: `%${search}%` })
+          .orWhere("client.email ILIKE :search", { search: `%${search}%` });
+    }
+
+    if (pageOptionsDto.skip !== undefined && pageOptionsDto.take !== undefined) {
+      query.skip(pageOptionsDto.skip).take(pageOptionsDto.take);
+    }
+
+    const clientsCount = await this.clientRepo.count()
+
+    const clients = await query.getMany();
+    const pageMetaDto = new PageMetaDto({itemCount: clientsCount, pageOptionsDto})
+    return new PageDto(clients, pageMetaDto)
   }
 
   async findUserByEmail(email:string){
@@ -77,6 +95,9 @@ export class UserService {
 
   async clientProfile(id:number) {
     return await this.clientRepo.findOne({
+      relations: {
+        clientDetails: true
+      },
       where: {
         id
       }

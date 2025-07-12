@@ -9,12 +9,19 @@ import { axios_instance_token } from '@/api/axios'
 import { PackageTypeAndRate } from '@/lib/types'
 
 interface Props {
-    onChange: (value: string)=>void
+    onChange: (value: string)=>void,
+    defaultValue?: string
 }
 
-const PackageTypePicker = ({onChange}:Props) => {
+const PackageTypePicker = ({onChange, defaultValue}:Props) => {
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState<string>("")
+
+    useEffect(() => {
+        if (defaultValue) {
+            setValue(defaultValue);
+        }
+    }, [defaultValue]);
 
     useEffect(()=>{
         if(!value) return

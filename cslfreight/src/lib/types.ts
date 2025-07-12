@@ -39,7 +39,19 @@ export type Package = {
     eta?: string,
     departure?: string,
     package:string,
+    dollarEstimate?: string
+    cedisEstimate?: string
     description?:string
+    packageType?:PackageTypeAndRate
+}
+
+export type PackageTypeAndRate = {
+    id: number,
+    description:string,
+    rate:number,
+    cedisRate:number,
+    createdAt:string,
+    updatedAt:string,
 }
 
 export type AnnouncementType = {
@@ -62,4 +74,23 @@ export type LoadingType = {
     loaded?:string,
     eta?: string,
     status: "IN_TRANSIT" | "ARRIVED" | "DELIVERED"
+}
+
+export type Stats = {
+    estimated: {
+        name: string,
+        stat: number
+    },
+    packages: {
+        name: string,
+        stat: number
+    },
+    undelivered: {
+        name: string,
+        stat: number
+    },
+    delivered: {
+        name: string,
+        stat: number
+    }
 }

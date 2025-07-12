@@ -3,11 +3,15 @@ import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deleted, Package, Status } from './entities/package.entity';
-import { In, LessThan, Not, Repository } from 'typeorm';
+import { Brackets, In, LessThan, Like, Not, Repository } from 'typeorm';
 import { PackageEdit } from './entities/packageEdits.entity';
 import { Client } from 'src/user/entities/client.entity';
 import { PackageType } from './entities/packageType.entity';
 import { PackageRateRequest } from './dto/package.dto';
+import { PackageResponse } from './dto/package-response.dto';
+import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
+import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
+import { PageDto } from 'src/common/dto/page.dto';
 
 @Injectable()
 export class PackageService {
@@ -50,19 +54,55 @@ export class PackageService {
     return await this.packageTypeRepo.find()
   }
 
-  async findAll() {
-    return await this.packageRepo.find({
-      where:{
-        isDeleted: Not("TRUE" as Deleted)
-      },
-      order: {
-        id: "DESC", 
-      },
-    });
+  async findAll(pageOptionsDto:PageOptionsDto, search?:string, status?:Status) {
+    const query = this.packageRepo
+      .createQueryBuilder("package")
+      .leftJoinAndSelect("package.client", "client")
+      .leftJoinAndSelect("package.packageType", "packageType")
+      .where("package.isDeleted != :deleted", { deleted: "TRUE" });
+
+    if (status) {
+      query.andWhere("package.status = :status", { status });
+    }
+    if (search) {
+      query.andWhere(
+        new Brackets(qb => {
+          qb.where("package.trackingNumber ILIKE :search", { search: `%${search}%` })
+            .orWhere("client.name ILIKE :search", { search: `%${search}%` })
+            .orWhere("client.email ILIKE :search", { search: `%${search}%` })
+            .orWhere("packageType.description ILIKE :search", { search: `%${search}%` });
+        })
+      );
+    }
+    
+    const [data, total] = await query
+    // .orderBy("package.id", "DESC")
+    .skip(pageOptionsDto.skip)
+    .take(pageOptionsDto.take)
+    .getManyAndCount();
+
+    const pageMetaDto = new PageMetaDto({itemCount: total, pageOptionsDto})
+    return new PageDto(data, pageMetaDto)
+    // return await this.packageRepo.find({
+    //   relations: {
+    //     client: true,
+    //     packageType: true
+    //   },
+    //   where:{
+    //     isDeleted: Not("TRUE" as Deleted)
+    //   },
+    //   order: {
+    //     id: "DESC", 
+    //   },
+    // });
   }
 
-  async findAllByStatus(status:Status) {
+  async findAllByStatus(status?:Status) {
     return await this.packageRepo.find({
+      relations: {
+        client: true,
+        packageType: true
+      },
       where:{
         isDeleted: Not("TRUE" as Deleted),
         status
@@ -76,13 +116,18 @@ export class PackageService {
   async findAllWithTrackingNumbers(trackingNumbers:string[]) {
     return await this.packageRepo.find({
       where:{
-        trackingNumber: In(trackingNumbers)
+        trackingNumber: In(trackingNumbers),
+        isDeleted: Not("TRUE" as Deleted)
       },
     });
   }
 
   async findRecentPackages() {
     return await this.packageRepo.find({
+      relations: {
+        client: true,
+        packageType: true
+      },
       where: {
         isDeleted: Deleted.FALSE
       },
@@ -95,7 +140,8 @@ export class PackageService {
   async findClientPackages(clientId: number, status?:Status) {
     return await this.packageRepo.find({
       relations: {
-        client: true
+        client: true,
+        packageType: true
       },
       where: {
         isDeleted: Deleted.FALSE,
@@ -113,9 +159,11 @@ export class PackageService {
   async findClientRecentPackages(clientId: number) {
     return await this.packageRepo.find({
       relations: {
-        client: true
+        client: true,
+        packageType: true
       },
       where: {
+        isDeleted: Deleted.FALSE,
         client: {
           id: clientId
         }
@@ -129,6 +177,7 @@ export class PackageService {
   async findLoadedCount() {
     return await this.packageRepo.count({
       where: {
+        isDeleted: Deleted.FALSE,
         status : "YET_TO_LOAD" as Status
       }
     });
@@ -137,6 +186,7 @@ export class PackageService {
   async findEnroutCount() {
     return await this.packageRepo.count({
       where: {
+        isDeleted: Deleted.FALSE,
         status : "EN_ROUTE" as Status
       }
     });
@@ -145,22 +195,50 @@ export class PackageService {
   async findArrivedCount() {
     return await this.packageRepo.count({
       where: {
+        isDeleted: Deleted.FALSE,
         status : "ARRIVED" as Status
       }
     });
   }
 
   async findOneById(id: number) {
-    return await this.packageRepo.findOne({
-      where:{id},
+    const packageType = await this.packageTypeRepo.find()
+    const foundPackage = await this.packageRepo.findOne({
+      where:{
+        isDeleted: Deleted.FALSE,
+        id
+      },
       relations: {
-        client: true
+        client: true,
+        packageType: true
       }
     });
+
+    const packageResponse = new PackageResponse(foundPackage)
+    const cedisRate = packageResponse.packageType?.cedisRate || packageType[0]?.cedisRate || 0
+    const dollarRate = packageResponse.packageType?.rate || packageType[0]?.rate || 0
+    packageResponse.dollarEstimate = (packageResponse.cbm * dollarRate).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+    packageResponse.cedisEstimate = (packageResponse.cbm * cedisRate).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+
+    return packageResponse
   }
 
   async findOneByTrackingNumber(trackingNumber: string) {
-    return await this.packageRepo.findOneBy({trackingNumber});
+    const packageType = await this.packageTypeRepo.find()
+    const foundPackage = await this.packageRepo.findOne({
+      where:{
+        isDeleted: Deleted.FALSE,
+        trackingNumber
+      }
+    });
+
+    const packageResponse = new PackageResponse(foundPackage)
+    const cedisRate = packageResponse.packageType.cedisRate || packageType[0].cedisRate || 0
+    const dollarRate = packageResponse.packageType.rate || packageType[0].rate || 0
+    packageResponse.dollarEstimate = (packageResponse.cbm * dollarRate).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+    packageResponse.cedisEstimate = (packageResponse.cbm * cedisRate).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+
+    return packageResponse
   }
 
   async update(id: number, trackingNumber?:string, customer?:string, email?:string, phone?:string, vessel?:string, packageName?:string, cbm?:number, quantity?:number, description?:string, shippingMark?:string, packageType?:string) {    

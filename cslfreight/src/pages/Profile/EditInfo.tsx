@@ -25,7 +25,7 @@ interface Props {
 }
 
 const EditInfoDialog = ({client, trigger}:Props) => {
-    const [phone, setPhone] = useState(client.phone || "")
+    const [phone, setPhone] = useState(client.clientDetails?.nextOfKinPhone || "")
     const axios_instance_token = useAxiosToken()
     const [open, setOpen] = useState(false)
 
