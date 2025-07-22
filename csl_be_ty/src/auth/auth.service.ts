@@ -104,6 +104,8 @@ export class AuthService {
             const signedId = await this.signResetPasswordPayload(payload, '30m')
 
             const link = `https://cslfreightgh.com/reset-password?id=${signedId}&email=${user.email}`
+            // const link = `https://localhost:5137/reset-password?id=${signedId}&email=${user.email}`
+
             
             this.eventEmitter.emit("reset.password", {email: user.email, name: user.name, link})
 
@@ -115,14 +117,14 @@ export class AuthService {
     }
 
     async resetClientPassword(resetPasswordDto:ResetPasswordDto){
-        try{
+        try{            
             const payload = this.jwtService.verify(resetPasswordDto.id, {
                 secret: process.env.JWT_SECRET_KEY
             })
 
-            if(resetPasswordDto.email !== payload.email) throw new UnauthorizedException("")
+            if(resetPasswordDto.email !== payload.email) throw new UnauthorizedException("The reset does not belong to the current email")
             const userExists = await this.findClient(resetPasswordDto.email)
-            if(userExists) throw new HttpException("The account does not exist on this platform", 401)
+            if(!userExists) throw new HttpException("The account does not exist on this platform", 401)
 
             if(resetPasswordDto.password !== resetPasswordDto.confirmPassword) throw new HttpException("Passwords do not match", 401)
 

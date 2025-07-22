@@ -8,6 +8,25 @@ class ClientDetailsDto {
     nextOfKinPhone?:string
 }
 
+export class MembershipTierDto {
+    id: number;
+    name: string;
+    description?: string;
+    priority: number;
+}
+
+export class AttachmentResponseDto {
+    id: number
+    name: string
+    imageUrl?:string
+    public createdAt:Date 
+    public updatedAt:Date 
+
+    constructor(partial:Partial<AttachmentResponseDto>){
+        Object.assign(this, partial)
+    }
+}
+
 export class UserResponseDto {
     public id:number 
     public name:string
@@ -37,6 +56,8 @@ export class ClientResponseDto {
     public password: string
 
     clientsDetails?:ClientDetailsDto
+    membershipTier?:MembershipTierDto
+    attachments?:AttachmentResponseDto[]
 
     constructor(partial:Partial<ClientResponseDto>){
         Object.assign(this, partial)

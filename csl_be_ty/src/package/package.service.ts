@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deleted, Package, Status } from './entities/package.entity';
-import { Brackets, In, LessThan, Like, Not, Repository } from 'typeorm';
+import { Brackets, DataSource, In, LessThan, Like, Not, Repository } from 'typeorm';
 import { PackageEdit } from './entities/packageEdits.entity';
 import { Client } from 'src/user/entities/client.entity';
 import { PackageType } from './entities/packageType.entity';
@@ -12,6 +12,7 @@ import { PackageResponse } from './dto/package-response.dto';
 import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
 import { PageDto } from 'src/common/dto/page.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class PackageService {
@@ -19,7 +20,9 @@ export class PackageService {
     @InjectRepository(Package) private readonly packageRepo:Repository<Package>, 
     @InjectRepository(Client) private readonly clientRepo:Repository<Client>, 
     @InjectRepository(PackageEdit) private readonly packageEditRepo:Repository<PackageEdit>,
-    @InjectRepository(PackageType) private readonly packageTypeRepo:Repository<PackageType>
+    @InjectRepository(PackageType) private readonly packageTypeRepo:Repository<PackageType>,
+    private userService: UserService,
+    private readonly dataSource:DataSource
   ){}
 
   async create( createPackageDto: CreatePackageDto, shippingMark?: string, packageType?: string) {
@@ -67,34 +70,23 @@ export class PackageService {
     if (search) {
       query.andWhere(
         new Brackets(qb => {
-          qb.where("package.trackingNumber ILIKE :search", { search: `%${search}%` })
-            .orWhere("client.name ILIKE :search", { search: `%${search}%` })
-            .orWhere("client.email ILIKE :search", { search: `%${search}%` })
-            .orWhere("packageType.description ILIKE :search", { search: `%${search}%` });
+          qb.where("package.trackingNumber LIKE :search", { search: `%${search}%` })
+            .orWhere("client.name LIKE :search", { search: `%${search}%` })
+            .orWhere("package.customer LIKE :search", { search: `%${search}%` })
+            .orWhere("client.email LIKE :search", { search: `%${search}%` })
+            .orWhere("packageType.description LIKE :search", { search: `%${search}%` });
         })
       );
     }
     
     const [data, total] = await query
-    // .orderBy("package.id", "DESC")
+    .orderBy("package.id", "DESC")
     .skip(pageOptionsDto.skip)
     .take(pageOptionsDto.take)
     .getManyAndCount();
 
     const pageMetaDto = new PageMetaDto({itemCount: total, pageOptionsDto})
     return new PageDto(data, pageMetaDto)
-    // return await this.packageRepo.find({
-    //   relations: {
-    //     client: true,
-    //     packageType: true
-    //   },
-    //   where:{
-    //     isDeleted: Not("TRUE" as Deleted)
-    //   },
-    //   order: {
-    //     id: "DESC", 
-    //   },
-    // });
   }
 
   async findAllByStatus(status?:Status) {
@@ -209,8 +201,11 @@ export class PackageService {
         id
       },
       relations: {
-        client: true,
-        packageType: true
+        client: {
+          attachments: true
+        },
+        packageType: true,
+        
       }
     });
 
@@ -276,10 +271,70 @@ export class PackageService {
   }
 
   async updateStatus(id: number, status: Status) {
-    return await this.packageRepo.update(id, {
-      status
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      let shippingRate = 0;
+      let client: Client | null = null;
+
+      if (status === "DELIVERED") {
+        const pack = await queryRunner.manager.findOne(Package, {
+          where: { id },
+          relations: { packageType: true, client: true },
+        });
+
+        if (!pack) throw new NotFoundException("Package not found");
+
+        client = pack.client;
+        
+        if (!pack.packageType) {
+          const defaultPackageType = await queryRunner.manager.findOne(PackageType, {
+            where: {},
+            order: { id: "ASC" }
+          });
+
+          if (!defaultPackageType) throw new Error("No package type found");
+
+          shippingRate = defaultPackageType.rate;
+        } else {
+          shippingRate = pack.packageType.rate;
+        }
+
+        const addedRate = shippingRate * pack.cbm;
+        client.totalShippingRate = client.totalShippingRate + addedRate;
+
+        // Update client totalShippingRate
+        await queryRunner.manager.update(Client, client.id, {
+          totalShippingRate: client.totalShippingRate
+        });
+        
+
+        // Optional: trigger membership tier evaluation
+        await this.userService.evaluateMembershipTier(client.id, queryRunner.manager); // <- optional and new
+      }
+
+      // Update package status and shipping rate (if DELIVERED)
+      await queryRunner.manager.update(Package, id, {
+        status,
+        ...(status === "DELIVERED" && { shippingRate }),
+      });
+
+      await queryRunner.commitTransaction();
+      console.log(client);
+      
+      return { message: "Package status updated successfully" };
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
+
+  
   async updateLoaded(id: number, loaded: string) {
     return await this.packageRepo.update(id, {
       loaded

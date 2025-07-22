@@ -1,10 +1,19 @@
 export type AuthType = {
     email: string,
     id: number | undefined,
+    membershipTier?: MembershipTier
     backendTokens: {
         accessToken: string,
         refreshToken: string
     }
+}
+
+export type Attachment = {
+    id: number
+    name: string
+    imageUrl:string
+    createdAt?: string,
+    updatedAt?:string,
 }
 
 export type Client = {
@@ -12,7 +21,9 @@ export type Client = {
     email:string,
     phone?: string,
     shippingMark: string,
-    clientDetails?:Details
+    clientDetails?:Details,
+    membershipTier?:MembershipTier,
+    attachments?: Attachment[]
 }
 
 export type Details = {
@@ -21,6 +32,13 @@ export type Details = {
     location: string,
     nextOfKin: string,
     nextOfKinPhone: string
+}
+
+export type MembershipTier = {
+    id: number;
+    name: string;
+    description?: string;
+    priority: number;
 }
 
 export type Package = {

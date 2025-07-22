@@ -1,22 +1,22 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, UnauthorizedException, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus, Req, BadRequestException, NotFoundException, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AttachmentDto, CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { User, UserInfo } from 'src/decorators/user.decorator';
 import { ClientInfoUpdateRequest, ClientUpdateRequest, UpdateUserPasswordRequest, UpdateUserRequest } from './dto/updateUser.dto';
 import { compare, hash } from 'bcryptjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageFileFilter } from 'src/helpers/file-helper';
-import { PaginationDto } from './dto/request.dto';
 import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
+import { UploadService } from 'src/upload/upload.service';
+import { CreateMembershipTierDto } from './dto/request.dto';
 
-const MAX_IMAGE_SIZE_IN_BYTE = 2 * 1024 * 1024
+const MAX_IMAGE_SIZE_IN_BYTE = 5 * 1024 * 1024
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly uploadService:UploadService) {}
 
   @Post('clients/:id/upload')
   @UseInterceptors(
@@ -30,25 +30,21 @@ export class UserController {
       .addMaxSizeValidator({maxSize: MAX_IMAGE_SIZE_IN_BYTE})
       .build({errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY})
   ) file: Express.Multer.File){
-    if(!file || req.fileValidationError){
-      throw new BadRequestException("Invalid file provided, [Image | pdf | doc files allowed]")
-    }
-    console.log(file);
-    console.log(body.filename);
-    
-    
-    // const category = await this.categoryService.findOneById(id)
-    // if(!category) return new NotFoundException("Category not found")
+    try{
 
-    // if( category.url ){
-    //   await this.uploadService.deleteCategoryImage(category.url)
-    // }
-    
-    const buffer = file.buffer
-    // const filename = `${uuid()}-${file.originalname.replace(/\s+/g,'')}`
-    // const upload = await this.uploadService.addCategoryImage(buffer, filename) 
-    
-    // return this.categoryService.updateCategoryImage(id, filename) 
+      if(!file || req.fileValidationError){
+        throw new BadRequestException("Invalid file provided, [Image | pdf | doc files allowed]")
+      }
+      
+      const buffer = file.buffer
+      const filename = body.filename ? `${body.filename.replace(/\s+/g,'_')}-${v4()}-${file.originalname.replace(/\s+/g,'_')}` : `${v4()}-${file.originalname.replace(/\s+/g,'_')}`
+      
+      await this.uploadService.addAttachment(buffer, filename) 
+      
+      return this.userService.addAttachment(id, filename) 
+    }catch(err){
+      throw err
+    }
   }
 
   @Post()
@@ -56,10 +52,29 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @Post("memberships")
+  createMembershipTier(@Body() createMembershipTierDto: CreateMembershipTierDto) {
+    return this.userService.createMembershipTier(createMembershipTierDto);
+  }
+
   @UseGuards(JwtGuard)
   @Get()
   findAll() {
     return this.userService.findAllUsers();
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("memberships")
+  findMembers(@Query() pageOptionsDto:PageOptionsDto,@Query("name") name?:string) {
+    console.log(pageOptionsDto);
+    
+    return this.userService.findMemberships(pageOptionsDto, name);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("membership-tiers")
+  findMembershipTiers() {
+    return this.userService.findMembershipsTiers();
   }
 
   @UseGuards(JwtGuard)
@@ -72,6 +87,12 @@ export class UserController {
   @Get("clients/:id")
   clientProfile(@Param('id', ParseIntPipe) id: number) {
     return this.userService.clientProfile(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("clients/:id/attachments")
+  clientAttachments(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.clientAttachments(id);
   }
 
   @UseGuards(JwtGuard)
@@ -163,5 +184,10 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @Delete('clients/:id/attachments/:attachmentId')
+  deleteAttachment(@Param('id', ParseIntPipe) id: number, @Param('attachmentId', ParseIntPipe) attachmentId: number) {
+    return this.userService.deleteAttachment(id, attachmentId)
   }
 }

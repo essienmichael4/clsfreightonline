@@ -20,9 +20,9 @@ interface Props{
     trigger?: React.ReactNode,
     item:Package,
     status?:string
-    page: number, 
-    limit: number, 
-    search: string
+    page?: number, 
+    limit?: number, 
+    search?: string
 }
 
 const EditPackage = ({item, status, trigger, page, limit, search}:Props) => {

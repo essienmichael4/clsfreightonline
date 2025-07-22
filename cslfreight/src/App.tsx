@@ -22,6 +22,7 @@ import Profile from './pages/Profile/Profile'
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword'
 import PasswordReset from './pages/PasswordReset/PasswordReset'
 import ClientAnnouncement from './components/ClientAnnouncement'
+import Attachments from './pages/Attachments/Attachments'
 
 function App() {
 
@@ -30,20 +31,21 @@ function App() {
       <Routes>
         <Route element={<Whatsapp />}>
         <Route element={<Calculator />}>
-        <Route element={<Layout />}>
-          <Route path='/' element={<Home />} />
-          <Route path='/contact' element={<Contact />} />
-          <Route path='/about' element={<About />} />
-          <Route path='/search' element={<Search />} />
-          <Route path='/address' element={<Address />} />
-          <Route path='/terms' element={<Terms />} />
-          <Route path='/container-loadings' element={<Loading />} />
-          <Route path='*' element={<NotFound />} />
-        </Route>
+          <Route element={<Layout />}>
+            <Route path='/' element={<Home />} />
+            <Route path='/contact' element={<Contact />} />
+            <Route path='/about' element={<About />} />
+            <Route path='/search' element={<Search />} />
+            <Route path='/address' element={<Address />} />
+            <Route path='/terms' element={<Terms />} />
+            <Route path='/container-loadings' element={<Loading />} />
+            <Route path='*' element={<NotFound />} />
+          </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
         <Route path='/reset-password' element={<PasswordReset />} />
+        </Route>
         <Route element={<RequireAuth />}>
           <Route element={<AuthLayout />}>
             <Route element={<ClientAnnouncement />}>
@@ -53,11 +55,12 @@ function App() {
               <Route path="/shipping-address" element={<Address />} />
               <Route path="/packages/:id" element={<PackageDetails />} />
               <Route path="/profile/:id" element={<Profile />} />
+              <Route path="/attachments/:id" element={<Attachments />} />
             </Route>
           </Route>
         </Route>
         </Route>
-        </Route>
+        {/* </Route> */}
       </Routes>
     </>
   )

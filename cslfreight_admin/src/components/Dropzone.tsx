@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
-import { FileIcon, Trash2 } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { FileIcon } from 'lucide-react'
+import { useCallback } from 'react'
 import { FileRejection, useDropzone} from 'react-dropzone'
 import { toast } from 'sonner'
 
@@ -9,7 +9,7 @@ interface Props{
 }
 
 const Dropzone = ({handleFileChange}:Props) => {
-    const [files, setFiles] = useState<(File & {preview:string})[] | undefined>(undefined)
+    // const [files, setFiles] = useState<(File & {preview:string})[] | undefined>(undefined)
 
     const onDrop = useCallback((acceptedFiles:File[]) => {
         const uploaded = acceptedFiles.map((file) =>
@@ -19,7 +19,7 @@ const Dropzone = ({handleFileChange}:Props) => {
         )
         // Do something with the files
         handleFileChange(uploaded[0])
-        setFiles(uploaded)
+        // setFiles(uploaded)
       }, [handleFileChange])
 
     const onDropRejected = useCallback(
@@ -29,13 +29,13 @@ const Dropzone = ({handleFileChange}:Props) => {
           if (fileError.code === 'file-too-large') {
             toast.error('File is too large. Max file size is 5MB.')
             handleFileChange(undefined)
-            setFiles(undefined)
+            // setFiles(undefined)
           }
 
           if(fileError.code === 'too-many-files'){
             toast.error('You can only upload one file.')
             handleFileChange(undefined)
-            setFiles(undefined)
+            // setFiles(undefined)
           }
         },
         []
@@ -54,7 +54,7 @@ const Dropzone = ({handleFileChange}:Props) => {
         multiple: false
       })
 
-    const file = files?.map((file, i)=> <img key={i} className='w-100%'  src={file.preview} alt={file.name} />).filter((_e , i)=> i == 0)
+    // const file = files?.map((file, i)=> <img key={i} className='w-100%'  src={file.preview} alt={file.name} />).filter((_e , i)=> i == 0)
 
       return (
         <div className="flex w-[100%] flex-col mt-2 gap-2">

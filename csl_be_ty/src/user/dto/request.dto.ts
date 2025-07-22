@@ -1,9 +1,19 @@
-import { IsNumber } from "class-validator"
+import { IsString, MinLength, IsDefined, IsNumber, IsPositive, IsOptional } from "class-validator"
 
-export class PaginationDto {
-    @IsNumber()
-    pageIndex: number
+export class CreateMembershipTierDto {
+    @IsString()
+    @MinLength(2)
+    name:string
 
     @IsNumber()
-    pageSize: number
+    @IsPositive()
+    @IsDefined()
+    minShipping:number
+
+    @IsNumber()
+    priority:number
+
+    @IsString()
+    @IsOptional()
+    descripption?:string
 }

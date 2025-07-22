@@ -49,6 +49,9 @@ const AddAttachments = ({id, open, onOpenChange}:Props) => {
                 id: "add-image"
             })
 
+            setFile(undefined)
+            setFileName("")
+            onOpenChange()
             queryClient.invalidateQueries({queryKey: ["clients", id]})
             
         },onError: (err:any) => {

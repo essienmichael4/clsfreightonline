@@ -13,6 +13,7 @@ import Loading from './pages/Loading/Loading'
 import Settings from './pages/Settings/Settings'
 import Clients from './pages/Client/Clients'
 import ClientDetails from './pages/Client/ClientDetails'
+import Membership from './pages/Membership/Membership'
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
             <Route path='/clients' element={<Clients />} />
             <Route path='/clients/:id' element={<ClientDetails />} />
             <Route path='/settings' element={<Settings />} />
+            <Route path='/memberships' element={<Membership />} />
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />

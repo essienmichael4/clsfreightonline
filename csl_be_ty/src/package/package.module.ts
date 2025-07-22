@@ -7,9 +7,10 @@ import { PackageEdit } from './entities/packageEdits.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Client } from 'src/user/entities/client.entity';
 import { PackageType } from './entities/packageType.entity';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Client, Package, PackageEdit, PackageType])],
+  imports: [TypeOrmModule.forFeature([Client, Package, PackageEdit, PackageType]), UserModule],
   controllers: [PackageController],
   providers: [PackageService, JwtService],
 })

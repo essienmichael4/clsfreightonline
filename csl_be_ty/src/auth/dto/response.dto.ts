@@ -1,4 +1,5 @@
 import { Exclude } from "class-transformer"
+import { MembershipTierDto } from "src/user/dto/user-response.dto"
 
 export class UserAuthReponse{
     id:number 
@@ -23,6 +24,8 @@ export class ClientAuthReponse{
     shippingMark:string
     createdAt:Date 
     updatedAt:Date 
+
+    membershipTier?:MembershipTierDto
 
     @Exclude()
     password:string

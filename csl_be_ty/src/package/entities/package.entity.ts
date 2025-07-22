@@ -86,6 +86,9 @@ export class Package {
   @Column()
   addedBy: number;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  shippingRate: number;
+
   @ManyToOne(() => User, (user) => user.packages)
   @JoinColumn({ name: 'addedBy' })
   user: User;

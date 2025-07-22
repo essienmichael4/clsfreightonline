@@ -37,15 +37,13 @@ const LoginForm = () => {
             const response = await axios_instance.post("/auth/signin/client", {
                 email: data.email,
                 password: data.password
-            })            
-            console.log(response.data)
+            })
             dispatch({type: "ADD_AUTH", payload: response.data})
             form.reset()
             setIsPending(false)
             toast.success("Login successful", {
                 id: "login"
             })            
-
             navigate(from, {replace:true})
             
         }catch(err:any){

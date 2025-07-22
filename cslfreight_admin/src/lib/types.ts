@@ -18,6 +18,14 @@ export type AuthContextType = {
     setAuth: Dispatch<SetStateAction<AuthType | undefined>>;
 }
 
+export type Attachment = {
+    id: number
+    name: string
+    imageUrl:string
+    createdAt?: string,
+    updatedAt?:string,
+}
+
 export type Client = {
     id: number | null,
     name?: string,
@@ -27,7 +35,10 @@ export type Client = {
     createdAt?: string,
     updatedAt?:string,
     packages: Package[]
-    clientDetails?:Details
+    clientDetails?:Details,
+    totalShippingRate?: number,
+    attachments?: Attachment[],
+    membershipTier?:MembershipTier
 }
 
 export type Data = {
@@ -42,6 +53,15 @@ export type Meta = {
     pageCount: number
     hasPreviousPage: boolean
     hasNextPage: boolean
+}
+
+export type MembershipTier = {
+    id: number;
+    name: string;
+    description?: string;
+    priority: number;
+    minShipping?: number
+    clientCount?: number
 }
 
 export type Details = {
