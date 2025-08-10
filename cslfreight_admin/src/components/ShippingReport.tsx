@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from './DataTable/ColumnHeader'
 import { ColumnDef, getCoreRowModel, flexRender, useReactTable } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import useAxiosToken from '@/hooks/useAxiosToken'
+import { TimeLeft } from '@/lib/helper'
 
 const emptyData: any[]= []
 
@@ -58,6 +59,14 @@ const ShippingReport = () => {
             
             return <div className='text-muted-foreground text-nowrap'>
                 {new Date(row.original.loaded as string).toDateString()}
+            </div>
+        }
+    },{
+        accessorKey: "eta",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Estimated Arrival' />),
+        cell:({row}) => {
+            return <div className='text-muted-foreground text-nowrap'>
+                {row.original.status !== "YET_TO_LOAD" && row.original.eta ? TimeLeft(row.original.eta) : "-"}
             </div>
         }
     },{

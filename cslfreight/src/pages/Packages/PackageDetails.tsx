@@ -1,5 +1,5 @@
 import useAxiosToken from "@/hooks/useAxiosToken"
-import { FormattedDate, FormattedTime } from "@/lib/helper"
+import { FormattedDate, FormattedTime, TimeLeft } from "@/lib/helper"
 import { Package } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
@@ -104,6 +104,10 @@ const PackageDetails = () => {
                 <div>
                     <h4 className='text-xs text-gray-400 mb-2'>ETA</h4>
                     <p>{packageDetail.data?.status !== "YET_TO_LOAD" && packageDetail.data?.eta ? new Date(packageDetail.data?.eta).toDateString() : "-"}</p>
+                </div>
+                <div>
+                    <h4 className='text-xs text-gray-400 mb-2'>Days Left</h4>
+                    <p>{packageDetail.data?.status !== "YET_TO_LOAD" && packageDetail.data?.eta ? TimeLeft(new Date(packageDetail.data?.eta).toDateString()) : "-"}</p>
                 </div>
                 <div>
                     <h4 className='text-xs text-gray-400 mb-2'>Vessel Line</h4>

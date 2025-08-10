@@ -3,6 +3,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, One
 import { Details } from "./details.entity";
 import { Attachment } from "./attachment.entity";
 import { MembershipTier } from "./membership.entity";
+import { Payment } from "./payment.entity";
 
 export enum Deleted {
     TRUE = 'TRUE',
@@ -52,6 +53,9 @@ export class Client {
 
     @OneToMany(() => Attachment, (attachmentEntity) => attachmentEntity.client)
     attachments: Attachment[];
+
+    @OneToMany(() => Payment, (paymentEntity) => paymentEntity.client)
+    payments: Payment[];
 
     @Column({ nullable: true })
     membershipTierId: number;

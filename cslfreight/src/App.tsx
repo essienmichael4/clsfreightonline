@@ -23,6 +23,7 @@ import ForgotPassword from './pages/ForgotPassword/ForgotPassword'
 import PasswordReset from './pages/PasswordReset/PasswordReset'
 import ClientAnnouncement from './components/ClientAnnouncement'
 import Attachments from './pages/Attachments/Attachments'
+import Payments from './pages/Payments/Payments'
 
 function App() {
 
@@ -52,6 +53,7 @@ function App() {
               <Route path='/our-policies' element={<Terms />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/packages" element={<Packages />} />
+              <Route path="/payments" element={<Payments />} />
               <Route path="/shipping-address" element={<Address />} />
               <Route path="/packages/:id" element={<PackageDetails />} />
               <Route path="/profile/:id" element={<Profile />} />

@@ -11,9 +11,10 @@ import { UploadModule } from 'src/upload/upload.module';
 import { UploadService } from 'src/upload/upload.service';
 import { MembershipTier } from './entities/membership.entity';
 import { ScheduleModule } from '@nestjs/schedule';
+import { Payment } from './entities/payment.entity';
 
 @Module({
-  imports: [ScheduleModule.forRoot(),TypeOrmModule.forFeature([User, Client, Details, Attachment, MembershipTier]), UploadModule],
+  imports: [ScheduleModule.forRoot(),TypeOrmModule.forFeature([User, Client, Details, Attachment, MembershipTier, Payment]), UploadModule],
   controllers: [UserController],
   providers: [UserService, JwtService, UploadService],
   exports:[UserService]

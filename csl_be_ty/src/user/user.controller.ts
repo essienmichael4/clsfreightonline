@@ -4,7 +4,7 @@ import { AttachmentDto, CreateUserDto } from './dto/create-user.dto';
 import { v4 } from 'uuid';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { User, UserInfo } from 'src/decorators/user.decorator';
-import { ClientInfoUpdateRequest, ClientUpdateRequest, UpdateUserPasswordRequest, UpdateUserRequest } from './dto/updateUser.dto';
+import { ClientInfoUpdateRequest, ClientPaymentRequest, ClientUpdateRequest, UpdateUserPasswordRequest, UpdateUserRequest } from './dto/updateUser.dto';
 import { compare, hash } from 'bcryptjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageFileFilter } from 'src/helpers/file-helper';
@@ -58,6 +58,12 @@ export class UserController {
   }
 
   @UseGuards(JwtGuard)
+  @Post('clients/:id/payments')
+  async addPayment(@Param('id') id: string, @Body() clientPaymentRequest: ClientPaymentRequest, @User() user:UserInfo) {
+    return this.userService.createPayment(id, user.sub.id, clientPaymentRequest)
+  }
+
+  @UseGuards(JwtGuard)
   @Get()
   findAll() {
     return this.userService.findAllUsers();
@@ -65,7 +71,7 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Get("memberships")
-  findMembers(@Query() pageOptionsDto:PageOptionsDto,@Query("name") name?:string) {
+  findMembers(@Query() pageOptionsDto:PageOptionsDto, @Query("name") name?:string) {
     console.log(pageOptionsDto);
     
     return this.userService.findMemberships(pageOptionsDto, name);
@@ -81,6 +87,18 @@ export class UserController {
   @Get("clients/shipping-marks")
   findShippingMarks() {
     return this.userService.findShippingMarks();
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("clients/payments")
+  findPayments(@Query() pageOptionsDto:PageOptionsDto,) {
+    return this.userService.findPayments(pageOptionsDto);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("clients/:id/payments")
+  findClientPayments(@Param('id', ParseIntPipe) id: number, @Query() pageOptionsDto:PageOptionsDto,) {
+    return this.userService.findClientPayments(id, pageOptionsDto);
   }
 
   @UseGuards(JwtGuard)
@@ -125,7 +143,6 @@ export class UserController {
     const {password, ...result} = updated
 
     return {user: result ,message: "User password updated successfully"}
-    // return
   }
 
   @UseGuards(JwtGuard)
@@ -179,6 +196,18 @@ export class UserController {
     const {password, ...result} = updated
 
     return {user: result ,message: "User password updated successfully"}
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('clients/:id/payments/:paymentId')
+  async updatePayment(@Param('id') id: string, @Param('paymentId', ParseIntPipe) paymentId: number, @Body() clientPaymentRequest: ClientPaymentRequest, @User() user:UserInfo) {
+    return this.userService.updatePayment(id, user.sub.id, paymentId,clientPaymentRequest)
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete('clients/:id/payments/:paymentId')
+  async removePayment( @Param('paymentId', ParseIntPipe) paymentId: number, @User() user:UserInfo) {
+    return this.userService.deletePayment(paymentId)
   }
 
   @Delete(':id')

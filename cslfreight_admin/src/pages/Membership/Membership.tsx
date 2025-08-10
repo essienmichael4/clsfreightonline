@@ -15,8 +15,6 @@ const Membership = () => {
     const membershipTierQuery = useQuery<MembershipTier[]>({
         queryKey: ["membership-tiers"],
         queryFn: async() => await axios_instance_token.get(`/users/membership-tiers`).then(res => {
-            console.log(res.data);
-            
             return res.data
         })
     })

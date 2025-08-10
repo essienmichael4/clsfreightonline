@@ -39,14 +39,15 @@ const Tiers = ({membershipTiers}:Props) => {
             cell:({row}) => <div className="text-xs">
                 <span className='text-gray-500'>{row.original.priority}</span>
             </div>
-        }]
-    
-        const table = useReactTable({
-            data: membershipTiers || emptyData,
-            columns,
-            manualPagination: true,
-            getCoreRowModel: getCoreRowModel(), 
-        })
+        }
+    ]
+
+    const table = useReactTable({
+        data: membershipTiers || emptyData,
+        columns,
+        manualPagination: true,
+        getCoreRowModel: getCoreRowModel(), 
+    })
 
     return (
         <div>

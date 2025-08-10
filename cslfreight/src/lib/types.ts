@@ -26,6 +26,21 @@ export type Client = {
     attachments?: Attachment[]
 }
 
+
+export type Data = {
+    data: Client[] | Package[] | Payment[],
+    meta: Meta
+}
+
+export type Meta = {
+    page: number
+    take: number
+    itemCount: number
+    pageCount: number
+    hasPreviousPage: boolean
+    hasNextPage: boolean
+}
+
 export type Details = {
     id: number,
     dob?: string,
@@ -70,6 +85,14 @@ export type PackageTypeAndRate = {
     cedisRate:number,
     createdAt:string,
     updatedAt:string,
+}
+
+export type Payment = {
+    id: number,
+    client?: Client,
+    paidShippingRate: number,
+    reference: string,
+    paymentMethod: string
 }
 
 export type AnnouncementType = {

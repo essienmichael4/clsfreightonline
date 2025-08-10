@@ -38,3 +38,17 @@ export const GetTierBadgeClass = (priority?: number) => {
             return "bg-[#ffdbb7] text-[#cd7f32]";
     }
 };
+
+export const TimeLeft = (time: string) => {
+    const now = Date.now()
+    const endTime = new Date(time).getTime()
+    const diff = endTime - now
+    if (diff <= 0){
+        return new Date(endTime).toDateString()
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+    const minutes = Math.floor((diff / (1000 * 60 )) % 60)
+    return `${days}d ${hours}h ${minutes}m left`
+}

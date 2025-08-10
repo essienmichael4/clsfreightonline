@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
+import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
 
 export class UpdateUserRequest {
     @IsString()
@@ -18,6 +18,20 @@ export class ClientUpdateRequest {
     @IsString()
     @IsOptional()
     phone:string
+}
+
+export class ClientPaymentRequest {
+    @IsNumber()
+    @IsPositive()
+    paidShippingRate:number 
+
+    @IsString()
+    @IsOptional()
+    paymentMethod:string
+
+    @IsString()
+    @IsOptional()
+    reference:string
 }
 
 export class ClientInfoUpdateRequest {

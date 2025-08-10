@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { EntityManager, Like, Repository } from 'typeorm';
 import { Client, Deleted } from './entities/client.entity';
 import { hash } from 'bcryptjs';
-import { ClientInfoUpdateRequest } from './dto/updateUser.dto';
+import { ClientInfoUpdateRequest, ClientPaymentRequest } from './dto/updateUser.dto';
 import { Details } from './entities/details.entity';
 import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
 import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
@@ -17,12 +17,14 @@ import { UploadService } from 'src/upload/upload.service';
 import { MembershipTier } from './entities/membership.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { CreateMembershipTierDto } from './dto/request.dto';
+import { Payment } from './entities/payment.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepo:Repository<User>,
     @InjectRepository(Client) private readonly clientRepo:Repository<Client>,
+    @InjectRepository(Payment) private readonly paymentRepo:Repository<Payment>,
     @InjectRepository(Details) private readonly detailsRepo:Repository<Details>,
     @InjectRepository(Attachment) private readonly attachmentRepo:Repository<Attachment>,
     @InjectRepository(MembershipTier) private readonly tierRepo:Repository<MembershipTier>,
@@ -51,6 +53,23 @@ export class UserService {
       name: attachment,
       client
     })
+  }
+
+  async createPayment(clientMark: string, userId: number, payment: ClientPaymentRequest){
+    const client = await this.findClientByShippingMark(clientMark)
+    const user = await this.findUserById(userId)
+    if(!client) throw new NotFoundException(`Client with ID:${clientMark} does not exist.`)
+    if(!user) throw new NotFoundException(`User is not permitted to make this request as you do not exist.`)
+
+    const saveEntity = this.paymentRepo.create({
+      paidShippingRate: payment.paidShippingRate,
+      reference: payment.reference,
+      paymentMethod: payment.paymentMethod,
+      client,
+      user
+    })
+
+    return this.paymentRepo.save(saveEntity)
   }
 
   async findClients(pageOptionsDto:PageOptionsDto, search?:string){
@@ -105,6 +124,45 @@ export class UserService {
     return rawTiers;
   }
 
+  async findPayments(pageOptionsDto: PageOptionsDto) {
+
+    const [data, total] = await this.paymentRepo.findAndCount({
+      relations: {
+        client: true,
+        user: true,
+      },
+      order:{
+        id: "DESC"
+      },
+      skip: pageOptionsDto.skip,
+      take: pageOptionsDto.take,
+    });
+
+    const pageMetaDto = new PageMetaDto({itemCount: total, pageOptionsDto})
+    return new PageDto(data, pageMetaDto)
+  }
+
+  async findClientPayments(clientId: number, pageOptionsDto: PageOptionsDto) {
+    const [data, total] = await this.paymentRepo.findAndCount({
+      relations: {
+        client: true,
+      },
+      where: {
+        client: {
+          id: clientId
+        }
+      },
+      order:{
+        id: "DESC"
+      },
+      skip: pageOptionsDto.skip,
+      take: pageOptionsDto.take,
+    });
+
+    const pageMetaDto = new PageMetaDto({itemCount: total, pageOptionsDto})
+    return new PageDto(data, pageMetaDto)
+  }
+
   async clientAttachments(id:number) {
     const attachments = await this.attachmentRepo.find({
       relations: {
@@ -145,6 +203,12 @@ export class UserService {
 
   async findClientById(id:number){
     return await this.clientRepo.findOneBy({id})
+  }
+
+  async findClientByShippingMark(id:string){
+    return await this.clientRepo.findOne({where: {
+      shippingMark: id
+    }})
   }
 
   async updateUserPassword(id:number, password:string){
@@ -247,6 +311,25 @@ export class UserService {
     return await this.clientRepo.save(client);
   }
 
+  async updatePayment(clientMark: string, userId: number, paymentId: number, paymentRequest: ClientPaymentRequest){
+    const client = await this.findClientByShippingMark(clientMark)
+    const user = await this.findUserById(userId)
+    const payment = await this.paymentRepo.findOne({where: {id: paymentId}})
+    if(!client) throw new NotFoundException(`Client with ID:${clientMark} does not exist.`)
+    if(!user) throw new NotFoundException(`User is not permitted to make this request as you do not exist.`)
+    if(!payment) throw new NotFoundException(`Payment with ID:${paymentId} does not exist.`)
+
+    
+
+    return this.paymentRepo.update(payment.id, {
+      paidShippingRate: paymentRequest.paidShippingRate,
+      ...(paymentRequest.paymentMethod && { paymentMethod: paymentRequest.paymentMethod }),
+      ...(paymentRequest.reference && { reference: paymentRequest.reference }),
+      client,
+      user
+    })
+  }
+
   async resetClientPassword(id: number, password:string) {
     try{
       return await this.clientRepo.update(id, {
@@ -281,6 +364,10 @@ export class UserService {
     }catch(err){
       throw err
     }
+  }
+
+  async deletePayment(paymentId: number){
+    return this.paymentRepo.delete(paymentId)
   }
 
   async evaluateMembershipTier(clientId: number, manager?: EntityManager) {

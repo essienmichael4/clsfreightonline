@@ -1,125 +1,84 @@
-import { Link } from 'react-router-dom'
-import { Package } from '@/lib/types'
-import { DataTableColumnHeader } from './DataTable/ColumnHeader'
-import { ColumnDef, getCoreRowModel, flexRender, useReactTable, getPaginationRowModel } from '@tanstack/react-table'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Trash2 } from 'lucide-react'
-import EditPackage from '@/pages/Package/EditPackage'
-import DeletePackage from '@/pages/Package/DeletePackage'
-import { usePackages } from '@/hooks/usePackages'
-
-interface FilterProps{
-    search:string,
-    status:string,
-    limit: number,
-    page: number,
-    setLimit: (value:number)=>void,
-    setPage: (value:number)=>void
-}
+import { DataTableColumnHeader } from "@/components/DataTable/ColumnHeader"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { usePayments } from "@/hooks/usePayments"
+import { Payment } from "@/lib/types"
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Trash2 } from "lucide-react"
+import { useState } from "react"
+import EditPayment from "./EditPayment"
+import DeletePayment from "./DeletePayment"
 
 const emptyData: any[]= []
 
-const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProps) => {
+const AllPayments = () => {
+    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(20)
     
-    const packagesQuery = usePackages(page, limit, search, status)
+    const paymentQuery = usePayments(page, limit)
 
-    const columns:ColumnDef<Package>[] =[{
+    const columns:ColumnDef<Payment>[] =[{
         accessorKey: "id",
-        header:({column})=>(<DataTableColumnHeader column={column} title='No.' />),
-        cell:({row}) => <div>
-            <Link to={`./${row.original.id}`}>
+        header:({column})=>(<DataTableColumnHeader column={column} title='ID' />),
+        cell:({row}) => <div className="text-xs">
+            {/* <Link to={`./${row.original.id}`}> */}
                 <span className='text-gray-400'>#</span>{row.original.id}
-            </Link>
+            {/* </Link> */}
         </div>
-    },{
-        accessorKey: "trackingNumber",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Tracking ID' />),
-        cell:({row}) => <div>
-                {row.original.trackingNumber}
-        </div>
-    },{
-        accessorKey: "customer",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Customer' />),
-        cell:({row}) => <div>
-            {row.original.customer}
-        </div>
-    },{
-        accessorKey: "received",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Received' />),
-        cell:({row}) => {
-            return <div className='text-muted-foreground text-nowrap'>
-                {new Date(row.original.received as string).toDateString()}
+        },{
+            accessorKey: "name",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Name' />),
+            cell:({row}) => <div className="flex flex-col gap-2 text-xs">
+                <span>{row.original.client?.shippingMark}</span>
             </div>
-        }
-    },{
-        accessorKey: "loaded",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Loaded' />),
-        cell:({row}) => {
-            return <div className='text-muted-foreground text-nowrap'>
-                {new Date(row.original.loaded as string).toDateString()}
+        },{
+            accessorKey: "paidShippingRate",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Paid Shipping' />),
+            cell:({row}) => <div className="text-xs">
+                <span className='text-gray-500'>{row.original.paidShippingRate}</span>
             </div>
-        }
-    },{
-        accessorKey: "package",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Package' />),
-        cell:({row}) => <div>
-            {row.original.package}
-        </div>
-    },{
-        accessorKey: "quantity",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Quantity' />),
-        cell:({row}) => {
-            return <div>
-                {row.original.quantity}
+        },{
+            accessorKey: "paymentMethod",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Payment Method' />),
+            cell:({row}) => <div className="text-xs">
+                <span className='text-gray-500'>{row.original.paymentMethod}</span>
             </div>
-        }
-    },{
-        accessorKey: "vessel",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Vessel' />),
-        cell:({row}) => {
-            return <div>
-                {row.original.vessel}
+        },{
+            accessorKey: "reference",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Payment Reference' />),
+            cell:({row}) => <div className="text-xs">
+                <span className='text-gray-500'>{row.original.reference}</span>
             </div>
-        }
-    },{
-        accessorKey: "status",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Status' />),
-        cell:({row}) => <div>
-            <span className={`${row.original.status === "YET_TO_LOAD" && 'bg-gray-300'} ${row.original.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${row.original.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${row.original.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-2 px-4 rounded-full text-xs`}>{row.original.status}</span>
-        </div>
-    },{
-        accessorKey: "cbm",
-        header:({column})=>(<DataTableColumnHeader column={column} title='CBM' />),
-        cell:({row}) => <div>
-            {row.original.cbm}
-        </div>
-    },{
+        },{
+            accessorKey: "addedBy",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Added By' />),
+            cell:({row}) => <div className="text-xs">
+                <span className='text-gray-500'>{row.original.user?.name}</span>
+            </div>
+        },{
         accessorKey: "ids",
         header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
         cell:({row}) => <div>
             <span className="flex gap-2 items-center"  >
-                <EditPackage page={page} limit={limit} search={search} item={row.original} status={status} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
-                <DeletePackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} /> 
+                <EditPayment page={page} limit={limit} payment={row.original}  trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
+                <DeletePayment page={page} limit={limit} payment={row.original}  trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} /> 
             </span> 
         </div>
-    }]
+        }
+    ]
 
     const table = useReactTable({
-        data: packagesQuery.data?.data || emptyData,
+        data: paymentQuery.data?.data || emptyData,
         columns,
         manualPagination: true,
-        getCoreRowModel: getCoreRowModel(),
-        state:{
-            pagination: {
-                pageIndex: page - 1,
-                pageSize: limit,
-            }
-        },
-        getPaginationRowModel: getPaginationRowModel(),
-        pageCount: packagesQuery.data?.meta?.pageCount,
+        getCoreRowModel: getCoreRowModel(), 
     })
 
-    return (
+    const content = paymentQuery.isLoading ? <Skeleton>
+      <div className="sm:h-72 md:h-80 lg:h-96 w-full">
+
+      </div>
+    </Skeleton> : paymentQuery.data?.data && paymentQuery.data?.data.length > 0 ? <>
         <div className="my-8 p-2 md:px-0 rounded-2xl">
             <div className="w-full rounded-md  bg-white/75">
                 <Table>
@@ -207,25 +166,32 @@ const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProp
                             setPage(page)
                           }}
                         />
-                        <span className="ml-1">of {packagesQuery.data?.meta.pageCount}</span>
+                        <span className="ml-1">of {paymentQuery.data?.meta.pageCount}</span>
                       </span>
 
                       <button
                         className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
                         onClick={()=>setPage(page + 1)}
-                        disabled={ page === Number(packagesQuery.data?.meta.pageCount) }>
+                        disabled={ page === Number(paymentQuery.data?.meta.pageCount) }>
                         <ChevronRight size={20} />
                       </button>
                       <button
                         className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
-                        onClick={()=>setPage(Number(packagesQuery.data?.meta.pageCount))}
-                        disabled={page === Number(packagesQuery.data?.meta.pageCount)}>
+                        onClick={()=>setPage(Number(paymentQuery.data?.meta.pageCount))}
+                        disabled={page === Number(paymentQuery.data?.meta.pageCount)}>
                         <ChevronsRight size={20} />
                       </button>
                   </div>
             </div>
         </div>
+    </>: <div className='bg-gray-100 rounded-lg h-[300px] flex flex-col items-center justify-center'>
+        No payments added yet...
+        <p className="text-sm text-center text-muted-foreground">Try adding one.</p>
+    </div>
+
+    return (
+        <div className="mt-4">{content}</div>
     )
 }
 
-export default AllPackages
+export default AllPayments

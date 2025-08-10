@@ -38,11 +38,12 @@ export type Client = {
     clientDetails?:Details,
     totalShippingRate?: number,
     attachments?: Attachment[],
-    membershipTier?:MembershipTier
+    membershipTier?:MembershipTier,
+    payments: Payment
 }
 
 export type Data = {
-    data: Client[] | Package[],
+    data: Client[] | Package[] | Payment[],
     meta: Meta
 }
 
@@ -90,6 +91,15 @@ export type Package = {
     description?:string,
     client?: Client,
     packageType?:PackageTypeAndRate
+}
+
+export type Payment = {
+    id: number,
+    client?: Client,
+    user?: User,
+    paidShippingRate: number,
+    reference: string,
+    paymentMethod: string
 }
 
 export type PackageTypeAndRate = {

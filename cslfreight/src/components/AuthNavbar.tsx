@@ -52,6 +52,7 @@ const AuthNavbar = () => {
               <NavLink to={"/packages"} className={({isActive})=> isActive ? "font-medium border-b-4 border-black" : "text-muted-foreground pb-2"}>Packages</NavLink>
               <NavLink to={"/our-policies"} className={({isActive})=> isActive ? "font-medium border-b-4 border-black" : "text-muted-foreground pb-2"}>Our Policies</NavLink>
               <NavLink to={"/shipping-address"} className={({isActive})=> isActive ? "font-medium border-b-4 border-black" : "text-muted-foreground pb-2"}>Shipping Address</NavLink>
+              <NavLink to={"/payments"} className={({isActive})=> isActive ? "font-medium border-b-4 border-black" : "text-muted-foreground pb-2"}>Payments</NavLink>
               <li className="list-none">
                 <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
               </li>
@@ -118,6 +119,9 @@ const AuthNavbar = () => {
                 </li>
                 <li className='py-4'>
                   <Link to={"/shipping-address"} onClick={toggleNavbar} className='text-neutral-500'>Shipping Address</Link>
+                </li>
+                <li className='py-4'>
+                  <Link to={"/payments"} onClick={toggleNavbar} className='text-neutral-500'>Payments</Link>
                 </li>
                 <li className='py-4'>
                   <a href="https://rmbdeals.com" onClick={toggleNavbar} target="_blank" className="text-neutral-500" >Buy RMB</a>

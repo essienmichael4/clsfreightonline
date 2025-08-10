@@ -1,5 +1,5 @@
 import logo from '../assets/logo.webp'
-import { Badge, LayoutDashboard, Package, Settings, Ship, User, Users } from 'lucide-react'
+import { Badge, LayoutDashboard, Package, PiggyBank, Settings, Ship, User, Users } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 
 interface SideNavProps{
@@ -31,6 +31,10 @@ const SideNav = ({isToggled}:SideNavProps) => {
                 <User className='h-6 w-6 mr-6' />
                 <span className=''>Clients</span>
             </NavLink>
+            <NavLink to={"/payments"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
+                <PiggyBank className='h-6 w-6 mr-6' />
+                <span className=''>Payments</span>
+            </NavLink>
             <NavLink to={"/users"} className='pl-1 py-2 flex items-center flex-shrink-0 mb-4 text-muted-foreground'>
                 <Users className='h-6 w-6 mr-6' />
                 <span className=''>Users</span>
@@ -43,35 +47,8 @@ const SideNav = ({isToggled}:SideNavProps) => {
                 <Settings className='h-6 w-6 mr-6' />
                 <span className=''>Settings</span>
             </NavLink>
-            
-          
-          {/* <div className="lg:hidden md:flex flex-col justify-end">
-            <button onClick={toggleNavbar}>{mobileDrawerOpen ? <X /> : <Menu />}</button>
-          </div> */}
         </div>
-        {/* {mobileDrawerOpen && 
-          <div className="fixed right-0 z-20 w-full bg-white backdrop-blur-lg p-12 flex flex-col justify-center items-center lg:hidden">
-            <ul>
-              <li className='py-4'>
-                <Link to={"/"}>Home</Link>
-              </li>
-              <li className='py-4'>
-                <Link to={"/gallery"}>Services</Link>
-              </li>
-              <li className='py-4'>
-                <Link to={"/gallery"}>About</Link>
-              </li>
-            </ul>
-            <div className=" flex space-x-6">
-            <p className='py-2 px-3 rounded-md border '>
-            (+233) 24 366 0662
-            </p>
-            <Link to={"/contact"} className='text-white bg-blue-700 py-2 px-3 rounded-md'>
-              Contact Us
-            </Link>
-            </div>
-          </div>
-        } */}
+        
       </div>
 
     </nav>

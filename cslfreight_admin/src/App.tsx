@@ -14,6 +14,7 @@ import Settings from './pages/Settings/Settings'
 import Clients from './pages/Client/Clients'
 import ClientDetails from './pages/Client/ClientDetails'
 import Membership from './pages/Membership/Membership'
+import Payments from './pages/Paymen/Payments'
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
             <Route path='/clients/:id' element={<ClientDetails />} />
             <Route path='/settings' element={<Settings />} />
             <Route path='/memberships' element={<Membership />} />
+            <Route path='/payments' element={<Payments />} />
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />
