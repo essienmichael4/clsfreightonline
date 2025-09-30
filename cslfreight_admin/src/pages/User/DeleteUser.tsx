@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
-import { User } from '@/lib/types'
+import type { User } from '@/lib/types'
 
 interface Props{
     trigger?: React.ReactNode,

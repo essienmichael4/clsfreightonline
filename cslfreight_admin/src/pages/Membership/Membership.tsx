@@ -1,5 +1,5 @@
 import useAxiosToken from "@/hooks/useAxiosToken";
-import { MembershipTier } from "@/lib/types";
+import type { MembershipTier } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import AddMembershipTierDialog from "./_components/AddMembershipTier";
 import { Button } from "@/components/ui/button";

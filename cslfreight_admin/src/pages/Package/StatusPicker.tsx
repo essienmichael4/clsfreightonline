@@ -6,13 +6,13 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Props {
-    onChange: (value: "YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=>void
+    onChange: (value: "YET_TO_LOAD" | "IN_TRANSIT" | "ARRIVED" | "DELIVERED")=>void
 }
 
 const StatusPicker = ({onChange}:Props) => {
-    const stat:("YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")[] = ["YET_TO_LOAD", "EN_ROUTE", "ARRIVED", "DELIVERED"]
+    const stat:("YET_TO_LOAD" | "IN_TRANSIT" | "ARRIVED" | "DELIVERED")[] = ["YET_TO_LOAD", "IN_TRANSIT", "ARRIVED", "DELIVERED"]
     const [open, setOpen] = useState(false)
-    const [value, setValue] = useState<"YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED">("YET_TO_LOAD")
+    const [value, setValue] = useState<"YET_TO_LOAD" | "IN_TRANSIT" | "ARRIVED" | "DELIVERED">("YET_TO_LOAD")
 
     useEffect(()=>{
         if(!value) return
@@ -21,9 +21,9 @@ const StatusPicker = ({onChange}:Props) => {
 
     
 
-    const selectedCategory = stat.find((status:"YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=> status === value)
+    const selectedCategory = stat.find((status:"YET_TO_LOAD" | "IN_TRANSIT" | "ARRIVED" | "DELIVERED")=> status === value)
 
-    // const successCallback = useCallback((status:"YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=>{
+    // const successCallback = useCallback((status:"YET_TO_LOAD" | "IN_TRANSIT" | "ARRIVED" | "DELIVERED")=>{
     //     setValue(status)
     //     setOpen(prev => !prev)
     // },[setValue, setOpen])
@@ -45,7 +45,7 @@ const StatusPicker = ({onChange}:Props) => {
                 <CommandInput placeholder='Search category'/>
                 <CommandGroup>
                     <CommandList>
-                        {stat.map((status:"YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED") => {                              
+                        {stat.map((status:"YET_TO_LOAD" | "IN_TRANSIT" | "ARRIVED" | "DELIVERED") => {                              
                                 // console.log(categoriesQuery.data)
                                 return (
                                     <CommandItem key={status} onSelect={()=>{
@@ -65,7 +65,7 @@ const StatusPicker = ({onChange}:Props) => {
   )
 }
 
-function StatusRow({status}:{status:"YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED"}){
+function StatusRow({status}:{status:"YET_TO_LOAD" | "IN_TRANSIT" | "ARRIVED" | "DELIVERED"}){
     return (
         <div className="flex items-center gap-2 text-xs">
             {/* <span role='img'>{category.icon}</span> */}

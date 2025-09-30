@@ -11,7 +11,7 @@ import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { PasswordInput } from '@/components/ui/password-input'
-import { UserPasswordUpdateSchema, UserPasswordUpdateSchemaType } from '@/schema/user'
+import { UserPasswordUpdateSchema, type UserPasswordUpdateSchemaType } from '@/schema/user'
 
 interface Props{
     id:number,

@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
-import { MembershipTierSchema, MembershipTierSchemaType } from '@/schema/membership'
+import { MembershipTierSchema, type MembershipTierSchemaType } from '@/schema/membership'
 import { Textarea } from '@/components/ui/textarea'
 
 interface Props {

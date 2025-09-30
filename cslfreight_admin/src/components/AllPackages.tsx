@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import { Package } from '@/lib/types'
+import type { Package } from '@/lib/types'
 import { DataTableColumnHeader } from './DataTable/ColumnHeader'
-import { ColumnDef, getCoreRowModel, flexRender, useReactTable, getPaginationRowModel } from '@tanstack/react-table'
+import { type ColumnDef, getCoreRowModel, flexRender, useReactTable, getPaginationRowModel } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Trash2 } from 'lucide-react'
 import EditPackage from '@/pages/Package/EditPackage'
@@ -85,7 +85,7 @@ const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProp
         accessorKey: "status",
         header:({column})=>(<DataTableColumnHeader column={column} title='Status' />),
         cell:({row}) => <div>
-            <span className={`${row.original.status === "YET_TO_LOAD" && 'bg-gray-300'} ${row.original.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${row.original.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${row.original.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-2 px-4 rounded-full text-xs`}>{row.original.status}</span>
+            <span className={`${row.original.status === "YET_TO_LOAD" && 'bg-gray-300'} ${row.original.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${row.original.status === "IN_TRANSIT" && 'bg-yellow-300 text-yellow-700'} ${row.original.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-2 px-4 rounded-full text-xs`}>{row.original.status}</span>
         </div>
     },{
         accessorKey: "cbm",

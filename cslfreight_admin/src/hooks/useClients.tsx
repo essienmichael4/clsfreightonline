@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import useAxiosToken from "./useAxiosToken";
-import { Data } from "@/lib/types";
+import type { Data } from "@/lib/types";
 
 export const useClients = (page: number, limit: number, search: string) => {
     const axios_instance_token = useAxiosToken()

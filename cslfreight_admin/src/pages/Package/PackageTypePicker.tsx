@@ -6,7 +6,7 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { axios_instance_token } from '@/api/axios'
-import { PackageTypeAndRate } from '@/lib/types'
+import type { PackageTypeAndRate } from '@/lib/types'
 
 interface Props {
     onChange: (value: string)=>void,

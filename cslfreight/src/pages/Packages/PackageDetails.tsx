@@ -39,7 +39,7 @@ const PackageDetails = () => {
                                 <h4 className="text-3xl font-semibold mb-2">Package ID: #{id}</h4>
                                 <p>Tracking Number: {packageDetail.data?.trackingNumber}</p>
                             </div>
-                            <span className={`${packageDetail.data?.status === "YET_TO_LOAD" && 'bg-gray-300'} ${packageDetail.data?.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${packageDetail.data?.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${packageDetail.data?.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-1 px-4 rounded-full text-xs`}>{packageDetail.data?.status}</span>
+                            <span className={`${packageDetail.data?.status === "YET_TO_LOAD" && 'bg-gray-300'} ${packageDetail.data?.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${packageDetail.data?.status === "IN_TRANSIT" && 'bg-yellow-300 text-yellow-700'} ${packageDetail.data?.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-1 px-4 rounded-full text-xs`}>{packageDetail.data?.status}</span>
                         </div>
                         <p className="mb-2 text-xs lg:text-sm text-muted-foreground">{FormattedDate(new Date(packageDetail.data?.createdAt as string))} at {FormattedTime(new Date(packageDetail.data?.createdAt as string))} from drafts</p>
                     </div>

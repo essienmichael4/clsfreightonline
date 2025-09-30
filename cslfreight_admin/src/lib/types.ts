@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction } from "react"
+import { Status } from "@/pages/Invoices/Create"
+import type { Dispatch, SetStateAction } from "react"
 
 export type AuthType = {
     user:{
@@ -18,6 +19,26 @@ export type AuthContextType = {
     setAuth: Dispatch<SetStateAction<AuthType | undefined>>;
 }
 
+export type AnnouncementType = {
+    title?:string,
+    body:string,
+    show: string
+}
+
+export type MarqueAnnouncementType = {
+    id: number,
+    announcement:string,
+    isShown: string
+}
+
+export type AddressType = {
+    id: number,
+    name:string,
+    contact:string,
+    mobile: string,
+    address: string
+}
+
 export type Attachment = {
     id: number
     name: string
@@ -26,8 +47,16 @@ export type Attachment = {
     updatedAt?:string,
 }
 
+export type BankType = {
+    id: number,
+    name:string,
+    accountName: string,
+    accountNumber: string,
+    branch: string
+}
+
 export type Client = {
-    id: number | null,
+    id: number,
     name?: string,
     email: string,
     phone?: string,
@@ -43,8 +72,58 @@ export type Client = {
 }
 
 export type Data = {
-    data: Client[] | Package[] | Payment[],
+    data: Client[] | Package[] | Payment[] | Invoice[],
     meta: Meta
+}
+
+export type Details = {
+    id: number,
+    dob?: string,
+    location: string,
+    nextOfKin: string,
+    nextOfKinPhone: string
+}
+
+export type HelplineType = {
+    id: number,
+    phone:string,
+}
+
+export type Invoice = {
+    id: number,
+    invoiceId: string,
+    invoiceNumber: string,
+    clientName: string,
+    total: number,
+    totalCbm: number,
+    totalQty: number,
+    status: Status,
+    createdBy: User,
+    client: Client,
+    companyName: string,
+    eta: string,
+    issuedDate: string,
+    packages: Package[],
+    createdAt: string,
+    updatedAt: string
+}
+
+export type InvoiceAddressType = {
+    id: number,
+    name:string,
+    addressLine: string,
+    streetAddress: string,
+    box: string,
+    city: string,
+    state: string
+}
+
+export type LoadingType = {
+    id: number,
+    vessel?:string,
+    loaded?:string,
+    eta?: string,
+    status: "IN_TRANSIT" | "ARRIVED" | "DELIVERED"
 }
 
 export type Meta = {
@@ -65,13 +144,6 @@ export type MembershipTier = {
     clientCount?: number
 }
 
-export type Details = {
-    id: number,
-    dob?: string,
-    location: string,
-    nextOfKin: string,
-    nextOfKinPhone: string
-}
 export type Package = {
     id:number,
     trackingNumber:string,
@@ -120,24 +192,8 @@ export type User = {
     updatedAt?:string,
 }
 
-export type AnnouncementType = {
-    title?:string,
-    body:string,
-    show: string
-}
-
-export type AddressType = {
+export type WarehouseType = {
     id: number,
     name:string,
-    contact:string,
-    mobile: string,
-    address: string
-}
-
-export type LoadingType = {
-    id: number,
-    vessel?:string,
-    loaded?:string,
-    eta?: string,
-    status: "IN_TRANSIT" | "ARRIVED" | "DELIVERED"
+    description: string,
 }

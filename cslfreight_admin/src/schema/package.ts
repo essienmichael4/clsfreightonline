@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+const optionalString = (schema: z.ZodString) =>
+  z.preprocess(
+    (val) => (val === null ? "" : val), // turn null into ""
+    schema.or(z.literal("")).optional()
+);
+
 export const PackageSchema = z.object({
     email: z.string().email({
         message: "Email must be a valid email."
@@ -27,34 +33,48 @@ export const PackageSchema = z.object({
     eta: z.coerce.date(),
     status:z.union([
         z.literal("YET_TO_LOAD"),
-        z.literal("EN_ROUTE"),
+        z.literal("IN_TRANSIT"),
         z.literal("ARRIVED"),
         z.literal("DELIVERED")
     ])
 })
 
 export const EditPackageSchema = z.object({
-    email: z.string().email({
-        message: "Email must be a valid email."
-    }).optional().or(z.literal('')),
-    phone: z.string().min(9, {
-        message: "Must be a valid phone number."
-    }).optional().or(z.literal('')),
-    trackingNumber: z.string({
-        message: "Must be a valid tracking number."
-    }).optional().or(z.literal('')),
-    package: z.string({
-        message: "Must be a valid package."
-    }).optional().or(z.literal("")),
-    description: z.string({
-        message: "Must be a valid package desccription."
-    }).optional().or(z.literal('')),
-    vessel: z.string().min(2, {
-        message: "Must be a valid vessel name."
-    }).optional().or(z.literal('')),
-    customer: z.string().min(2, {
-        message: "Must be a valid name."
-    }).optional().or(z.literal('')),
+    email: optionalString(
+        z.string().email({
+        message: "Email must be a valid email.",
+        })
+    ),
+    phone: optionalString(
+        z.string().min(9, {
+        message: "Must be a valid phone number.",
+        })
+    ),
+    trackingNumber: optionalString(
+        z.string().min(1, {
+        message: "Must be a valid tracking number.",
+        })
+    ),
+    package: optionalString(
+        z.string().min(1, {
+        message: "Must be a valid package.",
+        })
+    ),
+    description: optionalString(
+        z.string().min(1, {
+        message: "Must be a valid package description.",
+        })
+    ),
+    vessel: optionalString(
+        z.string().min(2, {
+        message: "Must be a valid vessel name.",
+        })
+    ),
+    customer: optionalString(
+        z.string().min(2, {
+        message: "Must be a valid name.",
+        })
+    ),
     cbm: z.coerce.number().positive().min(0.001).optional(),
     quantity: z.coerce.number().positive().min(0).optional(),
     loaded: z.coerce.date().optional(),

@@ -1,4 +1,4 @@
-import { AuthType } from '@/lib/types'
+import type { AuthType } from '@/lib/types'
 import useAuth from './useAuth'
 import axios from 'axios'
 

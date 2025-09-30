@@ -14,7 +14,12 @@ export class LoadingService {
   }
 
   async findAll() {
-    return await this.loadingRepo.find()
+    return await this.loadingRepo.find({
+      where: {},
+      order: {
+        id: "DESC"
+      }
+    })
   }
 
   async findAllByStatus( status:Status) {

@@ -1,8 +1,8 @@
 import { DataTableColumnHeader } from "@/components/DataTable/ColumnHeader"
 import useAxiosToken from "@/hooks/useAxiosToken"
-import { User } from "@/lib/types"
+import type { User } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table'
 import { Edit, Plus, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"

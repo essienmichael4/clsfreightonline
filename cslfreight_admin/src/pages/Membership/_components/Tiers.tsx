@@ -1,8 +1,8 @@
 import { DataTableColumnHeader } from "@/components/DataTable/ColumnHeader"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { GetTierBadgeClass } from "@/lib/helper"
-import { MembershipTier } from "@/lib/types"
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import type { MembershipTier } from "@/lib/types"
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Badge } from "lucide-react"
 
 interface Props {

@@ -3,7 +3,7 @@ import { CreateClientDto, CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { EntityManager, Like, Repository } from 'typeorm';
+import { Brackets, EntityManager, Like, Repository } from 'typeorm';
 import { Client, Deleted } from './entities/client.entity';
 import { hash } from 'bcryptjs';
 import { ClientInfoUpdateRequest, ClientPaymentRequest } from './dto/updateUser.dto';
@@ -72,6 +72,19 @@ export class UserService {
     return this.paymentRepo.save(saveEntity)
   }
 
+  exportClients(){
+    return this.clientRepo.find({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        shippingMark: true,
+        phone: true,
+        createdAt: true
+      }
+    })
+  }
+
   async findClients(pageOptionsDto:PageOptionsDto, search?:string){
     const query = this.clientRepo.createQueryBuilder("client");
 
@@ -124,23 +137,39 @@ export class UserService {
     return rawTiers;
   }
 
-  async findPayments(pageOptionsDto: PageOptionsDto) {
+  async findPayments(pageOptionsDto: PageOptionsDto, search?: string) {
+    const query = this.paymentRepo
+      .createQueryBuilder("payment")
+      .leftJoinAndSelect("payment.client", "client")
+      .leftJoinAndSelect("payment.user", "user")
+      .orderBy("payment.id", "DESC")
+      .skip(pageOptionsDto.skip)
+      .take(pageOptionsDto.take);
 
-    const [data, total] = await this.paymentRepo.findAndCount({
-      relations: {
-        client: true,
-        user: true,
-      },
-      order:{
-        id: "DESC"
-      },
-      skip: pageOptionsDto.skip,
-      take: pageOptionsDto.take,
+    if (search) {
+      // Normalize the search string once
+      const searchTerm = `%${search.toLowerCase()}%`;
+
+      query.andWhere(
+        new Brackets(qb => {
+          // Use LOWER(...) → portable across Postgres & MySQL
+          qb.where("LOWER(client.name) LIKE :search", { search: searchTerm })
+            .orWhere("LOWER(client.shippingMark) LIKE :search", { search: searchTerm })
+            .orWhere("LOWER(client.email) LIKE :search", { search: searchTerm });
+        }),
+      );
+    }
+
+    const [data, total] = await query.getManyAndCount();
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount: total,
+      pageOptionsDto,
     });
 
-    const pageMetaDto = new PageMetaDto({itemCount: total, pageOptionsDto})
-    return new PageDto(data, pageMetaDto)
+    return new PageDto(data, pageMetaDto);
   }
+
 
   async findClientPayments(clientId: number, pageOptionsDto: PageOptionsDto) {
     const [data, total] = await this.paymentRepo.findAndCount({
@@ -233,6 +262,9 @@ export class UserService {
 
   async findShippingMarks(shippingMark?:string) {
     return await this.clientRepo.find({
+      relations: {
+        clientDetails: true
+      },
       where: {
         ...(shippingMark && {shippingMark: Like(`%${shippingMark}%`)})
       }
@@ -319,8 +351,6 @@ export class UserService {
     if(!user) throw new NotFoundException(`User is not permitted to make this request as you do not exist.`)
     if(!payment) throw new NotFoundException(`Payment with ID:${paymentId} does not exist.`)
 
-    
-
     return this.paymentRepo.update(payment.id, {
       paidShippingRate: paymentRequest.paidShippingRate,
       ...(paymentRequest.paymentMethod && { paymentMethod: paymentRequest.paymentMethod }),
@@ -356,10 +386,11 @@ export class UserService {
         }
       })
 
-      if(!attachment) throw new Error("Attachment not found")
+      if(!attachment) throw new NotFoundException("Attachment not found")
       
-      await this.attachmentRepo.delete(id)
+      await this.attachmentRepo.remove(attachment);
       await this.uploadService.deleteAttachment(attachment.name)
+      
       return {message: "attachment deleted successfully"}
     }catch(err){
       throw err
@@ -387,7 +418,6 @@ export class UserService {
     const tiers = await tierRepo.find({
       order: { priority: 'DESC' },
     });
-    // console.log(tiers)
     
     // Find the highest tier that matches current totalShippingRate
     const matchingTier = tiers.find((tier) => totalShipping >= tier.minShipping);

@@ -16,8 +16,8 @@ const Dashboard = () => {
     })
 
     const enrouteQuery = useQuery<countRequest>({
-        queryKey: ["packages", "enroute"],
-        queryFn: async() => await axios_instance_token.get(`/packages/dashboard/enroute`).then(res => res.data)
+        queryKey: ["packages", "intransit"],
+        queryFn: async() => await axios_instance_token.get(`/packages/dashboard/intransit`).then(res => res.data)
     })
 
     const arrivedQuery = useQuery<countRequest>({

@@ -49,7 +49,7 @@ const Search = () => {
                                 </div>
                                 <div>
                                     <h4 className='text-xs text-gray-400 mb-2 '>Status</h4>
-                                    <p ><span className={`${item.status === "YET_TO_LOAD" && 'bg-gray-300'} ${item.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${item.status === "EN_ROUTE" && 'bg-yellow-300 text-yellow-700'} ${item.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-1 px-4 rounded-full text-xs`}>{item.status}</span></p>
+                                    <p ><span className={`${item.status === "YET_TO_LOAD" && 'bg-gray-300'} ${item.status === "ARRIVED" && 'bg-emerald-300 text-emerald-700'} ${item.status === "IN_TRANSIT" && 'bg-yellow-300 text-yellow-700'} ${item.status === "DELIVERED" && 'bg-blue-300 text-blue-700'} py-1 px-4 rounded-full text-xs`}>{item.status}</span></p>
                                 </div>
                             </div>
                             <div className="px-4 flex flex-wrap gap-8 mt-8">

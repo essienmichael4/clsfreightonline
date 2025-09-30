@@ -1,13 +1,16 @@
 import { DataTableColumnHeader } from "@/components/DataTable/ColumnHeader"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Client } from "@/lib/types"
-import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
+import type { Client } from "@/lib/types"
+import { type ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Link } from "react-router-dom"
 import EditClientDialog from "./_components/EditClient"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Search } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Edit, Search } from "lucide-react"
 import { useState } from "react"
 import { useClients } from "@/hooks/useClients"
 import { useDebounce } from "use-debounce"
+import { useQuery } from "@tanstack/react-query"
+import useAxiosToken from "@/hooks/useAxiosToken"
+import * as XLSX from "xlsx"
 
 const emptyData: any[]= []
 
@@ -16,6 +19,25 @@ const Clients = () => {
   const [limit, setLimit] = useState(20)
   const [search, setSearch] = useState("")
   const [debouncedValue] = useDebounce(search, 500)
+  const axios_instance_token = useAxiosToken()
+
+  const { data: clients, isLoading } = useQuery<Client[]>({
+    queryKey: ["clients", "all"],
+    queryFn: async () => {
+      const res = await axios_instance_token.get(`/users/clients/all`);
+      return res.data;
+    },
+  });
+
+  const onClick = () => {
+    if (!clients) return;
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(clients);
+
+    XLSX.utils.book_append_sheet(wb, ws, "Clients");
+    XLSX.writeFile(wb, "clients.xlsx");
+  };
   
   const clientsQuery = useClients(page, limit, debouncedValue)
 
@@ -77,151 +99,155 @@ const Clients = () => {
     getPaginationRowModel: getPaginationRowModel(),
   })
 
-    return (
-      <>
-        <div className="container px-4 mx-auto">
-            <div className="mt-4 flex items-center justify-between">
-              <h3 className="font-bold">All Clients</h3>
-              <div className="w-full sm:w-[320px]">
-                <div className="flex w-full border h-full items-center px-2 py-2 gap-2 rounded-md focus-within:border-gray-500">
-                  <Search className="h-5 w-5 text-gray-400 pointer-events-none" />
-                  <input type="text" placeholder="Plur 890987645368" 
-                    onChange={e => {
-                      setSearch(e.target.value)
-                      setPage(1)
-                      }
-                    } className="outline-none text-sm w-full"/>
-                </div>
+  return (
+    <>
+      <div className="container px-4 mx-auto">
+          <div className="mt-4 flex items-center justify-between">
+            <h3 className="font-bold">All Clients</h3>
+            <div className="w-full flex items-center gap-2 sm:w-[400px]">
+              <button
+                onClick={onClick}
+                disabled={isLoading}
+                className="flex gap-2 text-gray-500 py-2 px-4 rounded-md border hover:border-gray-600 hover:text-gray-800"><Download className="w-4 h-4"/> <span className="text-nowrap text-sm">Export CSV</span></button>
+              <div className="flex w-full border h-full items-center px-2 py-2 gap-2 rounded-md focus-within:border-gray-500">
+                <Search className="h-5 w-5 text-gray-400 pointer-events-none" />
+                <input type="text" placeholder="Plur 890987645368" 
+                  onChange={e => {
+                    setSearch(e.target.value)
+                    setPage(1)
+                    }
+                  } className="outline-none text-sm w-full"/>
               </div>
             </div>
+          </div>
 
-            <div className="my-8 p-2 md:px-0 rounded-2xl">
-                <div className="w-full rounded-md  bg-white/75">
-                    <Table>
-                        <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                <TableHead key={header.id}>
-                                    {header.isPlaceholder
-                                    ? null
-                                    : flexRender(
-                                        header.column.columnDef.header,
-                                        header.getContext()
-                                        )}
-                                </TableHead>
-                                )
-                            })}
-                            </TableRow>
-                        ))}
-                        </TableHeader>
-                        <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                <TableCell className='py-6' key={cell.id}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </TableCell>
-                                ))}
-                            </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                            <TableCell colSpan={columns.length} className="h-24 text-center">
-                                No results.
-                            </TableCell>
-                            </TableRow>
-                        )}
-                        </TableBody>
-                    </Table>
-                </div>
-                <div className="flex items-center justify-between space-x-2 py-4 mt-4">
-                  <div>
-                    <span className="mr-2">Items per page</span>
-                    <select 
-                      className="border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2"
-                      value={limit}
-                      onChange={e=> {setLimit(Number(e.target.value))}} >
-
-                      {[10,20,50,100].map((pageSize)=>(
-                        <option key={pageSize} value={pageSize}>
-                          {pageSize}
-                        </option>
+          <div className="my-8 p-2 md:px-0 rounded-2xl">
+              <div className="w-full rounded-md  bg-white/75">
+                  <Table>
+                      <TableHeader>
+                      {table.getHeaderGroups().map((headerGroup) => (
+                          <TableRow key={headerGroup.id}>
+                          {headerGroup.headers.map((header) => {
+                              return (
+                              <TableHead key={header.id}>
+                                  {header.isPlaceholder
+                                  ? null
+                                  : flexRender(
+                                      header.column.columnDef.header,
+                                      header.getContext()
+                                      )}
+                              </TableHead>
+                              )
+                          })}
+                          </TableRow>
                       ))}
-                    </select>
-                  </div>
+                      </TableHeader>
+                      <TableBody>
+                      {table.getRowModel().rows?.length ? (
+                          table.getRowModel().rows.map((row) => (
+                          <TableRow
+                              key={row.id}
+                              data-state={row.getIsSelected() && "selected"}
+                          >
+                              {row.getVisibleCells().map((cell) => (
+                              <TableCell className='py-6' key={cell.id}>
+                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </TableCell>
+                              ))}
+                          </TableRow>
+                          ))
+                      ) : (
+                          <TableRow>
+                          <TableCell colSpan={columns.length} className="h-24 text-center">
+                              No results.
+                          </TableCell>
+                          </TableRow>
+                      )}
+                      </TableBody>
+                  </Table>
+              </div>
+              <div className="flex items-center justify-between space-x-2 py-4 mt-4">
+                <div>
+                  <span className="mr-2">Items per page</span>
+                  <select 
+                    className="border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2"
+                    value={limit}
+                    onChange={e=> {setLimit(Number(e.target.value))}} >
 
-                  <div className="flex space-x-2">
-                      <button
-                        className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
-                        onClick={()=>setPage(1)}
-                        disabled={page === 1}>
-                        <ChevronsLeft size={20} />
-                      </button>
-                      <button
-                        className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
-                        onClick={()=>setPage(page - 1)}
-                        disabled={page === 1}>
-                        <ChevronLeft size={20} />
-                      </button>
-
-                      <span className="flex items-center">
-                        <input 
-                          className="w-16 p-2 rounded-md border border-gray-300 text-center"
-                          min={1}
-                          max={table.getPageCount()}
-                          type="number"
-                          value={table.getState().pagination.pageIndex + 1}
-                          onChange={e=> {
-                            const page = e.target.value ? Number(e.target.value) - 1 : 0
-                            setPage(page)
-                          }}
-                        />
-                        <span className="ml-1">of {clientsQuery.data?.meta.pageCount}</span>
-                      </span>
-
-                      <button
-                        className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
-                        onClick={()=>setPage(page + 1)}
-                        disabled={ page === Number(clientsQuery.data?.meta.pageCount) }>
-                        <ChevronRight size={20} />
-                      </button>
-                      <button
-                        className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
-                        onClick={()=>setPage(Number(clientsQuery.data?.meta.pageCount))}
-                        disabled={page === Number(clientsQuery.data?.meta.pageCount)}>
-                        <ChevronsRight size={20} />
-                      </button>
-                  </div>
-
-                  {/* <div className="flex space-x-2">
-                    <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    >
-                    Previous
-                    </Button>
-                    <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                    >
-                    Next
-                    </Button>
-                  </div> */}
+                    {[10,20,50,100].map((pageSize)=>(
+                      <option key={pageSize} value={pageSize}>
+                        {pageSize}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-            </div>
-        </div>
-      </>
-    )
+
+                <div className="flex space-x-2">
+                    <button
+                      className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                      onClick={()=>setPage(1)}
+                      disabled={page === 1}>
+                      <ChevronsLeft size={20} />
+                    </button>
+                    <button
+                      className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                      onClick={()=>setPage(page - 1)}
+                      disabled={page === 1}>
+                      <ChevronLeft size={20} />
+                    </button>
+
+                    <span className="flex items-center">
+                      <input 
+                        className="w-16 p-2 rounded-md border border-gray-300 text-center"
+                        min={1}
+                        max={table.getPageCount()}
+                        type="number"
+                        value={table.getState().pagination.pageIndex + 1}
+                        onChange={e=> {
+                          const page = e.target.value ? Number(e.target.value) - 1 : 0
+                          setPage(page)
+                        }}
+                      />
+                      <span className="ml-1">of {clientsQuery.data?.meta.pageCount}</span>
+                    </span>
+
+                    <button
+                      className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                      onClick={()=>setPage(page + 1)}
+                      disabled={ page === Number(clientsQuery.data?.meta.pageCount) }>
+                      <ChevronRight size={20} />
+                    </button>
+                    <button
+                      className="p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                      onClick={()=>setPage(Number(clientsQuery.data?.meta.pageCount))}
+                      disabled={page === Number(clientsQuery.data?.meta.pageCount)}>
+                      <ChevronsRight size={20} />
+                    </button>
+                </div>
+
+                {/* <div className="flex space-x-2">
+                  <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
+                  >
+                  Previous
+                  </Button>
+                  <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                  >
+                  Next
+                  </Button>
+                </div> */}
+              </div>
+          </div>
+      </div>
+    </>
+  )
 }
 
 export default Clients

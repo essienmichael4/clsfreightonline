@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
-import { RegisterUserSchema, RegisterUserSchemaType } from '@/schema/user'
+import { RegisterUserSchema, type RegisterUserSchemaType } from '@/schema/user'
 import useAuth from '@/hooks/useAuth'
 import RolePicker from './RolePicker'
 

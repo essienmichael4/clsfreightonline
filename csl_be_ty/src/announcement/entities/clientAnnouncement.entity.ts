@@ -15,7 +15,7 @@ export class ClientAnnouncement {
     })
     title: string
 
-    @Column()
+    @Column({type: "text", nullable: true})
     body: string
 
     @Column({

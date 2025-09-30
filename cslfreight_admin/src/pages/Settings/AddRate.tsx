@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { PackageRate, PackageRateType } from '@/schema/package'
+import { PackageRate, type PackageRateType } from '@/schema/package'
 
 interface Props{
     trigger?: React.ReactNode,
@@ -24,7 +24,7 @@ const AddRate = ({trigger}:Props) => {
     const form = useForm<PackageRateType>({
         resolver:zodResolver(PackageRate),
         defaultValues:{
-            description: ""
+            description: "",
         }
     })
 
@@ -78,8 +78,8 @@ const AddRate = ({trigger}:Props) => {
                         Add New Shipping Rate
                     </DialogTitle>
                 </DialogHeader>
-                <Form {...form}>
-                    <form className='space-y-1 w-full'>
+                <Form {...form} >
+                    <form className='space-y-1 w-full' onSubmit={form.handleSubmit(onSubmit)}>
                         <FormField 
                             control={form.control}
                             name="description"
@@ -104,6 +104,7 @@ const AddRate = ({trigger}:Props) => {
                                     <FormLabel className='my-1 font-semibold text-xs'>Rate ($ USD)</FormLabel>
                                     <FormControl>
                                         <Input 
+                                            type="number"
                                             className='py-2 px-2 text-sm rounded border border-slate-200 w-full' 
                                             placeholder='Please enter rate' {...field} />
                                     </FormControl>
@@ -120,6 +121,7 @@ const AddRate = ({trigger}:Props) => {
                                     <FormLabel className='my-1 font-semibold text-xs'>Rate (¢ GHS)</FormLabel>
                                     <FormControl>
                                         <Input 
+                                            type="number"
                                             className='py-2 px-2 text-sm rounded border border-slate-200 w-full' 
                                             placeholder='Please enter rate' {...field} />
                                     </FormControl>

@@ -11,8 +11,8 @@ import { toast } from 'sonner'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
-import { UserUpdateSchema, UserUpdateSchemaType } from '@/schema/user'
-import { User } from '@/lib/types'
+import { UserUpdateSchema, type UserUpdateSchemaType } from '@/schema/user'
+import type { User } from '@/lib/types'
 
 interface Props{
     user:User,

@@ -72,8 +72,6 @@ export class UserController {
   @UseGuards(JwtGuard)
   @Get("memberships")
   findMembers(@Query() pageOptionsDto:PageOptionsDto, @Query("name") name?:string) {
-    console.log(pageOptionsDto);
-    
     return this.userService.findMemberships(pageOptionsDto, name);
   }
 
@@ -91,8 +89,14 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Get("clients/payments")
-  findPayments(@Query() pageOptionsDto:PageOptionsDto,) {
-    return this.userService.findPayments(pageOptionsDto);
+  findPayments(@Query() pageOptionsDto:PageOptionsDto, @Query("search") search?: string) {
+    return this.userService.findPayments(pageOptionsDto, search);
+  }
+  
+  @UseGuards(JwtGuard)
+  @Get("clients/all")
+  exportClients() {
+    return this.userService.exportClients();
   }
 
   @UseGuards(JwtGuard)

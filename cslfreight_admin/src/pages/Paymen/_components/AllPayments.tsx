@@ -2,20 +2,23 @@ import { DataTableColumnHeader } from "@/components/DataTable/ColumnHeader"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { usePayments } from "@/hooks/usePayments"
-import { Payment } from "@/lib/types"
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import type { Payment } from "@/lib/types"
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Trash2 } from "lucide-react"
 import { useState } from "react"
 import EditPayment from "./EditPayment"
 import DeletePayment from "./DeletePayment"
 
 const emptyData: any[]= []
+interface PaymentsProps {
+    search: string, 
+    page: number,
+    setPage: (value: number) => void
+}
 
-const AllPayments = () => {
-    const [page, setPage] = useState(1)
+const AllPayments = ({search, page, setPage}: PaymentsProps) => {
     const [limit, setLimit] = useState(20)
-    
-    const paymentQuery = usePayments(page, limit)
+    const paymentQuery = usePayments(page, limit, search)
 
     const columns:ColumnDef<Payment>[] =[{
         accessorKey: "id",
@@ -27,7 +30,7 @@ const AllPayments = () => {
         </div>
         },{
             accessorKey: "name",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Name' />),
+            header:({column})=>(<DataTableColumnHeader column={column} title='Shipping Mark' />),
             cell:({row}) => <div className="flex flex-col gap-2 text-xs">
                 <span>{row.original.client?.shippingMark}</span>
             </div>

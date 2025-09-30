@@ -1,9 +1,10 @@
 import { Skeleton } from "@/components/ui/skeleton"
 import useAxiosToken from "@/hooks/useAxiosToken"
-import { PackageTypeAndRate } from "@/lib/types"
+import type { PackageTypeAndRate } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
 import { Edit, Trash2 } from "lucide-react"
 import EditRate from "./EditRate"
+import DeleteRate from "./DeleteRate"
 
 const ShippingRates = () => {
     const axios_instance_token = useAxiosToken()
@@ -11,8 +12,6 @@ const ShippingRates = () => {
     const {data:rates, isLoading} = useQuery<PackageTypeAndRate[]>({
         queryKey: ["rates"],
         queryFn: async() => await axios_instance_token.get(`/packages/shipping-rates`).then(res => {
-            console.log(res.data);
-            
             return res.data
         })
     })
@@ -32,9 +31,9 @@ const ShippingRates = () => {
                             <Edit className='w-4 h-4' />
                           </button>} />
 
-                          <button className='p-2 rounded-full  bg-white  text-rose-300 hover:text-rose-700'>
+                          <DeleteRate id={Number(rate.id)} rate={rate} trigger={<button className='p-2 rounded-full  bg-white  text-rose-300 hover:text-rose-700'>
                             <Trash2 className='w-4 h-4' />
-                          </button>
+                          </button>} />
                       </div>
                       <div>
                         <h5 className="text-xs font-semibold">Package Description</h5>

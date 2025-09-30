@@ -11,7 +11,7 @@ import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
-import { AddAddressSchemaType , AddAddressSchema} from '@/schema/address'
+import { type AddAddressSchemaType , AddAddressSchema} from '@/schema/address'
 
 interface Props{
     trigger?: React.ReactNode,

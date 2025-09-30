@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import useAxiosToken from "./useAxiosToken";
-import { Data } from "@/lib/types";
+import type { Data } from "@/lib/types";
 
-export const usePayments = (page: number, limit: number) => {
+export const usePayments = (page: number, limit: number, search?: string) => {
     const axios_instance_token = useAxiosToken()
     return useQuery<Data>({
-        queryKey: ["payments", page, limit],
+        queryKey: ["payments", page, limit, search],
         queryFn: async() => await axios_instance_token.get(`/users/clients/payments`, {
-            params: { page, take: limit, }
+            params: { page, take: limit, search}
         }).then(res => {
             return res.data
         })

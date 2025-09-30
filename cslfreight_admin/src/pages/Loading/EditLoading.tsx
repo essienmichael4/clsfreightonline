@@ -10,13 +10,13 @@ import axios from 'axios'
 import { CalendarIcon, Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { useState } from 'react'
-import { EditLoadingSchema, EditLoadingSchemaType } from '@/schema/loading'
+import { EditLoadingSchema, type EditLoadingSchemaType } from '@/schema/loading'
 import StatusPicker from './StatusPicker'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
-import { LoadingType } from '@/lib/types'
+import type { LoadingType } from '@/lib/types'
 
 interface Props{
     trigger?: React.ReactNode,

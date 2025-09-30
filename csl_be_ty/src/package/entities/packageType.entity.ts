@@ -1,5 +1,4 @@
-import { User } from "src/user/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Package } from "./package.entity";
 
 @Entity()
@@ -10,10 +9,16 @@ export class PackageType {
     @Column()
     description: string;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2 })
+    @Column({ type: 'decimal', precision: 10, scale: 2, transformer: {
+        to: (value: number) => value,
+        from: (value: string) => parseFloat(value),
+    }})
     rate: number;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true, transformer: {
+        to: (value: number) => value,
+        from: (value: string) => parseFloat(value),
+    }})
     cedisRate: number;
 
     @CreateDateColumn()

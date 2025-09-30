@@ -44,7 +44,7 @@ const ClientAnnouncement = () => {
                     </button>
                 </div>
                 <div className="mt-4">
-                    <AnnouncementParser announcement={announcementQuery.data?.body} />
+                    {announcementQuery.data.body && <AnnouncementParser announcement={announcementQuery.data?.body} />}
                 </div>
             </div>
         </div>}

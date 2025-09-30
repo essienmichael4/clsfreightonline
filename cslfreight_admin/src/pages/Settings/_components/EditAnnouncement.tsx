@@ -10,8 +10,8 @@ import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { useState } from 'react'
-import { EditAnnouncementSchema, EditAnnouncementSchemaType } from '@/schema/announcement'
-import { AnnouncementType } from '@/lib/types'
+import { EditAnnouncementSchema, type EditAnnouncementSchemaType } from '@/schema/announcement'
+import type { AnnouncementType } from '@/lib/types'
 import Tiptap from '@/components/RichTextEditor/Tiptap'
 
 interface Props{

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Package } from '@/lib/types'
+import type { Package } from '@/lib/types'
 import { DataTableColumnHeader } from './DataTable/ColumnHeader'
-import { ColumnDef, getCoreRowModel, flexRender, useReactTable } from '@tanstack/react-table'
+import { type ColumnDef, getCoreRowModel, flexRender, useReactTable } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { TimeLeft } from '@/lib/helper'
@@ -14,7 +14,9 @@ const ShippingReport = () => {
 
     const orders = useQuery<Package[]>({
         queryKey: ["summary", "packages"],
-        queryFn: async() => await axios_instance_token.get(`/packages/dashboard`).then(res => res.data)
+        queryFn: async() => await axios_instance_token.get(`/packages/dashboard`).then(res => {
+            return res.data
+        })
     })
 
     const columns:ColumnDef<Package>[] =[{

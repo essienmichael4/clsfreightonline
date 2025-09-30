@@ -2,7 +2,7 @@ import { Edit, Loader2, Plus, Trash2 } from "lucide-react"
 import AddLoading from "./AddLoading"
 import useAxiosToken from "@/hooks/useAxiosToken"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { LoadingType } from "@/lib/types"
+import type { LoadingType } from "@/lib/types"
 import EditLoading from "./EditLoading"
 import DeleteLoading from "./DeleteLoading"
 import { toast } from "sonner"
@@ -84,7 +84,7 @@ const Loading = () => {
                         />
                     </div>
                 </div>
-                <div className="w-full mt-4 flex flex-col gap-4">
+                <div className="w-full mt-4 mb-8 flex flex-col gap-4">
                     {
                         !dataAvailable && 
                         <div className='bg-gray-100 rounded-lg h-[300px] flex flex-col items-center justify-center'>
@@ -97,13 +97,13 @@ const Loading = () => {
                         <div key={i} className="p-4 border rounded-md flex flex-wrap gap-4 items-center justify-between">
                             <div>
                                 <div className="flex gap-2 items-center">
-                                    <p>Loaded - {item.loaded}</p> <span className="text-xs py-2 px-4 bg-emerald-200 rounded-full text-emerald-700">{item.status}</span>
+                                    <p>Loaded - {new Date(item.loaded as string).toDateString()}</p> <span className="text-xs py-2 px-4 bg-emerald-200 rounded-full text-emerald-700">{item.status}</span>
                                 </div>
                                 <h5 className="text-3xl mt-2">{item.vessel}</h5>
                             </div>
                             <div className="ml-8">
                                 <span className="text-xs">ETA</span>
-                                <p className="text-xl">{item.eta}</p>
+                                <p className="text-xl">{new Date(item.eta as string).toDateString()}</p>
                             </div>
                             <div className="ml-8">
                                 <span className="text-xs">Status Actions</span>

@@ -1,5 +1,5 @@
 import { GetTierBadgeClass } from "@/lib/helper"
-import { MembershipTier } from "@/lib/types"
+import type { MembershipTier } from "@/lib/types"
 import { Badge } from "lucide-react"
 
 interface Props {

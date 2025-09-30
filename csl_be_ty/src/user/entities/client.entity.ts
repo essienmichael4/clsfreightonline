@@ -4,6 +4,7 @@ import { Details } from "./details.entity";
 import { Attachment } from "./attachment.entity";
 import { MembershipTier } from "./membership.entity";
 import { Payment } from "./payment.entity";
+import { Invoice } from "src/invoice/entities/invoice.entity";
 
 export enum Deleted {
     TRUE = 'TRUE',
@@ -32,7 +33,10 @@ export class Client {
     @Column({nullable: true})
     phone:string
 
-    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0, transformer: {
+        to: (value: number) => value,
+        from: (value: string) => parseFloat(value),
+    }})
     totalShippingRate: number;
 
     @CreateDateColumn({ type: 'timestamp' })
@@ -46,6 +50,9 @@ export class Client {
 
     @OneToMany(() => Package, (packageEntity) => packageEntity.user)
     packages: Package[];
+
+    @OneToMany(() => Invoice, (invoice) => invoice.client)
+    invoices: Invoice[];
 
     @OneToOne(()=> Details, (details)=> details.client , { cascade: true })
     @JoinColumn({ name: 'clientAddress' })

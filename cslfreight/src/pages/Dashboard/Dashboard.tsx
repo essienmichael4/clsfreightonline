@@ -37,7 +37,7 @@ const Dashboard = () => {
       <div className='px-2 w-full flex flex-wrap justify-between gap-4 mb-4'>
         <div className="w-full md:w-1/2">
           <h2 className='text-lg lg:text-xl font-semibold'>Dashboard</h2>
-          <p className="text-xs md:w-full text-muted-foreground">Estimated shipping fees does not reflect your actual shipping fees as the fees may be higher or lower than what is shown. Please, only make payment for fees sent to you on invoices. The estimate reflects fees for undelivered packages only. Also, all billings are in USD and will be paid against the current USD-GHS rate.</p>
+          <p className="text-xs md:w-full text-muted-foreground">Shipping rates show the highest rates per category, hence, discounted rates will reflect on your invoices. Also actual shipping fees may be higher or lower at the time of payment due to changes in USD-GHC rates. Kindly use these estimated shipping fees as a guide for preparation.</p>
         </div>
         <div className="flex w-full md:w-[520px] flex-col p-3 rounded-2xl border bg-gradient-to-r from-orange-50 to-orange-500">
           <div className="flex gap-8 justify-between items-center">

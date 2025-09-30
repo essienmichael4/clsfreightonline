@@ -10,8 +10,8 @@ import { toast } from 'sonner'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
-import { Client } from '@/lib/types'
-import { EditClientSchemaType, EditClientSchema } from '@/schema/client'
+import type { Client } from '@/lib/types'
+import { type EditClientSchemaType, EditClientSchema } from '@/schema/client'
 import PhoneInput from 'react-phone-input-2'
 import "react-phone-input-2/lib/style.css"
 

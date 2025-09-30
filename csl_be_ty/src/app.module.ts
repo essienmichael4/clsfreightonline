@@ -14,6 +14,8 @@ import { MailModule } from './mailer/mailer.module';
 import { UploadModule } from './upload/upload.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { SettingsModule } from './settings/settings.module';
+import { InvoiceModule } from './invoice/invoice.module';
 
 @Module({
   imports: [
@@ -31,7 +33,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         database: configService.get("DB_NAME"),
         // entities: [],
         entities: [join(process.cwd(), 'dist/**/*.entity.js')],
-        synchronize:true
+        synchronize:true,
       })
     }),
     UserModule,
@@ -42,7 +44,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     LoadingModule,
     MailModule,
     UploadModule,
-    StatisticsModule
+    StatisticsModule,
+    SettingsModule,
+    InvoiceModule
   ],
   controllers: [AppController],
   providers: [AppService],

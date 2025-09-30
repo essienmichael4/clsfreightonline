@@ -1,14 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import './index.css'
+import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
+import { Toaster } from 'sonner'
+import ReactQueryProvider from './components/ReactQueryProvider.tsx'
 import AuthProvider from './context/authContext.tsx'
-import { Toaster } from "@/components/ui/sonner";
-import ReactQueryProvider from '@/components/ReactQueryProvider.tsx'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
     <Toaster richColors position="bottom-right" />
     <BrowserRouter>
       <ReactQueryProvider>
@@ -17,5 +17,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </AuthProvider>
       </ReactQueryProvider>
     </BrowserRouter>
-  </React.StrictMode>,
+  </StrictMode>,
 )

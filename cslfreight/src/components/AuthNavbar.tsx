@@ -1,17 +1,41 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,  DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from './ui/button'
+import Marquee from 'react-fast-marquee'
 import logo from '../assets/logo.webp'
 import { Badge, CalculatorIcon, FileArchive, LogOut, Menu, User, X } from 'lucide-react'
 import useAuth from '@/hooks/useAuth'
 import { Link, NavLink, useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 import { GetTierBadgeClass } from "@/lib/helper"
+import { axios_instance } from "@/api/axios"
+import { MarqueAnnouncementType } from "@/lib/types"
+import { useQuery } from "@tanstack/react-query"
 
 const AuthNavbar = () => {
   const {auth, dispatch} = useAuth()
   const navigate = useNavigate()
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
+  const [show, setShow] = useState(false)
+
+  const marqueeAnnouncements = useQuery<MarqueAnnouncementType[]>({
+      queryKey: ["announcements", "marquee"],
+      queryFn: async() => await axios_instance.get(`/settings/marque`).then(res => {
+        return res.data
+      })
+  })
+
+  useEffect(() => {
+    if (marqueeAnnouncements.data && marqueeAnnouncements.data.length > 0) {
+      setShow(true)
+    } else {
+      setShow(false)
+    }
+  }, [marqueeAnnouncements.data])
+
+  const handleShow = ()=>{
+    setShow(!show)
+  }
   
   const toggleNavbar = ()=>{
     setMobileDrawerOpen(!mobileDrawerOpen)
@@ -38,8 +62,26 @@ const AuthNavbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b border-neutral-100/80">
-        <div className="lg:container px-4 mx-auto relative text-sm">
+      <nav className="sticky top-0 z-50 pb-3 backdrop-blur-lg border-b border-neutral-100/80">
+        <div className={`${show ? "block" : "hidden"} bg-gray-800 relative`}>
+          <div className='container px-4 py-4 mx-auto '>
+            <Marquee className="text-gray-100 text-sm space-x-16">
+              {marqueeAnnouncements.data?.map((marquee, idx) => (
+                <span
+                  key={idx}
+                  className={`flex items-center ${idx > 0 ? "ml-4" : ""}`}
+                >
+                  {idx > 0 && <span className="mx-4 text-gray-400">|</span>}
+                  {marquee.announcement}
+                </span>
+              ))}
+            </Marquee>
+            <button onClick={handleShow} className='absolute z-10 text-white right-4 top-4'>
+              <X  className='w-4 h-4'/>
+            </button>
+          </div>
+        </div>
+        <div className="lg:container mt-3 px-4 mx-auto relative text-sm">
           <div className="flex justify-between items-center">
             <div className='flex items-center gap-4'>
               <Link to={"/dashboard"} className="flex items-center flex-shrink-0">
@@ -179,11 +221,6 @@ const AuthNavbar = () => {
               <button onClick={handleCalculate} className="py-3 w-full mb-2 text-xs text-white bg-orange-500 rounded-md">Calculate</button>
           </div>
       </div>
-      {/* <div className="fixed bottom-24 right-4 lg:bottom-28 lg:right-8 rounded-full">
-        <button onClick={onCalculateClick} className="p-3 text-orange-500 border-orange-500 border-2 rounded-full">
-          <CalculatorIcon />
-        </button>
-      </div> */}
     </>
   )
 }

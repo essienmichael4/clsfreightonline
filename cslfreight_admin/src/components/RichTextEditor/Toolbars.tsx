@@ -1,7 +1,7 @@
-import { TaskType, tools, HeadingType, headingOptions } from "@/constants"
-import { ChainedCommands, Editor } from "@tiptap/react"
+import { type TaskType, tools, type HeadingType, headingOptions } from "@/constants"
+import {type ChainedCommands, Editor } from "@tiptap/react"
 import IconButton from "./IconButton"
-import { ChangeEventHandler } from "react"
+import type { ChangeEventHandler } from "react"
 
 interface Props {
     editor: Editor | null
@@ -18,9 +18,9 @@ const Toolbars = ({editor}:Props) => {
     const handleOnClick = (task:TaskType)=>{
         switch(task){
             case "bold":
-                return chainMethods(editor, chain => chain.toggleBold())
+                return chainMethods(editor, chain => chain.toggleMark("bold"))
             case "italic":
-                return chainMethods(editor, chain => chain.toggleItalic())
+                return chainMethods(editor, chain => chain.toggleMark("italic"))
             case "underline":
                 return chainMethods(editor, chain => chain.toggleUnderline())
             case "strike":
@@ -64,7 +64,7 @@ const Toolbars = ({editor}:Props) => {
 
     return (
         <div className="border border-input bg-transparent rounded-md space-x-1 p-1">
-            <select value={getSelectedHeading()} className="p-2 text-xs" onChange={handleHeadingSelectionChange}>
+            <select value={getSelectedHeading()} className="p-2" onChange={handleHeadingSelectionChange}>
                 {headingOptions.map(item=>{
                     return <option key={item.task} value={item.task}>{item.value}</option>
                 })}

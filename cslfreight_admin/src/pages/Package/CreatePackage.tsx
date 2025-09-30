@@ -7,7 +7,7 @@ import useAxiosToken from '@/hooks/useAxiosToken'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { PackageSchema, PackageSchemaType } from '@/schema/package'
+import { PackageSchema, type PackageSchemaType } from '@/schema/package'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
@@ -47,7 +47,7 @@ const CreatePackage = ({trigger}:Props) => {
         }
     })
 
-    const handleStatusChange = (value:"YET_TO_LOAD" | "EN_ROUTE" | "ARRIVED" | "DELIVERED")=>{
+    const handleStatusChange = (value:"YET_TO_LOAD" | "IN_TRANSIT" | "ARRIVED" | "DELIVERED")=>{
         form.setValue("status", value)        
     }
 
@@ -375,7 +375,7 @@ const CreatePackage = ({trigger}:Props) => {
                             <div className='w-full sm:w-1/2 px-1'>
                                 <FormField 
                                     control={form.control}
-                                    name="vessel"
+                                    name="status"
                                     render={({}) =>(
                                         <FormItem className='flex flex-col'>
                                         <FormLabel className='my-1 text-xs'>Status</FormLabel>

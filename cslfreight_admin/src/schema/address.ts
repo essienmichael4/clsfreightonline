@@ -15,6 +15,27 @@ export const AddAddressSchema = z.object({
     })
 })
 
+export const AddInvoiceAddressSchema = z.object({
+    name: z.string().min(2, {
+        message: "Name must be a proper name."
+    }),
+    streetAddress: z.string().min(2, {
+        message: "This must be a proper street address."
+    }),
+    addressLine: z.string().min(2, {
+        message: "This must be a proper addressline."
+    }),
+    box: z.string().min(2, {
+        message: "This must be a proper box number."
+    }),
+    city: z.string().min(2, {
+        message: "This must be a city."
+    }),
+    state: z.string().min(2, {
+        message: "This must be a state."
+    })
+})
+
 export const EditAddressSchema = z.object({
     name: z.string().min(2, {
         message: "Title must be a proper title."
@@ -31,5 +52,6 @@ export const EditAddressSchema = z.object({
 })
 
 export type AddAddressSchemaType = z.infer<typeof AddAddressSchema>
+export type AddInvoiceAddressSchemaType = z.infer<typeof AddInvoiceAddressSchema>
 export type EditAddressSchemaType = z.infer<typeof EditAddressSchema>
 

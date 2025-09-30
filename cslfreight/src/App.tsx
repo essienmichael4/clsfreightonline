@@ -24,6 +24,8 @@ import PasswordReset from './pages/PasswordReset/PasswordReset'
 import ClientAnnouncement from './components/ClientAnnouncement'
 import Attachments from './pages/Attachments/Attachments'
 import Payments from './pages/Payments/Payments'
+import Invoices from './pages/Invoice/Invoices'
+import InvoiceDetails from './pages/Invoice/InvoiceDetails'
 
 function App() {
 
@@ -58,6 +60,8 @@ function App() {
               <Route path="/packages/:id" element={<PackageDetails />} />
               <Route path="/profile/:id" element={<Profile />} />
               <Route path="/attachments/:id" element={<Attachments />} />
+              <Route path="/invoices/" element={<Invoices />} />
+              <Route path="/invoices/:id" element={<InvoiceDetails />} />
             </Route>
           </Route>
         </Route>

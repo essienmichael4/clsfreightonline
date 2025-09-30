@@ -7,7 +7,7 @@ const Terms = () => {
         <div className="mt-12">
             <div className="px-6 mt-10 rounded-lg">
                 <h2 className="font-bold text-3xl sm:font-normal sm:text-6xl tracking-wide">Our Terms & conditions</h2>
-                <p className="flex items-center text-sm gap-2 text-gray-500"><Clock className="w-4 h-4"/>Last updated: 2 January 2025</p>
+                <p className="flex items-center text-sm gap-2 text-gray-500"><Clock className="w-4 h-4"/>Last updated: 15 September 2025</p>
 
                 <div className="mt-8">
                     <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
@@ -30,7 +30,7 @@ const Terms = () => {
                     </div>
                     <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
                         <h4 className="text-3xl text-gray-500"># 05</h4>
-                        <p>You are liable to pay USD 5 per day/package as warehousing fees after 7 days of cargo 
+                        <p>You are liable to pay GH¢ 100.00 per day/package as warehousing fees after 7 days of cargo 
                             arrival for pickup or delivery or pay at a declared flat rate as a consideration to customers.</p>
                     </div>
                     <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
@@ -94,6 +94,14 @@ const Terms = () => {
                     <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
                         <h4 className="text-3xl text-gray-500"># 20</h4>
                         <p>Please note that all payments are in US Dollar rate with Ghana Cedi equivalent at the time of payment.</p>
+                    </div>
+                    <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
+                        <h4 className="text-3xl text-gray-500"># 21</h4>
+                        <p>We shall only keep your packages for a maximum of 30 days and after all means are exhausted, we will re-sell at a fair price them to retrieve our customs clearance and freight charges.</p>
+                    </div>
+                    <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
+                        <h4 className="text-3xl text-gray-500"># 22</h4>
+                        <p>Due to storage and security costs, we shall totally auction all unpaid packages in our warehouse by proper legal proceedings after 60 days.</p>
                     </div>
                 </div>
             </div>

@@ -62,6 +62,12 @@ export class PackageController {
     return this.packageService.findAll(pageOptionsDto, search, status);
   }
 
+  @UseGuards(JwtGuard)
+  @Get("clients/:id")
+  findAllClientPackagesForInvoice(@Param('id', ParseIntPipe) id: number, @Query("search") search?: string, @Query("loaded_date") loadedDate?: string, ) {
+    return this.packageService.findAllClientPackages(id, search, loadedDate);
+  }
+
   @Get("search")
   findPakages(@Query("filter") filter:string) {
     const search = filter.split(',')
@@ -94,9 +100,9 @@ export class PackageController {
   }
 
   @UseGuards(JwtGuard)
-  @Get('dashboard/enroute')
+  @Get('dashboard/intransit')
   async findDashboardEnRoute() {
-     const count = await this.packageService.findEnroutCount();     
+     const count = await this.packageService.findIntransitCount();     
      return {count}
   }
 
@@ -159,6 +165,12 @@ export class PackageController {
   @Patch("shipping-rates/:id")
   updatePackageRate(@Param('id', ParseIntPipe) id: number, @Body() body: PackageRateRequest,) {
     return this.packageService.updatePackageTypeAndRate(id, body)
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete("shipping-rates/:id")
+  deletePackageRate(@Param('id', ParseIntPipe) id: number) {
+    return this.packageService.removeRate(id)
   }
 
   @UseGuards(JwtGuard)

@@ -5,6 +5,7 @@ import { Deleted, Package } from "src/package/entities/package.entity";
 import { PackageEdit } from "src/package/entities/packageEdits.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Payment } from "./payment.entity";
+import { Marque } from "src/settings/entities/marque.entity";
 
 export enum Role {
     ADMIN = 'ADMIN',
@@ -50,6 +51,9 @@ export class User {
 
     @OneToMany(()=> ClientAnnouncement, (clientAnnouncement) => clientAnnouncement.updatedBy)
     clientAnnouncements: ClientAnnouncement[]
+
+    @OneToMany(()=> Marque, (marque) => marque.updatedBy)
+    marqueAnnouncements: Marque[]
 
     @OneToMany(()=> Address, (address) => address.updatedBy)
     address: Address[]

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Loader2, Plus, PlusCircle } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AddressType, AnnouncementType, User } from "@/lib/types"
+import type { AddressType, AnnouncementType, User } from "@/lib/types"
 import useAxiosToken from '@/hooks/useAxiosToken'
 import EditAccountDialog from './EditAccountDialog'
 import { Button } from '@/components/ui/button'

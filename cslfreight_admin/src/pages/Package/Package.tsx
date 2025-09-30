@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import useAxiosToken from "@/hooks/useAxiosToken"
 import { FormattedDate, FormattedTime } from "@/lib/helper"
-import { Package } from "@/lib/types"
+import type { Package } from "@/lib/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { Edit } from "lucide-react"
@@ -94,7 +94,7 @@ const PackageDetails = () => {
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {packageDetail.data?.status !== "YET_TO_LOAD" && <Button className="border bg-gray-700 hover:bg-gray-500" onClick={()=>{onPackageUpdate("ON_HOLD")}} disabled={isPending}>Yet to Load</Button>}
-                        {packageDetail.data?.status !== "EN_ROUTE" && <Button className="border bg-yellow-700 hover:bg-yellow-500" onClick={()=>{onPackageUpdate("EN_ROUTE")}} disabled={isPending}>En Route</Button>}
+                        {packageDetail.data?.status !== "IN_TRANSIT" && <Button className="border bg-yellow-700 hover:bg-yellow-500" onClick={()=>{onPackageUpdate("IN_TRANSIT")}} disabled={isPending}>In transit</Button>}
                         {packageDetail.data?.status !== "ARRIVED" && <Button className="border bg-emerald-700 hover:bg-emerald-500" onClick={()=>{onPackageUpdate("ARRIVED")}} disabled={isPending}>Arrived</Button>}
                         {packageDetail.data?.status !== "DELIVERED" && <Button className="border bg-blue-700 hover:bg-blue-500" onClick={()=>{onPackageUpdate("DELIVERED")}} disabled={isPending}>Delivered</Button>}
                     </div>

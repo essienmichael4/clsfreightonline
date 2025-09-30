@@ -3,7 +3,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { axios_instance } from '@/api/axios'
-import { LoginSchemaType, LoginSchema } from '@/schema/login'
+import { type LoginSchemaType, LoginSchema } from '@/schema/login'
 import useAuth from '@/hooks/useAuth'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'

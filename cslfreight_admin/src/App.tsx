@@ -15,6 +15,10 @@ import Clients from './pages/Client/Clients'
 import ClientDetails from './pages/Client/ClientDetails'
 import Membership from './pages/Membership/Membership'
 import Payments from './pages/Paymen/Payments'
+import Invoices from './pages/Invoices/Invoices'
+import Invoice from './pages/Invoices/Invoice'
+import Create from './pages/Invoices/Create'
+import EditInvoice from './pages/Invoices/EditInvoice'
 
 function App() {
 
@@ -36,6 +40,10 @@ function App() {
             <Route path='/settings' element={<Settings />} />
             <Route path='/memberships' element={<Membership />} />
             <Route path='/payments' element={<Payments />} />
+            <Route path='/invoices' element={<Invoices />} />
+            <Route path='/invoices/create' element={<Create />} />
+            <Route path='/invoices/edit/:id' element={<EditInvoice />} />
+            <Route path='/invoices/:id' element={<Invoice />} />
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />

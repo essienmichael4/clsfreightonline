@@ -1,18 +1,60 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import logo from '../assets/logo.webp'
 import { Menu, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import Marquee from 'react-fast-marquee'
+import { useQuery } from '@tanstack/react-query'
+import { MarqueAnnouncementType } from '@/lib/types'
+import { axios_instance } from '@/api/axios'
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
+  const [show, setShow] = useState(false)
+
+  const marqueeAnnouncements = useQuery<MarqueAnnouncementType[]>({
+      queryKey: ["announcements", "marquee"],
+      queryFn: async() => await axios_instance.get(`/settings/marque`).then(res => {
+        return res.data
+      })
+  })
+
+  useEffect(() => {
+    if (marqueeAnnouncements.data && marqueeAnnouncements.data.length > 0) {
+      setShow(true)
+    } else {
+      setShow(false)
+    }
+  }, [marqueeAnnouncements.data])
+
+  const handleShow = ()=>{
+    setShow(!show)
+  }
 
   const toggleNavbar = ()=>{
     setMobileDrawerOpen(!mobileDrawerOpen)
   }
 
   return (
-    <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b border-neutral-100/80">
-      <div className="container px-4 mx-auto relative text-sm">
+    <nav className="sticky top-0 z-50 pb-3 backdrop-blur-lg border-b border-neutral-100/80">
+      <div className={`${show ? "block" : "hidden"} bg-gray-800 relative`}>
+        <div className='container px-4 py-4 mx-auto '>
+          <Marquee className="text-gray-100 text-sm space-x-16">
+            {marqueeAnnouncements.data?.map((marquee, idx) => (
+              <span
+                key={idx}
+                className={`flex items-center ${idx > 0 ? "ml-4" : ""}`}
+              >
+                {idx > 0 && <span className="mx-4 text-gray-400">|</span>}
+                {marquee.announcement}
+              </span>
+            ))}
+          </Marquee>
+          <button onClick={handleShow} className='absolute z-10 text-white right-4 top-4'>
+            <X  className='w-4 h-4'/>
+          </button>
+        </div>
+      </div>
+      <div className="container mt-3 px-4 mx-auto relative text-sm">
         <div className="flex justify-between items-center">
           <Link to={"/"} className="flex items-center flex-shrink-0">
             <img src={logo} alt="logo" className='h-10 w-10 mr-2' />

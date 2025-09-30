@@ -13,7 +13,10 @@ export class Payment {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0, transformer: {
+        to: (value: number) => value,
+        from: (value: string) => parseFloat(value),
+    }})
     paidShippingRate: number;
 
     @Column({ nullable: true })

@@ -13,7 +13,7 @@ import { CalendarIcon, Loader2 } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
-import { EditPackageLoadedSchema , EditLoadedSchemaType} from '@/schema/package'
+import { EditPackageLoadedSchema , type EditLoadedSchemaType} from '@/schema/package'
 
 interface Props{
     trigger?: React.ReactNode,

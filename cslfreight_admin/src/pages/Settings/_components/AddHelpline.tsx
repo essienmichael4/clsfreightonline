@@ -1,0 +1,118 @@
+import { Dialog, DialogTitle, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import axios from 'axios'
+import { Loader2 } from 'lucide-react'
+import useAxiosToken from '@/hooks/useAxiosToken'
+import { useState } from 'react'
+import { type AddHelplineSchemaType , AddHelplineSchema} from '@/schema/warehouse'
+
+interface Props{
+    trigger?: React.ReactNode,
+}
+
+const AddHelpline = ({trigger}:Props) => {
+    const [open, setOpen] = useState(false)
+    const axios_instance_token = useAxiosToken()
+    const queryClient = useQueryClient()
+
+    const form = useForm<AddHelplineSchemaType>({
+        resolver:zodResolver(AddHelplineSchema),
+        defaultValues:{
+            phone: "",
+        }
+    })
+
+    const addAddress = async (data:AddHelplineSchemaType)=>{
+        const response = await axios_instance_token.post(`/settings/helplines`, {
+            ...data
+        },)
+
+        return response.data
+    }
+
+    const {mutate, isPending} = useMutation({
+        mutationFn: addAddress,
+        onSuccess: ()=>{
+            toast.success("Helpline added successfully", {
+                id: "add-helpline"
+            })
+
+            queryClient.invalidateQueries({queryKey: ["settings", "helplines"]})
+
+            form.reset({})
+
+            setOpen(prev => !prev)
+        },onError: (err:any) => {
+            if (axios.isAxiosError(err)){
+                toast.error(err?.response?.data?.message, {
+                    id: "add-helpline"
+                })
+            }else{
+                toast.error(`Something went wrong`, {
+                    id: "add-helpline"
+                })
+            }
+        }
+    })
+
+    const onSubmit = (data: AddHelplineSchemaType)=>{
+        toast.loading("Adding helpline...", {
+            id: "add-helpline"
+        })
+        mutate(data)
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>{trigger}</DialogTrigger>
+            <DialogContent className='w-[90%] mx-auto rounded-2xl'>
+                <DialogHeader className='items-start'>
+                    <DialogTitle>
+                        Add New Helpline
+                    </DialogTitle>
+                </DialogHeader>
+                <Form {...form}>
+                    <form className='space-y-2'>
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({field}) =>(
+                                <FormItem className='flex-1'>
+                                    <FormLabel className='text-xs'>Phone</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )} 
+                        />
+                    </form>
+                </Form>
+                <DialogFooter >
+                    <DialogClose asChild>
+                        <Button 
+                            type='button'
+                            variant={"secondary"}
+                            onClick={()=>{
+                                form.reset()
+                            }} >
+                                Cancel
+                        </Button>
+                    </DialogClose>
+                    <Button onClick={form.handleSubmit(onSubmit)} disabled={isPending} className='bg-gradient-to-r from-blue-500 to-blue-800 text-white py-2'
+                    >
+                        {!isPending && "Add Helpline"}
+                        {isPending && <Loader2 className='animate-spin' /> }
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+export default AddHelpline

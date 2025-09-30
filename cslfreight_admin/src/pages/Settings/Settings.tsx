@@ -5,11 +5,13 @@ import AddAnnouncement from "./_components/AddAnnouncement"
 import AnnouncementParser from "@/components/AnnouncementParser"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import useAxiosToken from "@/hooks/useAxiosToken"
-import { AnnouncementType } from "@/lib/types"
+import type { AnnouncementType } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import EditAnnouncement from "./_components/EditAnnouncement"
 import { toast } from "sonner"
 import axios from "axios"
+import InvoiceDetails from "./_components/InvoiceDetails"
+import MarqueAnnouncement from "./_components/MarqueAnnouncement"
 
 const Settings = () => {
     const axios_instance_token = useAxiosToken()
@@ -23,9 +25,7 @@ const Settings = () => {
     const upadateAnnouncementStatus = async (data:string)=>{
         const response = await axios_instance_token.patch(`/announcements/clients/1/show`, {
             show: data
-        },)
-        console.log(response.data);
-        
+        },)        
         return response.data
     }
 
@@ -73,6 +73,9 @@ const Settings = () => {
             <div className="mt-4">
                 <ShippingRates />
             </div>
+            
+            <InvoiceDetails />
+
             <div className="mt-6 flex items-center justify-between">
                 <h3 className="font-bold">Client Announcement</h3>
                 {!announcement.data && <div>
@@ -92,7 +95,7 @@ const Settings = () => {
                 <div className="mt-4">
                 <h3 className="text-2xl font-bold mb-2">{announcement.data.title}</h3>
                 <div className="mt-4">
-                    <AnnouncementParser announcement={announcement.data.body} />
+                    {announcement.data.body && <AnnouncementParser announcement={announcement.data.body} />}
                 </div>
                 {announcement.data.show === "TRUE" && 
                     <button onClick={ ()=>onUpdate("FALSE")} disabled={isPending} className="py-2 px-4 bg-gray-600 hover:bg-gray-800 rounded-md flex text-white">
@@ -108,6 +111,8 @@ const Settings = () => {
                 }
                 </div>
             }
+
+            <MarqueAnnouncement />
             
         </div>
     )

@@ -11,7 +11,7 @@ import { Loader2 } from 'lucide-react'
 import useAxiosToken from '@/hooks/useAxiosToken'
 import { useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
-import { AddAnnouncementSchema, AddAnnouncementSchemaType,  } from '@/schema/announcement'
+import { AddAnnouncementSchema, type AddAnnouncementSchemaType,  } from '@/schema/announcement'
 
 interface Props{
     trigger?: React.ReactNode,

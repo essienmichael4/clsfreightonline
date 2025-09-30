@@ -1,10 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePackageDto } from './dto/create-package.dto';
-import { UpdatePackageDto } from './dto/update-package.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deleted, Package, Status } from './entities/package.entity';
-import { Brackets, DataSource, In, LessThan, Like, Not, Repository } from 'typeorm';
-import { PackageEdit } from './entities/packageEdits.entity';
+import { Brackets, DataSource, In, Not, Repository } from 'typeorm';
 import { Client } from 'src/user/entities/client.entity';
 import { PackageType } from './entities/packageType.entity';
 import { PackageRateRequest } from './dto/package.dto';
@@ -18,8 +16,7 @@ import { UserService } from 'src/user/user.service';
 export class PackageService {
   constructor(
     @InjectRepository(Package) private readonly packageRepo:Repository<Package>, 
-    @InjectRepository(Client) private readonly clientRepo:Repository<Client>, 
-    @InjectRepository(PackageEdit) private readonly packageEditRepo:Repository<PackageEdit>,
+    @InjectRepository(Client) private readonly clientRepo:Repository<Client>,
     @InjectRepository(PackageType) private readonly packageTypeRepo:Repository<PackageType>,
     private userService: UserService,
     private readonly dataSource:DataSource
@@ -87,6 +84,46 @@ export class PackageService {
 
     const pageMetaDto = new PageMetaDto({itemCount: total, pageOptionsDto})
     return new PageDto(data, pageMetaDto)
+  }
+
+  async findAllClientPackages(id: number, search?: string, loadedDate?: string, ) {
+    const query = this.packageRepo
+      .createQueryBuilder("package")
+      .leftJoinAndSelect("package.client", "client")
+      .leftJoinAndSelect("package.packageType", "packageType")
+      .where("package.isDeleted != :deleted", { deleted: "TRUE" });
+
+    if (id) {
+      query.andWhere("package.client.id = :id", { id });
+    }
+
+    if (search) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where("package.trackingNumber LIKE :search", {
+            search: `%${search}%`,
+          })
+            .orWhere("client.name LIKE :search", { search: `%${search}%` })
+            .orWhere("package.customer LIKE :search", {
+              search: `%${search}%`,
+            })
+            .orWhere("client.email LIKE :search", { search: `%${search}%` })
+            .orWhere("packageType.description LIKE :search", {
+              search: `%${search}%`,
+            });
+        }),
+      );
+    }
+
+    if (loadedDate) {
+      query.andWhere("DATE(package.loaded) = :loadedDate", { loadedDate: loadedDate.split("T")[0] });
+    }
+
+    const data = await query
+      .orderBy("package.id", "DESC")
+      .getMany();
+
+    return data
   }
 
   async findAllByStatus(status?:Status) {
@@ -175,11 +212,11 @@ export class PackageService {
     });
   }
 
-  async findEnroutCount() {
+  async findIntransitCount() {
     return await this.packageRepo.count({
       where: {
         isDeleted: Deleted.FALSE,
-        status : "EN_ROUTE" as Status
+        status : "IN_TRANSIT" as Status
       }
     });
   }
@@ -310,7 +347,6 @@ export class PackageService {
         await queryRunner.manager.update(Client, client.id, {
           totalShippingRate: client.totalShippingRate
         });
-        
 
         // Optional: trigger membership tier evaluation
         await this.userService.evaluateMembershipTier(client.id, queryRunner.manager); // <- optional and new
@@ -323,7 +359,6 @@ export class PackageService {
       });
 
       await queryRunner.commitTransaction();
-      console.log(client);
       
       return { message: "Package status updated successfully" };
     } catch (err) {
@@ -363,6 +398,10 @@ export class PackageService {
     return await this.packageTypeRepo.update(id, {
       ...packageRate
     })
+  }
+
+  async removeRate(id: number) {
+    return await this.packageTypeRepo.delete(id);
   }
 
   async remove(id: number) {

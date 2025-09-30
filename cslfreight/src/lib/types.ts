@@ -101,6 +101,12 @@ export type AnnouncementType = {
     show: string
 }
 
+export type MarqueAnnouncementType = {
+    id?: number,
+    announcement:string,
+    isShown: string
+}
+
 export type AddressType = {
     id: number,
     name:string,
