@@ -103,6 +103,10 @@ const Terms = () => {
                         <h4 className="text-3xl text-gray-500"># 22</h4>
                         <p>Due to storage and security costs, we shall totally auction all unpaid packages in our warehouse by proper legal proceedings after 60 days.</p>
                     </div>
+                    <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
+                        <h4 className="text-3xl text-gray-500"># 23</h4>
+                        <p>We do not do business with third parties apart from the registered persons and/or designated next of kin assigned from the day of registration as our client.</p>
+                    </div>
                 </div>
             </div>
         </div>
