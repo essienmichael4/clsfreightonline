@@ -7,6 +7,7 @@ import { Payment } from "./payment.entity";
 import { Invoice } from "src/invoice/entities/invoice.entity";
 import { VideoLike } from "src/video/entities/video-like.entity";
 import { VideoComment } from "src/video/entities/video-comment.entity";
+import { Delivery } from "src/delivery/entities/delivery.entity";
 
 export enum Deleted {
     TRUE = 'TRUE',
@@ -71,6 +72,9 @@ export class Client {
 
     @OneToMany(() => VideoComment, (comment) => comment.client)
     comments: VideoComment[];
+
+    @OneToMany(() => Delivery, (delivery) => delivery.client)
+    deliveries: Delivery[];
 
     @Column({ nullable: true })
     membershipTierId: number;

@@ -5,18 +5,18 @@ import { Client } from "src/user/entities/client.entity";
 import { PackageType } from "./packageType.entity";
 
 export enum Deleted {
-    TRUE = 'TRUE',
-    FALSE = 'FALSE',
-  }
-  
-  export enum Status {
-    ON_HOLD = 'ON_HOLD',
-    EN_ROUTE = 'EN_ROUTE',
-    YET_TO_LOAD = 'YET_TO_LOAD',
-    IN_TRANSIT = 'IN_TRANSIT',
-    ARRIVED = 'ARRIVED',
-    DELIVERED = 'DELIVERED',
-  }
+  TRUE = 'TRUE',
+  FALSE = 'FALSE',
+}
+
+export enum Status {
+  ON_HOLD = 'ON_HOLD',
+  EN_ROUTE = 'EN_ROUTE',
+  YET_TO_LOAD = 'YET_TO_LOAD',
+  IN_TRANSIT = 'IN_TRANSIT',
+  ARRIVED = 'ARRIVED',
+  DELIVERED = 'DELIVERED',
+}
 
 @Entity()
 export class Package {
@@ -47,9 +47,7 @@ export class Package {
   @Column()
   quantity: number;
 
-  @Column({
-    nullable:true
-  })
+  @Column({ nullable:true })
   vessel: string;
 
   @Column({
@@ -57,19 +55,13 @@ export class Package {
   })
   departure: Date;
 
-  @Column({
-    nullable:true
-  })
+  @Column({ nullable:true })
   loaded: Date;
 
-  @Column({
-    nullable:true
-  })
+  @Column({ nullable:true })
   eta: Date;
 
-  @Column({
-    nullable:true
-  })
+  @Column({ nullable:true })
   received: Date;
 
   @CreateDateColumn()

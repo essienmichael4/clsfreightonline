@@ -17,6 +17,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { SettingsModule } from './settings/settings.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { VideoModule } from './video/video.module';
+import { DeliveryModule } from './delivery/delivery.module';
 
 @Module({
   imports: [
@@ -49,7 +50,8 @@ import { VideoModule } from './video/video.module';
     StatisticsModule,
     SettingsModule,
     InvoiceModule,
-    VideoModule
+    VideoModule,
+    DeliveryModule
   ],
   controllers: [AppController],
   providers: [AppService],
