@@ -27,6 +27,7 @@ import Payments from './pages/Payments/Payments'
 import Invoices from './pages/Invoice/Invoices'
 import InvoiceDetails from './pages/Invoice/InvoiceDetails'
 import RequestForm from './pages/RequestForm'
+import Deliveries from './pages/Deliveries'
 
 function App() {
 
@@ -58,6 +59,7 @@ function App() {
               <Route path="/packages" element={<Packages />} />
               <Route path="/create-delivery" element={<RequestForm />} />
               <Route path="/payments" element={<Payments />} />
+              <Route path="/delivery" element={<Deliveries />} />
               <Route path="/shipping-address" element={<Address />} />
               <Route path="/packages/:id" element={<PackageDetails />} />
               <Route path="/profile/:id" element={<Profile />} />
