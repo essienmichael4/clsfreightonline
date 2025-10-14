@@ -11,7 +11,7 @@ export enum Deleted {
 
 export enum Status {
   ON_HOLD = 'ON_HOLD',
-  EN_ROUTE = 'EN_ROUTE',
+  // EN_ROUTE = 'EN_ROUTE',
   YET_TO_LOAD = 'YET_TO_LOAD',
   IN_TRANSIT = 'IN_TRANSIT',
   ARRIVED = 'ARRIVED',
