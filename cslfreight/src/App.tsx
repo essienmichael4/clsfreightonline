@@ -56,7 +56,7 @@ function App() {
               <Route path='/our-policies' element={<Terms />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/packages" element={<Packages />} />
-              <Route path="/request-form" element={<RequestForm />} />
+              <Route path="/create-delivery" element={<RequestForm />} />
               <Route path="/payments" element={<Payments />} />
               <Route path="/shipping-address" element={<Address />} />
               <Route path="/packages/:id" element={<PackageDetails />} />

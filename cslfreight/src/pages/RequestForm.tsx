@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import useAxiosToken from "@/hooks/useAxiosToken"
+import { useState,useEffect } from 'react';
 import { RequestFormData, RequestType, PartyType } from '../types/request';
+import useAuth from '@/hooks/useAuth'
+
 
 const initialFormData: RequestFormData = {
   shippingMark: '',
@@ -13,8 +16,13 @@ const initialFormData: RequestFormData = {
 };
 
 export default function RequestForm() {
+  const axios_instance_token = useAxiosToken()
+  const {auth} = useAuth()
   const [formData, setFormData] = useState<RequestFormData>(initialFormData);
   const [submitted, setSubmitted] = useState(false);
+  useEffect(()=>{
+    setFormData(prev => ({ ...prev, shippingMark: auth.shippingMark }));
+  })
 
   const updateFormData = (field: keyof RequestFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -121,7 +129,7 @@ export default function RequestForm() {
                 id="shippingMark"
                 value={formData.shippingMark}
                 onChange={(e) => updateFormData('shippingMark', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-black"
                 placeholder="Enter shipping mark"
                 required
               />
@@ -205,7 +213,7 @@ export default function RequestForm() {
                     id="thirdPartyName"
                     value={formData.thirdPartyName || ''}
                     onChange={(e) => updateFormData('thirdPartyName', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="Enter third party name"
                     required
                   />
@@ -219,7 +227,7 @@ export default function RequestForm() {
                     id="thirdPartyPhone"
                     value={formData.thirdPartyPhone || ''}
                     onChange={(e) => updateFormData('thirdPartyPhone', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="Enter phone number"
                     required
                   />
@@ -237,7 +245,7 @@ export default function RequestForm() {
                 value={formData.loadingDate}
                 onChange={(e) => updateFormData('loadingDate', e.target.value)}
                 min={getMinDateTime()}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 ${
                   formData.loadingDate && !validateDate() ? 'border-red-500' : 'border-gray-300'
                 }`}
                 required
@@ -256,7 +264,7 @@ export default function RequestForm() {
                 id="location"
                 value={formData.location}
                 onChange={(e) => updateFormData('location', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Enter location"
                 required
               />
@@ -271,7 +279,7 @@ export default function RequestForm() {
                 id="callNumber"
                 value={formData.callNumber}
                 onChange={(e) => updateFormData('callNumber', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Enter call number"
                 required
               />

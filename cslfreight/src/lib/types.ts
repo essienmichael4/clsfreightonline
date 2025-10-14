@@ -1,4 +1,5 @@
 export type AuthType = {
+    shippingMark?: string,
     email: string,
     id: number | undefined,
     membershipTier?: MembershipTier
