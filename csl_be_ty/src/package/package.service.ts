@@ -285,7 +285,7 @@ export class PackageService {
     if(packageType){
       packageRateType = await this.packageTypeRepo.findOne({
         where: {
-          description: packageRateType
+          description: packageType
         }
       })
     }

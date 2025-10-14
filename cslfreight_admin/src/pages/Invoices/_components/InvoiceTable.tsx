@@ -33,7 +33,7 @@ const InvoiceTable = ({ selected, rate, total, totalCbm, totalQty }: Props) => {
               <td className="px-2 py-4 text-right text-xs">{row.quantity}</td>
               <td className="px-2 py-4 text-right text-xs">{row.cbm}</td>
               <td className="px-2 py-4 text-right text-xs"></td>
-              <td className="px-2 py-4 text-right text-xs">{(Number(row.cbm) * Number(row.packageType?.rate)).toFixed(2)}</td>
+              <td className="px-2 py-4 text-right text-xs">{(Number(row.cbm) * Number(rate)).toFixed(2)}</td>
             </tr>
           ))}
           <tr className="bg-gray-50 font-semibold">

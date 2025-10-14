@@ -5,6 +5,7 @@ interface ITagsProps {
   defaultValue?: string[];
   onChange?: (tags: string[]) => void; // notify parent
   maxTags?: number;
+  placeholder?: string
 }
 
 const Tags: React.FC<ITagsProps> = ({
@@ -12,6 +13,7 @@ const Tags: React.FC<ITagsProps> = ({
   defaultValue = [],
   onChange,
   maxTags = 10,
+  placeholder="0200000000"
 }) => {
   const [internalTags, setInternalTags] = useState<string[]>(defaultValue);
   const [tag, setTag] = useState("");
@@ -107,7 +109,7 @@ const Tags: React.FC<ITagsProps> = ({
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
           value={tag}
-          placeholder="0200000000"
+          placeholder={placeholder}
           className="outline-none w-full text-sm bg-white flex-grow"
         />
       </div>

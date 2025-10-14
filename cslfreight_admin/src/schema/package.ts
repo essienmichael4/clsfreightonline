@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const optionalString = (schema: z.ZodString) =>
+export const optionalString = (schema: z.ZodString) =>
   z.preprocess(
     (val) => (val === null ? "" : val), // turn null into ""
     schema.or(z.literal("")).optional()

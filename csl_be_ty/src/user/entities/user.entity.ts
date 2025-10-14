@@ -6,6 +6,8 @@ import { PackageEdit } from "src/package/entities/packageEdits.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Payment } from "./payment.entity";
 import { Marque } from "src/settings/entities/marque.entity";
+import { Video } from "src/video/entities/video.entity";
+import { VideoComment } from "src/video/entities/video-comment.entity";
 
 export enum Role {
     ADMIN = 'ADMIN',
@@ -60,4 +62,12 @@ export class User {
 
     @OneToMany(() => Payment, (paymentEntity) => paymentEntity.user)
     payments: Payment[];
+
+    @OneToMany(() => Video, (videoEntity) => videoEntity.uploader)
+    videos: Video[];
+
+    // user.entity.ts
+    @OneToMany(() => VideoComment, (comment) => comment.user)
+    comments: VideoComment[];
+
 }

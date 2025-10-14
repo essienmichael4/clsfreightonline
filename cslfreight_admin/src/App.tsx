@@ -19,6 +19,8 @@ import Invoices from './pages/Invoices/Invoices'
 import Invoice from './pages/Invoices/Invoice'
 import Create from './pages/Invoices/Create'
 import EditInvoice from './pages/Invoices/EditInvoice'
+import Videos from './pages/Video/Videos'
+import VideoDetails from './pages/Video/VideoDetails'
 
 function App() {
 
@@ -44,6 +46,8 @@ function App() {
             <Route path='/invoices/create' element={<Create />} />
             <Route path='/invoices/edit/:id' element={<EditInvoice />} />
             <Route path='/invoices/:id' element={<Invoice />} />
+            <Route path='/videos' element={<Videos />} />
+            <Route path='/video-details' element={<VideoDetails />} />
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />

@@ -4,7 +4,7 @@ import type { InvoiceAddressType, WarehouseType, HelplineType, Client, Package, 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { CalendarIcon, ChevronDown, FileArchive } from "lucide-react"
 import Tags from "./_components/Tags"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import ShippingMarkPicker from "./_components/ShippingMarkPicker"
 import { useRef } from "react"
 import {useReactToPrint} from 'react-to-print'
@@ -55,10 +55,10 @@ const EditInvoice = () => {
     // Invoice Details
     const [showInvoiceDetails, setShowInvoiceDetails] = useState(false);
     const [filter, setFilter] = useState("")
-    // const [totalCbm, setTotalCbm] = useState(0)
-    // const [totalQty, setTotalQty] = useState(0)
+    const [totalCbm, setTotalCbm] = useState(0)
+    const [totalQty, setTotalQty] = useState(0)
     const [rate, setRate] = useState(0)
-    // const [total, setTotal] = useState(0)
+    const [total, setTotal] = useState(0)
     const [date,] = useState(Date.now())
     const [createDate, setcreatedDate] = useState<Date | undefined>(undefined)
     const [dueDate, setDueDate] = useState<Date | undefined>(undefined)
@@ -94,6 +94,7 @@ const EditInvoice = () => {
             setClientLocation(invoice.data.client?.clientDetails?.location ?? "");
             setcreatedDate(invoice.data.issuedDate ? new Date(invoice.data.issuedDate) : undefined);
             setDueDate(invoice.data.eta ? new Date(invoice.data.eta) : undefined);
+            setRate(Number(invoice.data.rate) ?? 0)
 
             if (invoice.data.packages) {
                 setSelectedRows(invoice.data.packages);
@@ -103,19 +104,19 @@ const EditInvoice = () => {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-        if (
-            dropdownRef.current &&
-            !dropdownRef.current.contains(event.target as Node)
-        ) {
-            setOpen(false);
-        }
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setOpen(false);
+            }
         };
 
         if (open) {
-        document.addEventListener("mousedown", handleClickOutside);
+            document.addEventListener("mousedown", handleClickOutside);
         }
         return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [open]);
 
@@ -150,19 +151,28 @@ const EditInvoice = () => {
         queryFn: async() => await axios_instance_token.get(`/settings/address`).then(res => res.data)
     })
 
-    const { total, totalCbm, totalQty } = useMemo(() => {
-        const totalQty = selectedRows.reduce((acc, row) => acc + row.quantity, 0)
-        const totalCbm = selectedRows.reduce((acc, row) => acc + Number(row.cbm), 0)
-        const total = selectedRows.reduce(
-            (acc, row) => acc + Number(row.cbm) * Number(row.packageType?.rate ?? 0),
-            0
-        )
-        return {
-            total: Number(total.toFixed(2)),
-            totalCbm: Number(totalCbm.toFixed(2)),
-            totalQty: Number(totalQty.toFixed(2)),
-        }
-    }, [selectedRows])
+    useEffect(()=>{
+            const totalQty = selectedRows.reduce((acc, row) => acc + row.quantity, 0)
+            const totalCbm = selectedRows.reduce((acc, row) => acc + Number(row.cbm), 0)
+            const total = selectedRows.reduce((acc, row) => acc + Number((Number(row.cbm) * Number(rate)).toFixed(2)), 0)
+            setTotal(Number(total.toFixed(2)))
+            setTotalCbm(Number(totalCbm.toFixed(2)))
+            setTotalQty(Number(totalQty.toFixed(2)))
+        }, [selectedRows, rate])
+
+    // const { total, totalCbm, totalQty } = useMemo(() => {
+    //     const totalQty = selectedRows.reduce((acc, row) => acc + row.quantity, 0)
+    //     const totalCbm = selectedRows.reduce((acc, row) => acc + Number(row.cbm), 0)
+    //     const total = selectedRows.reduce(
+    //         (acc, row) => acc + Number(row.cbm) * Number(row.packageType?.rate ?? 0),
+    //         0
+    //     )
+    //     return {
+    //         total: Number(total.toFixed(2)),
+    //         totalCbm: Number(totalCbm.toFixed(2)),
+    //         totalQty: Number(totalQty.toFixed(2)),
+    //     }
+    // }, [selectedRows])
 
     // sync when invoiceAddress loads
     useEffect(() => {
@@ -195,6 +205,12 @@ const EditInvoice = () => {
         queryFn: async() => await axios_instance_token.get(`/settings/helplines`).then(res => res.data)
     })
 
+    useEffect(() => {
+        if (helplines.data) {
+            setPhone(helplines.data.map(line => line.phone))
+        }
+    }, [helplines.data])
+
     const banks = useQuery<BankType[]>({
         queryKey: ["settings", "banks"],
         queryFn: async() => await axios_instance_token.get(`/settings/banks`).then(res => res.data)
@@ -204,7 +220,7 @@ const EditInvoice = () => {
         const response = await axios_instance_token.patch(`/invoices/${id}`, {
             clientName, shippingMark: selectedClient?.shippingMark, companyName: name,
             issued: createDate, eta: dueDate, packages: selectedRows.map(row=> row.id),
-            totalCbm, totalQty, total: 100, status: data, invoiceId: date, rate
+            totalCbm, totalQty, total, status: data, invoiceId: date, rate
         })
 
         return response.data

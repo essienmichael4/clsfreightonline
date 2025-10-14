@@ -105,7 +105,8 @@ export type Invoice = {
     issuedDate: string,
     packages: Package[],
     createdAt: string,
-    updatedAt: string
+    updatedAt: string,
+    rate: number
 }
 
 export type InvoiceAddressType = {

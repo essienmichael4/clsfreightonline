@@ -183,7 +183,7 @@ const Create = () => {
         const response = await axios_instance_token.post(`/invoices`, {
             clientName, shippingMark: selectedClient?.shippingMark, companyName: name,
             issued: createDate, eta: dueDate, packages: selectedRows.map(row=> row.id),
-            totalCbm, totalQty, total: 100, status: data, invoiceId: date, rate
+            totalCbm, totalQty, total, status: data, invoiceId: date, rate
         })
 
         return response.data

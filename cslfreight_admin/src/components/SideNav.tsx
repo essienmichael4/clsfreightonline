@@ -1,5 +1,5 @@
 import logo from '../assets/logo.webp'
-import { Badge, LayoutDashboard, Package, PiggyBank, ReceiptText, Settings, Ship, User, Users } from 'lucide-react'
+import { Badge, LayoutDashboard, Package, PiggyBank, ReceiptText, Settings, Ship, User, Users, Video } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 
 interface SideNavProps{
@@ -51,10 +51,12 @@ const SideNav = ({isToggled}:SideNavProps) => {
                 <Settings className='h-4 w-4 mr-6' />
                 <span className=''>Settings</span>
             </NavLink>
+            <NavLink to={"/videos"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
+                <Video className='h-4 w-4 mr-6' />
+                <span className=''>Videos</span>
+            </NavLink>
         </div>
-        
       </div>
-
     </nav>
   )
 }
