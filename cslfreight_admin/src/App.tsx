@@ -21,6 +21,8 @@ import Create from './pages/Invoices/Create'
 import EditInvoice from './pages/Invoices/EditInvoice'
 import Videos from './pages/Video/Videos'
 import VideoDetails from './pages/Video/VideoDetails'
+import Deliveries from './pages/Deliveries/Deliveries'
+import DeliveryDetails from './pages/Deliveries/DeliveryDetails'
 
 function App() {
 
@@ -48,6 +50,8 @@ function App() {
             <Route path='/invoices/:id' element={<Invoice />} />
             <Route path='/videos' element={<Videos />} />
             <Route path='/video-details' element={<VideoDetails />} />
+            <Route path='/deliveries' element={<Deliveries />} />
+            <Route path='/deliveries/:id' element={<DeliveryDetails />} />
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />

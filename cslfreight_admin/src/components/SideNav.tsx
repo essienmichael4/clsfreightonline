@@ -1,60 +1,107 @@
 import logo from '../assets/logo.webp'
-import { Badge, LayoutDashboard, Package, PiggyBank, ReceiptText, Settings, Ship, User, Users, Video } from 'lucide-react'
+import {LayoutDashboard, Package, Truck, Ship, User, Users, Badge, PiggyBank, ReceiptText, Settings, Video} from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
+import { Separator } from '@/components/ui/separator'
 
-interface SideNavProps{
-    isToggled: boolean
+interface SideNavProps {
+  isToggled: boolean
 }
 
-const SideNav = ({isToggled}:SideNavProps) => {
+const SideNav = ({ isToggled }: SideNavProps) => {
+  const menuGroups = [
+    {
+      label: 'Overview',
+      items: [
+        { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+      ],
+    },
+    {
+      label: 'Operations',
+      items: [
+        { name: 'Packages', icon: Package, path: '/packages' },
+        { name: 'Pickup/Deliveries', icon: Truck, path: '/deliveries' },
+        { name: 'Loadings', icon: Ship, path: '/loadings' },
+      ],
+    },
+    {
+      label: 'Clients & Memberships',
+      items: [
+        { name: 'Clients', icon: User, path: '/clients' },
+        { name: 'Memberships', icon: Badge, path: '/memberships' },
+      ],
+    },
+    {
+      label: 'Finance',
+      items: [
+        { name: 'Payments', icon: PiggyBank, path: '/payments' },
+        { name: 'Invoices', icon: ReceiptText, path: '/invoices' },
+      ],
+    },
+    {
+      label: 'Administration',
+      items: [
+        { name: 'Users', icon: Users, path: '/users' },
+        { name: 'Settings', icon: Settings, path: '/settings' },
+      ],
+    },
+    {
+      label: 'Media',
+      items: [{ name: 'Videos', icon: Video, path: '/videos' }],
+    },
+  ]
+
   return (
-    <nav className={`fixed ${isToggled === true ? 'lg:w-[4rem] md:w-[220px] ' : 'lg:w-[220px]'} w-[4rem] top-0 bottom-0 z-50 py-3 backdrop-blur-lg border-r border-neutral-100/80 overflow-hidden transition-all ease-in-out duration-500`}>
-      <div className="px-4 mx-auto relative text-sm">
-        <div className="flex flex-col items-start">
-          <Link to={"/"} className="flex items-center flex-shrink-0 mb-8">
-            <img src={logo} alt="logo" className='h-10 w-10 mr-4' />
-            <span className="text-xl tracking-tight text-nowrap">CSL Freight</span>
-          </Link>
-            <NavLink to={"/dashboard"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <LayoutDashboard className='h-4 w-4 mr-6' />
-                <span className=''>Dashboard {isToggled}</span>
-            </NavLink>
-            <NavLink to={"/packages"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <Package className='h-4 w-4 mr-6' />
-                <span className=''>Packages</span>
-            </NavLink>
-            <NavLink to={"/loadings"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <Ship className='h-4 w-4 mr-6' />
-                <span className=''>Loadings</span>
-            </NavLink>
-            <NavLink to={"/clients"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <User className='h-4 w-4 mr-6' />
-                <span className=''>Clients</span>
-            </NavLink>
-            <NavLink to={"/payments"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <PiggyBank className='h-4 w-4 mr-6' />
-                <span className=''>Payments</span>
-            </NavLink>
-            <NavLink to={"/invoices"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <ReceiptText className='h-4 w-4 mr-6' />
-                <span className=''>Invoices</span>
-            </NavLink>
-            <NavLink to={"/users"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <Users className='h-4 w-4 mr-6' />
-                <span className=''>Users</span>
-            </NavLink>
-            <NavLink to={"/memberships"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <Badge className='h-4 w-4 mr-6' />
-                <span className=''>Memberships</span>
-            </NavLink>
-            <NavLink to={"/settings"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <Settings className='h-4 w-4 mr-6' />
-                <span className=''>Settings</span>
-            </NavLink>
-            <NavLink to={"/videos"} className='pl-2 py-2 flex items-center flex-shrink-0 mb-2 text-muted-foreground'>
-                <Video className='h-4 w-4 mr-6' />
-                <span className=''>Videos</span>
-            </NavLink>
+    <nav
+      className={`fixed top-0 bottom-0 z-50 py-4 border-r border-neutral-200/80 bg-white/70 dark:bg-neutral-900/50 backdrop-blur-lg transition-all duration-500 ease-in-out overflow-y-auto
+        ${isToggled ? 'lg:w-[4rem] w-[4rem]' : 'lg:w-[220px] w-[220px]'}
+      `}
+    >
+      <div className="px-4 mx-auto text-sm">
+        {/* LOGO */}
+        <Link
+          to="/"
+          className="flex items-center mb-8 px-2 py-1 hover:opacity-90 transition-opacity"
+        >
+          <img src={logo} alt="logo" className="h-9 w-9 mr-3" />
+          {!isToggled && (
+            <span className="text-lg font-semibold tracking-tight">
+              CSL Freight
+            </span>
+          )}
+        </Link>
+
+        {/* NAVIGATION GROUPS */}
+        <div className="flex flex-col space-y-2">
+          {menuGroups.map((group, i) => (
+            <div key={group.label}>
+              {!isToggled && (
+                <p className="uppercase text-[11px] font-medium text-neutral-500 mb-2 px-2">
+                  {group.label}
+                </p>
+              )}
+              <div className="flex flex-col">
+                {group.items.map((item) => (
+                  <NavLink
+                    key={item.name}
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `flex items-center py-2 px-2 mb-1 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                      }`
+                    }
+                  >
+                    <item.icon className="h-4 w-4 shrink-0 mr-4" />
+                    {!isToggled && <span>{item.name}</span>}
+                  </NavLink>
+                ))}
+              </div>
+              {i < menuGroups.length - 1 && (
+                <Separator className="my-2 opacity-40" />
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </nav>
