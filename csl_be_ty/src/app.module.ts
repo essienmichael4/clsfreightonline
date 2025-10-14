@@ -17,6 +17,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { SettingsModule } from './settings/settings.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { VideoModule } from './video/video.module';
+import { DeliveryModule } from './delivery/delivery.module';
 
 @Module({
   imports: [
@@ -26,10 +27,10 @@ import { VideoModule } from './video/video.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+        type: 'mysql',
         // timezone: 'Z',
         host: configService.get("DB_HOST"),
-        port: +configService.get("DB_PORT"),
+        // port: +configService.get("DB_PORT"),
         username: configService.get("DB_USERNAME"),
         password: configService.get("DB_PASSWORD"),
         database: configService.get("DB_NAME"),
@@ -49,7 +50,8 @@ import { VideoModule } from './video/video.module';
     StatisticsModule,
     SettingsModule,
     InvoiceModule,
-    VideoModule
+    VideoModule,
+    DeliveryModule
   ],
   controllers: [AppController],
   providers: [AppService],
