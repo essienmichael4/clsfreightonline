@@ -58,7 +58,7 @@ function DeliveryTracking() {
   };
 
   const handleNext = () => {
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -108,7 +108,7 @@ function DeliveryTracking() {
     );
   }
 
-  const renderRequestInfo = () => (
+  const renderCombinedInfo = () => (
     <div className="space-y-6 animate-fadeIn">
       <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-6 shadow-lg">
         <div className="flex items-center gap-3 mb-4">
@@ -160,11 +160,7 @@ function DeliveryTracking() {
           )}
         </div>
       </div>
-    </div>
-  );
 
-  const renderScheduling = () => (
-    <div className="space-y-6 animate-fadeIn">
       <div className="bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-200 rounded-2xl p-6 shadow-lg">
         <div className="flex items-center gap-3 mb-4">
           <div className="bg-green-600 p-2 rounded-lg">
@@ -198,73 +194,6 @@ function DeliveryTracking() {
           <div className="bg-white/80 backdrop-blur rounded-xl p-4 border border-green-100">
             <p className="text-sm text-slate-600 mb-1">Call Number</p>
             <p className="text-lg font-bold text-slate-900">{fetchedRequest.callNumber}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderReview = () => (
-    <div className="space-y-6 animate-fadeIn">
-      <div className="bg-gradient-to-br from-amber-50 to-orange-100 border-2 border-amber-200 rounded-2xl p-6 shadow-lg">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="bg-amber-600 p-2 rounded-lg">
-            <Check className="w-6 h-6 text-white" />
-          </div>
-          <h3 className="text-xl font-bold text-amber-900">Review & Confirmation</h3>
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <h4 className="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide">Request Information</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-amber-100">
-                <p className="text-xs text-slate-500">Shipping Mark</p>
-                <p className="font-bold text-slate-900">{fetchedRequest.shippingMark}</p>
-              </div>
-              <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-amber-100">
-                <p className="text-xs text-slate-500">Request Type</p>
-                <p className="font-bold text-slate-900 capitalize">{fetchedRequest.requestType}</p>
-              </div>
-              <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-amber-100">
-                <p className="text-xs text-slate-500">Party Type</p>
-                <p className="font-bold text-slate-900">
-                  {fetchedRequest.partyType === 'third' ? 'Third Party' : 'Self'}
-                </p>
-              </div>
-              {fetchedRequest.partyType === 'third' && (
-                <>
-                  <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-amber-100">
-                    <p className="text-xs text-slate-500">Third Party Name</p>
-                    <p className="font-bold text-slate-900">{fetchedRequest.thirdPartyName}</p>
-                  </div>
-                  <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-amber-100 md:col-span-2">
-                    <p className="text-xs text-slate-500">Phone Number</p>
-                    <p className="font-bold text-slate-900">{fetchedRequest.thirdPartyPhone}</p>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide">Scheduling Details</h4>
-            <div className="grid grid-cols-1 gap-3">
-              <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-amber-100">
-                <p className="text-xs text-slate-500">Loading Date</p>
-                <p className="font-bold text-slate-900">
-                  {new Date(fetchedRequest.loadingDate).toLocaleString()}
-                </p>
-              </div>
-              <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-amber-100">
-                <p className="text-xs text-slate-500">Location</p>
-                <p className="font-bold text-slate-900">{fetchedRequest.location}</p>
-              </div>
-              <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-amber-100">
-                <p className="text-xs text-slate-500">Call Number</p>
-                <p className="font-bold text-slate-900">{fetchedRequest.callNumber}</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -333,9 +262,7 @@ function DeliveryTracking() {
   );
 
   const stepTitles = [
-    'Request Information',
-    'Scheduling Details',
-    'Review & Confirmation',
+    'Request & Scheduling Details',
     'Request Status'
   ];
 
@@ -346,12 +273,12 @@ function DeliveryTracking() {
           <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent mb-2">
             Pickup & Delivery Request
           </h1>
-          <p className="text-slate-600 text-lg">Step {currentStep} of 4: {stepTitles[currentStep - 1]}</p>
+          <p className="text-slate-600 text-lg">Step {currentStep} of 2: {stepTitles[currentStep - 1]}</p>
         </div>
 
         <div className="mb-8">
           <div className="flex gap-2">
-            {[1, 2, 3, 4].map(step => (
+            {[1, 2].map(step => (
               <div
                 key={step}
                 className={`flex-1 h-3 rounded-full transition-all duration-500 ${
@@ -369,10 +296,8 @@ function DeliveryTracking() {
         <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-6 sm:p-8 border border-slate-200">
           <h2 className="text-3xl font-bold text-slate-900 mb-6">{stepTitles[currentStep - 1]}</h2>
 
-          {currentStep === 1 && renderRequestInfo()}
-          {currentStep === 2 && renderScheduling()}
-          {currentStep === 3 && renderReview()}
-          {currentStep === 4 && renderStatus()}
+          {currentStep === 1 && renderCombinedInfo()}
+          {currentStep === 2 && renderStatus()}
 
           <div className="flex gap-4 mt-8">
             {currentStep > 1 && (
@@ -384,7 +309,7 @@ function DeliveryTracking() {
               </button>
             )}
 
-            {currentStep < 4 && (
+            {currentStep < 2 && (
               <button
                 onClick={handleNext}
                 className="ml-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
@@ -393,7 +318,7 @@ function DeliveryTracking() {
               </button>
             )}
 
-            {currentStep === 4 && !submitted && (
+            {currentStep === 2 && !submitted && (
               <button
                 onClick={handleConfirm}
                 className="ml-auto flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl"
@@ -402,7 +327,7 @@ function DeliveryTracking() {
               </button>
             )}
 
-            {currentStep === 4 && submitted && (
+            {currentStep === 2 && submitted && (
               <button
                 onClick={handleReset}
                 className="ml-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
