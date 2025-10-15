@@ -36,7 +36,7 @@ const EditPickupReadyStatus = ({id, delivery, trigger}:Props) => {
     })
 
     const addPackage = async (data:PickupReadyStatusSchemaType)=>{
-        const response = await axios_instance_token.patch(`/deliveries/${id}/status`, {
+        const response = await axios_instance_token.patch(`/deliveries/${id}/pickup-ready`, {
             ...data
         },)
 

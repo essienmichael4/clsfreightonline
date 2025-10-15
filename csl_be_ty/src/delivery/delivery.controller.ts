@@ -7,7 +7,7 @@ import { User, UserInfo } from 'src/decorators/user.decorator';
 import { Confirmation, PickupReady, Status } from './entities/delivery.entity';
 import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 
-@Controller('delivery')
+@Controller('deliveries')
 export class DeliveryController {
   constructor(private readonly deliveryService: DeliveryService) {}
 
