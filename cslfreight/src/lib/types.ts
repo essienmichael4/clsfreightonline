@@ -1,5 +1,5 @@
 export type AuthType = {
-    shippingMark?: string,
+    shippingMark: string,
     email: string,
     id: number | undefined,
     membershipTier?: MembershipTier
@@ -19,6 +19,7 @@ export type Attachment = {
 
 export type Client = {
     id: number,
+    name?: string,
     email:string,
     phone?: string,
     shippingMark: string,
@@ -48,6 +49,23 @@ export type Details = {
     location: string,
     nextOfKin: string,
     nextOfKinPhone: string
+}
+
+export type Delivery = {
+    id: number,
+    phone: string,
+    location: string,
+    loaded: string,
+    deliveryType: string,
+    pickupBy: string,
+    thirdPartyName?: string,
+    thirdPartyPhone?: string,
+    status: "Completed" | "Pending" ,
+    isConfirmed: "Confirmed" | "Pending" | "Declined",
+    isPickupReady: "True" | "False",
+    createdAt: string,
+    updatedAt?: string,
+    client: Pick<Client, "id" | "name" | "shippingMark">
 }
 
 export type MembershipTier = {

@@ -1,28 +1,33 @@
 import useAxiosToken from "@/hooks/useAxiosToken"
 import { useState,useEffect } from 'react';
-import { RequestFormData, RequestType, PartyType } from '../types/request';
+import { RequestFormData, DeliveryType, PickupBy } from '../../types/request';
 import useAuth from '@/hooks/useAuth'
+import { toast } from "sonner";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 const initialFormData: RequestFormData = {
   shippingMark: '',
-  requestType: 'pickup',
-  partyType: 'self',
+  deliveryType: 'Pickup',
+  pickupBy: 'Self',
   thirdPartyName: '',
   thirdPartyPhone: '',
-  loadingDate: '',
+  loadedDate: '',
   location: '',
-  callNumber: ''
+  phone: ''
 };
 
 export default function RequestForm() {
+  const [isPending, setIsPending] = useState(false)
+  const navigate = useNavigate()
   const axios_instance_token = useAxiosToken()
   const {auth} = useAuth()
   const [formData, setFormData] = useState<RequestFormData>(initialFormData);
   const [submitted, setSubmitted] = useState(false);
   useEffect(()=>{
-    setFormData(prev => ({ ...prev, shippingMark: auth.shippingMark }));
-  })
+    setFormData(prev => ({ ...prev, shippingMark: auth!.shippingMark }));
+  }, [auth])
 
   const updateFormData = (field: keyof RequestFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -34,26 +39,26 @@ export default function RequestForm() {
   };
 
   const validateDate = () => {
-    if (!formData.loadingDate) return false;
+    if (!formData.loadedDate) return false;
 
-    const selectedDate = new Date(formData.loadingDate);
+    const selectedDate = new Date(formData.loadedDate);
     const twelveHoursFromNow = new Date(Date.now() + 12 * 60 * 60 * 1000);
 
     return selectedDate >= twelveHoursFromNow;
   };
 
   const isFormValid = () => {
-    if (!formData.shippingMark || !formData.requestType || !formData.partyType) {
+    if (!formData.shippingMark || !formData.deliveryType || !formData.pickupBy) {
       return false;
     }
 
-    if (formData.partyType === 'third-party') {
+    if (formData.pickupBy === 'Third Party') {
       if (!formData.thirdPartyName || !formData.thirdPartyPhone) {
         return false;
       }
     }
 
-    if (!formData.loadingDate || !formData.location || !formData.callNumber) {
+    if (!formData.loadedDate || !formData.location || !formData.phone) {
       return false;
     }
 
@@ -64,7 +69,8 @@ export default function RequestForm() {
     e.preventDefault();
 
     if (isFormValid()) {
-      setSubmitted(true);
+      // setSubmitted(true);
+      onSubmit(formData)
     }
   };
 
@@ -73,6 +79,34 @@ export default function RequestForm() {
     setSubmitted(false);
   };
 
+
+  const onSubmit = async (data: RequestFormData) =>{
+          try{
+              setIsPending(true)
+              toast.loading("Submitting request...", {
+                  id: "request"
+              })
+  
+              const response = await axios_instance_token.post("/deliveries", {
+                  ...data
+              })
+             console.log(response)
+              setIsPending(false)
+              toast.success("Delivery request created successfully", {
+                  id: "request"
+              })            
+              navigate(-1)
+              
+          }catch(err:any){
+              setIsPending(false)
+              if (axios.isAxiosError(err)){
+                  toast.error(err?.response?.data?.message, {
+                      id: "request"
+                  })
+              }
+          }
+      }
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
@@ -80,7 +114,7 @@ export default function RequestForm() {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="bg-green-600 text-white px-8 py-6 text-center">
               <h1 className="text-3xl font-bold mb-2">Request Submitted!</h1>
-              <p className="text-green-100">Your {formData.requestType} request has been successfully submitted.</p>
+              <p className="text-green-100">Your {formData.deliveryType} request has been successfully submitted.</p>
             </div>
             <div className="px-8 py-6 space-y-4">
               <div className="border-b pb-4">
@@ -89,7 +123,7 @@ export default function RequestForm() {
               </div>
               <div className="border-b pb-4">
                 <p className="text-sm text-gray-500">Call Number</p>
-                <p className="text-lg font-medium text-gray-900">{formData.callNumber}</p>
+                <p className="text-lg font-medium text-gray-900">{formData.phone}</p>
               </div>
               <div className="border-b pb-4">
                 <p className="text-sm text-gray-500">Location</p>
@@ -143,10 +177,10 @@ export default function RequestForm() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
-                    name="requestType"
-                    value="pickup"
-                    checked={formData.requestType === 'pickup'}
-                    onChange={(e) => updateFormData('requestType', e.target.value as RequestType)}
+                    name="deliveryType"
+                    value="Pickup"
+                    checked={formData.deliveryType === 'Pickup'}
+                    onChange={(e) => updateFormData('deliveryType', e.target.value as DeliveryType)}
                     className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">Pickup</span>
@@ -154,10 +188,10 @@ export default function RequestForm() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
-                    name="requestType"
-                    value="delivery"
-                    checked={formData.requestType === 'delivery'}
-                    onChange={(e) => updateFormData('requestType', e.target.value as RequestType)}
+                    name="deliveryType"
+                    value="Delivery"
+                    checked={formData.deliveryType === 'Delivery'}
+                    onChange={(e) => updateFormData('deliveryType', e.target.value as DeliveryType)}
                     className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">Delivery</span>
@@ -173,13 +207,13 @@ export default function RequestForm() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
-                    name="partyType"
-                    value="self"
-                    checked={formData.partyType === 'self'}
+                    name="pickupBy"
+                    value="Self"
+                    checked={formData.pickupBy === 'Self'}
                     onChange={(e) => {
                       setFormData(prev => ({
                         ...prev,
-                        partyType: e.target.value as PartyType,
+                        pickupBy: e.target.value as PickupBy,
                         thirdPartyName: '',
                         thirdPartyPhone: ''
                       }));
@@ -191,10 +225,10 @@ export default function RequestForm() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
-                    name="partyType"
-                    value="third-party"
-                    checked={formData.partyType === 'third-party'}
-                    onChange={(e) => updateFormData('partyType', e.target.value as PartyType)}
+                    name="pickupBy"
+                    value="Third Party"
+                    checked={formData.pickupBy === 'Third Party'}
+                    onChange={(e) => updateFormData('pickupBy', e.target.value as PickupBy)}
                     className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">Third Party</span>
@@ -202,7 +236,7 @@ export default function RequestForm() {
               </div>
             </div>
 
-            {formData.partyType === 'third-party' && (
+            {formData.pickupBy === 'Third Party' && (
               <div className="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <div>
                   <label htmlFor="thirdPartyName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -236,21 +270,21 @@ export default function RequestForm() {
             )}
 
             <div>
-              <label htmlFor="loadingDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Loading Date & Time <span className="text-red-500">*</span>
+              <label htmlFor="loadedDate" className="block text-sm font-medium text-gray-700 mb-2">
+                Loading Date <span className="text-red-500">*</span>
               </label>
               <input
-                type="datetime-local"
-                id="loadingDate"
-                value={formData.loadingDate}
-                onChange={(e) => updateFormData('loadingDate', e.target.value)}
+                type="date"
+                id="loadedDate"
+                value={formData.loadedDate}
+                onChange={(e) => updateFormData('loadedDate', e.target.value)}
                 min={getMinDateTime()}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 ${
-                  formData.loadingDate && !validateDate() ? 'border-red-500' : 'border-gray-300'
+                  formData.loadedDate && !validateDate() ? 'border-red-500' : 'border-gray-300'
                 }`}
                 required
               />
-              {formData.loadingDate && !validateDate() && (
+              {formData.loadedDate && !validateDate() && (
                 <p className="text-red-500 text-sm mt-1">Loading date must be at least 12 hours from now</p>
               )}
             </div>
@@ -271,16 +305,16 @@ export default function RequestForm() {
             </div>
 
             <div>
-              <label htmlFor="callNumber" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                 Call Number <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                id="callNumber"
-                value={formData.callNumber}
-                onChange={(e) => updateFormData('callNumber', e.target.value)}
+                id="phone"
+                value={formData.phone}
+                onChange={(e) => updateFormData('phone', e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                placeholder="Enter call number"
+                placeholder="Enter phone number"
                 required
               />
             </div>
