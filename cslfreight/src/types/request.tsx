@@ -1,15 +1,15 @@
-export type RequestType = 'pickup' | 'delivery';
-export type PartyType = 'self' | 'third-party';
+export type DeliveryType = 'Pickup' | 'Delivery';
+export type PickupBy = 'Self' | 'Third Party';
 
 export interface RequestFormData {
   shippingMark: string;
-  requestType: RequestType;
-  partyType: PartyType;
+  deliveryType: DeliveryType;
+  pickupBy: PickupBy;
   thirdPartyName?: string;
   thirdPartyPhone?: string;
-  loadingDate: string;
+  loadedDate: string;
   location: string;
-  callNumber: string;
+  phone: string;
 }
 
 export interface RequestStatus {

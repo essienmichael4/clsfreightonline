@@ -1,21 +1,22 @@
 import { DataTableColumnHeader } from "@/components/DataTable/ColumnHeader"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { usePayments } from "@/hooks/usePayments"
-import { Payment } from "@/lib/types"
+import { useDeliveries } from "@/hooks/useDeliveries"
+import { Delivery } from "@/lib/types"
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const emptyData: any[]= []
 const limit = 5
 
 const Deliveries = () => {
     const [page, setPage] = useState(1)
-    
-    const deliveriesQuery = usePayments(page, limit)
+    const navigate = useNavigate()
+    const deliveriesQuery = useDeliveries(page, limit)
 
-    const columns:ColumnDef<Payment>[] =[{
+    const columns:ColumnDef<Delivery>[] =[{
         accessorKey: "id",
         header:({column})=>(<DataTableColumnHeader column={column} title='ID' />),
         cell:({row}) => <div className="text-xs">
@@ -25,19 +26,19 @@ const Deliveries = () => {
             accessorKey: "shippingMark",
             header:({column})=>(<DataTableColumnHeader column={column} title='Shipping Mark' />),
             cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500'>{row.original.shippingMark || '-'}</span>
+                <span className='text-gray-500'>{row.original.client.shippingMark || '-'}</span>
             </div>
         },{
-            accessorKey: "requestType",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Request Type' />),
+            accessorKey: "deliveryType",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Delivery Type' />),
             cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500 capitalize'>{row.original.requestType || '-'}</span>
+                <span className='text-gray-500 capitalize'>{row.original.deliveryType || '-'}</span>
             </div>
         },{
-            accessorKey: "partyType",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Party Type' />),
+            accessorKey: "pickupBy",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Pickup By' />),
             cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500 capitalize'>{row.original.partyType || '-'}</span>
+                <span className='text-gray-500 capitalize'>{row.original.pickupBy || '-'}</span>
             </div>
         },{
             accessorKey: "thirdPartyName",
@@ -52,10 +53,10 @@ const Deliveries = () => {
                 <span className='text-gray-500'>{row.original.thirdPartyPhone || '-'}</span>
             </div>
         },{
-            accessorKey: "loadingDate",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Loading Date' />),
+            accessorKey: "loaded",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Loaded' />),
             cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500'>{row.original.loadingDate || '-'}</span>
+                <span className='text-gray-500'>{row.original.loaded || '-'}</span>
             </div>
         },{
             accessorKey: "location",
@@ -64,10 +65,10 @@ const Deliveries = () => {
                 <span className='text-gray-500'>{row.original.location || '-'}</span>
             </div>
         },{
-            accessorKey: "callNumber",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Call Number' />),
+            accessorKey: "phone",
+            header:({column})=>(<DataTableColumnHeader column={column} title='Phone' />),
             cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500'>{row.original.callNumber || '-'}</span>
+                <span className='text-gray-500'>{row.original.phone || '-'}</span>
             </div>
         }
     ]
@@ -183,7 +184,7 @@ const Deliveries = () => {
         <div className="mt-4">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Deliveries</h2>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2">
+                <button onClick={() => navigate("create")} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2">
                     <span>+</span> Create Delivery
                 </button>
             </div>
