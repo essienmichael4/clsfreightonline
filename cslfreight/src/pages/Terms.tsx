@@ -115,6 +115,10 @@ const Terms = () => {
                         <h4 className="text-3xl text-gray-500"># 25</h4>
                         <p>We do not do business with third parties apart from the registered persons and/or designated next of kin assigned from the day of registration as our client.</p>
                     </div>
+                    <div className="mt-4 gap-4 flex flex-col p-4 md:w-3/4">
+                        <h4 className="text-3xl text-gray-500"># 26</h4>
+                        <p>Higher customs duty packages, all forklift related packages and/or packages over 400kg will be charged or billed at a different rate to cover for all such fees irrespective of whether they fall under NORMAL or SENSITIVE goods.</p>
+                    </div>
                 </div>
             </div>
         </div>
