@@ -18,8 +18,8 @@ export enum Confirmation {
 }
 
 export enum PickupReady {
-    TRUE = 'true',
-    FALSE = "false",
+    TRUE = 'True',
+    FALSE = "False",
 }
 
 export enum DeliveryType {

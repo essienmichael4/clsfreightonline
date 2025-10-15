@@ -95,6 +95,7 @@ export type Delivery = {
     thirdPartyPhone?: string,
     status: "Completed" | "Pending" ,
     isConfirmed: "Confirmed" | "Pending" | "Declined",
+    isPickupReady: "True" | "False",
     createdAt: string,
     updatedAt?: string,
     client: Pick<Client, "id" | "name" | "shippingMark">

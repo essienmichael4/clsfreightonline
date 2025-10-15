@@ -7,6 +7,7 @@ import { Edit } from "lucide-react"
 import { useParams } from "react-router-dom"
 import EditDeliveryStatus from "./_components/EditDeliveryStatus"
 import EditConfirmationStatus from "./_components/EditConfirmationStatus"
+import EditPickupReadyStatus from "./_components/EditPickupReadyStatus"
 
 const DeliveryDetails = () => {
     const {id} = useParams()
@@ -47,6 +48,12 @@ const DeliveryDetails = () => {
                     {deliveryDetails.data && <EditDeliveryStatus id={Number(id)} trigger={
                         <Button className="py-2 px-2 md:px-4 flex items-center rounded-md bg-gradient-to-r from-blue-500 to-blue-800 text-white">
                             <Edit className="w-4 h-4 mr-2 text-white"/> <span className="text-xs md:text-sm">Edit Status</span>
+                        </Button>
+                    } delivery={deliveryDetails.data} />}
+
+                    {deliveryDetails.data && <EditPickupReadyStatus id={Number(id)} trigger={
+                        <Button className="py-2 px-2 md:px-4 flex items-center rounded-md bg-gradient-to-r from-blue-500 to-blue-800 text-white">
+                            <Edit className="w-4 h-4 mr-2 text-white"/> <span className="text-xs md:text-sm">Edit Ready For Pickup</span>
                         </Button>
                     } delivery={deliveryDetails.data} />}
                 </div>
