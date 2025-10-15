@@ -50,15 +50,10 @@ export class DeliveryService {
   }
 
   // 🔹 Get all deliveries (optionally include client)
-  async findAll(pageOptionsDto: PageOptionsDto, includeClient = true) {
+  async findAll(pageOptionsDto: PageOptionsDto) {
     const query = this.deliveryRepo
       .createQueryBuilder('delivery')
-      .leftJoinAndSelect(
-        includeClient
-          ? 'delivery.client'
-          : null,
-        'client'
-      )
+      .leftJoinAndSelect('delivery.client', 'client')
       .select([
         'delivery.id',
         'delivery.phone',
@@ -72,13 +67,15 @@ export class DeliveryService {
         'delivery.isConfirmed',
         'delivery.createdAt',
         'delivery.updatedAt',
-        ...(includeClient
-          ? ['client.id', 'client.name', 'client.email', 'client.shippingMark']
-          : []),
+        // Select only specific client fields
+        'client.id',
+        'client.name',
+        'client.email',
+        'client.shippingMark',
       ])
       .orderBy('delivery.createdAt', 'DESC')
       .skip(pageOptionsDto.skip)
-      .take(pageOptionsDto.take)
+      .take(pageOptionsDto.take);
 
     const [deliveries, total] = await query.getManyAndCount();
 
@@ -93,6 +90,7 @@ export class DeliveryService {
 
     return new PageDto(response, pageMetaDto);
   }
+
   
   async export() {
     const query = this.deliveryRepo
@@ -117,33 +115,36 @@ export class DeliveryService {
 
   // 🔹 Get all deliveries for a specific client
   async findAllClientDeliveries(pageOptionsDto: PageOptionsDto, clientId: number) {
-    const [deliveries, total] = await this.deliveryRepo.findAndCount({
-      where: { client: { id: clientId } },
-      relations: ['client'],
-      order: { createdAt: 'DESC' },
-      skip: pageOptionsDto.skip,
-      take: pageOptionsDto.take,
-      select: {
-        id: true,
-        phone: true,
-        location: true,
-        loaded: true,
-        deliveryType: true,
-        pickupBy: true,
-        thirdPartyName: true,
-        thirdPartyPhone: true,
-        status: true,
-        isConfirmed: true,
-        createdAt: true,
-        updatedAt: true,
-        client: {
-          id: true,
-          name: true,
-          email: true,
-          shippingMark: true,
-        },
-      },
-    });
+    const query = this.deliveryRepo
+      .createQueryBuilder('delivery')
+      .leftJoinAndSelect('delivery.client', 'client')
+      .where('client.id = :clientId', { clientId })
+      .select([
+        'delivery.id',
+        'delivery.phone',
+        'delivery.location',
+        'delivery.loaded',
+        'delivery.deliveryType',
+        'delivery.pickupBy',
+        'delivery.thirdPartyName',
+        'delivery.thirdPartyPhone',
+        'delivery.status',
+        'delivery.isConfirmed',
+        'delivery.createdAt',
+        'delivery.updatedAt',
+        'client.id',
+        'client.name',
+        'client.email',
+        'client.shippingMark',
+      ])
+      .orderBy('delivery.createdAt', 'DESC')
+      .skip(pageOptionsDto.skip)
+      .take(pageOptionsDto.take);
+
+    const [deliveries, total] = await query.getManyAndCount();
+
+    // Debug log (optional)
+    console.log(deliveries);
 
     const response = deliveries.map(
       (delivery) => new DeliveryResponseDto(delivery),
@@ -156,6 +157,7 @@ export class DeliveryService {
 
     return new PageDto(response, pageMetaDto);
   }
+
 
   async findClientSingleDelivery(id: number, clientId: number) {
     const delivery = await this.deliveryRepo.findOne({
@@ -178,11 +180,7 @@ export class DeliveryService {
     return this.deliveryRepo.findOne({where: {id}});
   }
 
-  update(id: number, updateDeliveryDto: UpdateDeliveryDto) {
-    return `This action updates a #${id} delivery`;
-  }
-
-  async edit(id: number, updateDeliveryDto: CreateDeliveryDto, clientId: number) {
+  async edit(id: number, updateDeliveryDto: UpdateDeliveryDto, clientId: number) {
     try {
       // 1️⃣ Validate client existence
       const client = await this.clientRepo.findOne({ where: { id: clientId } });

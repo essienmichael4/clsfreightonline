@@ -20,8 +20,8 @@ export class DeliveryController {
    // ✅ GET /deliveries?includeClient=true
    @UseGuards(JwtGuard)
   @Get()
-  findAll(@Query() pageOptionsDto:PageOptionsDto, @Query('includeClient') includeClient?: string) {
-    return this.deliveryService.findAll(pageOptionsDto, includeClient === 'true');
+  findAll(@Query() pageOptionsDto:PageOptionsDto, ) {
+    return this.deliveryService.findAll(pageOptionsDto,);
   }
 
   @Get("all")
@@ -52,8 +52,8 @@ export class DeliveryController {
   // ✅ PATCH /deliveries/:id
   @UseGuards(JwtGuard)
   @Patch(':id')
-  updateDelivery(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateDeliveryDto) {
-    return this.deliveryService.update(id, updateDto);
+  updateDelivery(@Param('id', ParseIntPipe) id: number, @Body() updateDto: UpdateDeliveryDto, @User() user:UserInfo) {
+    return this.deliveryService.edit(id, updateDto, user.sub.id);
   }
 
   @UseGuards(JwtGuard)

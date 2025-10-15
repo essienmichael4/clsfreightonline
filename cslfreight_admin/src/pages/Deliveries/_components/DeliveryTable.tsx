@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useDeliveries } from "@/hooks/useDeliveries"
 import type { Delivery } from "@/lib/types"
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table"
-import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Edit } from "lucide-react"
+import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react"
 import { Link } from "react-router-dom"
 
 interface FilterProps{
@@ -92,13 +92,18 @@ const DeliveryTable = ({status, page, limit, setLimit, setPage}:FilterProps) => 
         }
     },{
         accessorKey: "ids",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
+        header:({column})=>(<DataTableColumnHeader column={column} title='Ready for Pickup' />),
         cell:({row}) => <div>
-            <span className="flex gap-2 items-center"  >
-                <Link to={`edit/${row.original.id}`}><Edit className="w-4 h-4 text-emerald-400"/></Link>
+            {/* <span className="flex gap-2 items-center"  > */}
+                 <div className='text-muted-foreground text-nowrap'>
+                <span className={`${row.original.isPickupReady === "True" && "text-cyan-800 bg-cyan-100"} ${row.original.isPickupReady === "False" && "text-emerald-800 bg-emerald-100"} py-2 px-4 rounded-md`}>
+                    {row.original.status}
+                </span>
+            </div>
+                {/* <Link to={`edit/${row.original.id}`}><Edit className="w-4 h-4 text-emerald-400"/></Link> */}
                 {/* <EditPackage page={page} limit={limit} search={search} item={row.original} status={status} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
                 <DeletePackage trackingNumber={row.original.trackingNumber} id={Number(row.original.id)} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} />  */}
-            </span> 
+            {/* </span>  */}
         </div>
     }]
 

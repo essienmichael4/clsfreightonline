@@ -11,7 +11,6 @@ import EditPickupReadyStatus from "./_components/EditPickupReadyStatus"
 
 const DeliveryDetails = () => {
     const {id} = useParams()
-    // const navigate = useNavigate()
     const axios_instance_token = useAxiosToken()
 
     const deliveryDetails = useQuery<Delivery>({
@@ -59,7 +58,7 @@ const DeliveryDetails = () => {
                 </div>
             </div>
             <div>
-                {deliveryDetails.data?.client.shippingMark}
+                {deliveryDetails.data?.client?.shippingMark}
             </div>
         </div>
     )
