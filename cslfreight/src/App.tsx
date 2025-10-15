@@ -26,9 +26,11 @@ import Attachments from './pages/Attachments/Attachments'
 import Payments from './pages/Payments/Payments'
 import Invoices from './pages/Invoice/Invoices'
 import InvoiceDetails from './pages/Invoice/InvoiceDetails'
-import RequestForm from './pages/RequestForm'
-import Deliveries from './pages/Deliveries'
-import DeliveryTracking from './pages/DeliveryTracking'
+import RequestForm from './pages/Deliveries/RequestForm'
+// import Deliveries from './pages/Deliveries/Deliveries'
+import DeliveryTracking from './pages/Deliveries/DeliveryTracking'
+import Deliveries from './pages/Deliveries/Deliveries'
+import DeliveryEdit from './pages/Deliveries/DeliveryEdit'
 
 function App() {
 
@@ -58,10 +60,11 @@ function App() {
               <Route path='/our-policies' element={<Terms />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/packages" element={<Packages />} />
-              <Route path="/create-delivery" element={<RequestForm />} />
               <Route path="/payments" element={<Payments />} />
-              <Route path="/delivery" element={<Deliveries />} />
-              <Route path="/delivery-tracking" element={<DeliveryTracking />} />
+              <Route path="/deliveries" element={<Deliveries />} />
+              <Route path="/deliveries/create" element={<RequestForm />} />
+              <Route path="/deliveries/:id" element={<DeliveryTracking />} />
+               <Route path="/deliveries/:id/edit" element={<DeliveryEdit />} />
               <Route path="/shipping-address" element={<Address />} />
               <Route path="/packages/:id" element={<PackageDetails />} />
               <Route path="/profile/:id" element={<Profile />} />
