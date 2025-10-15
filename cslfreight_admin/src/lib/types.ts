@@ -72,7 +72,7 @@ export type Client = {
 }
 
 export type Data = {
-    data: Client[] | Package[] | Payment[] | Invoice[],
+    data: Client[] | Package[] | Payment[] | Invoice[] | Delivery[],
     meta: Meta
 }
 
@@ -82,6 +82,23 @@ export type Details = {
     location: string,
     nextOfKin: string,
     nextOfKinPhone: string
+}
+
+export type Delivery = {
+    id: number,
+    phone: string,
+    location: string,
+    loaded: string,
+    deliveryType: string,
+    pickupBy: string,
+    thirdPartyName?: string,
+    thirdPartyPhone?: string,
+    status: "Completed" | "Pending" ,
+    isConfirmed: "Confirmed" | "Pending" | "Declined",
+    isPickupReady: "True" | "False",
+    createdAt: string,
+    updatedAt?: string,
+    client: Pick<Client, "id" | "name" | "shippingMark">
 }
 
 export type HelplineType = {
