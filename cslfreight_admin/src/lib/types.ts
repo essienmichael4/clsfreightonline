@@ -93,8 +93,8 @@ export type Delivery = {
     pickupBy: string,
     thirdPartyName?: string,
     thirdPartyPhone?: string,
-    status: string,
-    isConfirmed: string,
+    status: "Completed" | "Pending" ,
+    isConfirmed: "Confirmed" | "Pending" | "Declined",
     createdAt: string,
     updatedAt?: string,
     client: Pick<Client, "id" | "name" | "shippingMark">

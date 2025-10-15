@@ -5,6 +5,8 @@ import type { Delivery } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
 import { Edit } from "lucide-react"
 import { useParams } from "react-router-dom"
+import EditDeliveryStatus from "./_components/EditDeliveryStatus"
+import EditConfirmationStatus from "./_components/EditConfirmationStatus"
 
 const DeliveryDetails = () => {
     const {id} = useParams()
@@ -36,11 +38,17 @@ const DeliveryDetails = () => {
             <div className="mt-6 flex items-center justify-between">
                 <h3 className="font-bold">Delivery Details</h3>
                 <div className="flex gap-2">
-                    <div>
+                    {deliveryDetails.data && <EditConfirmationStatus id={Number(id)} trigger={
+                        <Button className="py-2 px-2 md:px-4 flex items-center rounded-md bg-gradient-to-r from-emerald-500 to-emerald-800 text-white">
+                            <Edit className="w-4 h-4 mr-2 text-white"/> <span className="text-xs md:text-sm">Edit Confirmation</span>
+                        </Button>
+                    } delivery={deliveryDetails.data} />}
+                
+                    {deliveryDetails.data && <EditDeliveryStatus id={Number(id)} trigger={
                         <Button className="py-2 px-2 md:px-4 flex items-center rounded-md bg-gradient-to-r from-blue-500 to-blue-800 text-white">
                             <Edit className="w-4 h-4 mr-2 text-white"/> <span className="text-xs md:text-sm">Edit Status</span>
                         </Button>
-                    </div>
+                    } delivery={deliveryDetails.data} />}
                 </div>
             </div>
             <div>

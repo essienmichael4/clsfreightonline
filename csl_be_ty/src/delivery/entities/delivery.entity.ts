@@ -17,6 +17,11 @@ export enum Confirmation {
     DECLINED = "Declined"
 }
 
+export enum PickupReady {
+    TRUE = 'true',
+    FALSE = "false",
+}
+
 export enum DeliveryType {
     DELIVERY = 'Delivery',
     PICKUP = 'Pickup',
@@ -59,6 +64,9 @@ export class Delivery {
 
     @Column({ type: 'enum', enum: Confirmation, default: Confirmation.PENDING })
     isConfirmed: Confirmation;
+
+    @Column({ type: 'enum', enum: PickupReady, default: PickupReady.FALSE })
+    isPickupReady: PickupReady;
 
     @ManyToOne(() => Client, (client) => client.deliveries, { onDelete: "CASCADE" })
     client: Client; 

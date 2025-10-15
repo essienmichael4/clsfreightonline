@@ -1,10 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
-import { Confirmation, Delivery, PickupBy, Status } from './entities/delivery.entity';
+import { Confirmation, Delivery, PickupBy, PickupReady, Status } from './entities/delivery.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Client } from 'src/user/entities/client.entity';
+import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
+import { DeliveryResponseDto } from './dto/response.dto';
+import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
+import { PageDto } from 'src/common/dto/page.dto';
 
 @Injectable()
 export class DeliveryService {
@@ -46,24 +50,132 @@ export class DeliveryService {
   }
 
   // 🔹 Get all deliveries (optionally include client)
-  async findAll(includeClient = false) {
-    return this.deliveryRepo.find({
-      relations: includeClient ? ['client'] : [],
-      order: { createdAt: 'DESC' },
+  async findAll(pageOptionsDto: PageOptionsDto, includeClient = true) {
+    const query = this.deliveryRepo
+      .createQueryBuilder('delivery')
+      .leftJoinAndSelect(
+        includeClient
+          ? 'delivery.client'
+          : null,
+        'client'
+      )
+      .select([
+        'delivery.id',
+        'delivery.phone',
+        'delivery.location',
+        'delivery.loaded',
+        'delivery.deliveryType',
+        'delivery.pickupBy',
+        'delivery.thirdPartyName',
+        'delivery.thirdPartyPhone',
+        'delivery.status',
+        'delivery.isConfirmed',
+        'delivery.createdAt',
+        'delivery.updatedAt',
+        ...(includeClient
+          ? ['client.id', 'client.name', 'client.email', 'client.shippingMark']
+          : []),
+      ])
+      .orderBy('delivery.createdAt', 'DESC')
+      .skip(pageOptionsDto.skip)
+      .take(pageOptionsDto.take)
+
+    const [deliveries, total] = await query.getManyAndCount();
+
+    const response = deliveries.map(
+      (delivery) => new DeliveryResponseDto(delivery),
+    );
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount: total,
+      pageOptionsDto,
     });
+
+    return new PageDto(response, pageMetaDto);
+  }
+  
+  async export() {
+    const query = this.deliveryRepo
+      .createQueryBuilder('delivery')
+      .leftJoin('delivery.client', 'client')
+      .select([
+        'delivery.id AS delivery_id',
+        'delivery.phone AS delivery_phone',
+        'delivery.location AS delivery_location',
+        'delivery.deliveryType AS delivery_type',
+        'delivery.status AS delivery_status',
+        'client.name AS client_name',
+        'client.email AS client_email',
+        'client.shippingMark AS client_shipping_mark',
+      ])
+      .orderBy('delivery.createdAt', 'DESC');
+
+    // Return as raw objects for easier CSV export
+    const deliveries = await query.getRawMany();
+    return deliveries;
   }
 
   // 🔹 Get all deliveries for a specific client
-  async findAllClientDeliveries(clientId: number) {
-    return this.deliveryRepo.find({
+  async findAllClientDeliveries(pageOptionsDto: PageOptionsDto, clientId: number) {
+    const [deliveries, total] = await this.deliveryRepo.findAndCount({
       where: { client: { id: clientId } },
       relations: ['client'],
       order: { createdAt: 'DESC' },
+      skip: pageOptionsDto.skip,
+      take: pageOptionsDto.take,
+      select: {
+        id: true,
+        phone: true,
+        location: true,
+        loaded: true,
+        deliveryType: true,
+        pickupBy: true,
+        thirdPartyName: true,
+        thirdPartyPhone: true,
+        status: true,
+        isConfirmed: true,
+        createdAt: true,
+        updatedAt: true,
+        client: {
+          id: true,
+          name: true,
+          email: true,
+          shippingMark: true,
+        },
+      },
     });
+
+    const response = deliveries.map(
+      (delivery) => new DeliveryResponseDto(delivery),
+    );
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount: total,
+      pageOptionsDto,
+    });
+
+    return new PageDto(response, pageMetaDto);
   }
 
+  async findClientSingleDelivery(id: number, clientId: number) {
+    const delivery = await this.deliveryRepo.findOne({
+      where: {
+        id,
+        client: { id: clientId },
+      },
+      relations: ['client'],
+    });
+
+    if (!delivery) {
+      throw new NotFoundException(`Delivery ${id} not found for client ${clientId}`);
+    }
+
+    return delivery;
+  }
+
+
   findOne(id: number) {
-    return `This action returns a #${id} delivery`;
+    return this.deliveryRepo.findOne({where: {id}});
   }
 
   update(id: number, updateDeliveryDto: UpdateDeliveryDto) {
@@ -145,7 +257,17 @@ export class DeliveryService {
     return { message: `Delivery confirmation updated to ${confirmation}`, delivery };
   }
 
+  async editReadyForPickup(deliveryId: number, isPickupReady: PickupReady) {
+    const delivery = await this.deliveryRepo.findOne({ where: { id: deliveryId } });
+    if (!delivery) throw new BadRequestException('Delivery not found');
+
+    delivery.isPickupReady = isPickupReady;
+    await this.deliveryRepo.save(delivery);
+
+    return { message: `Delivery ready for pickup updated to ${isPickupReady}`, delivery };
+  }
+
   remove(id: number) {
-    return `This action removes a #${id} delivery`;
+    return this.deliveryRepo.delete(id)
   }
 }

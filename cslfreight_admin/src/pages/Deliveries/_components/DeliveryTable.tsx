@@ -85,7 +85,7 @@ const DeliveryTable = ({status, page, limit, setLimit, setPage}:FilterProps) => 
         header:({column})=>(<DataTableColumnHeader column={column} title='Status' />),
         cell:({row}) => {
             return <div className='text-muted-foreground text-nowrap'>
-                <span className={`${row.original.status === "DRAFT" && "text-cyan-800 bg-cyan-100"} ${row.original.status === "PAID" && "text-emerald-800 bg-emerald-100"} ${row.original.status === "OPEN" && "text-purple-800 bg-purple-100"} ${row.original.status === "PAST_DUE" && "text-rose-800 bg-rose-100"} py-2 px-4 rounded-md`}>
+                <span className={`${row.original.status === "Completed" && "text-cyan-800 bg-cyan-100"} ${row.original.status === "Pending" && "text-emerald-800 bg-emerald-100"} py-2 px-4 rounded-md`}>
                     {row.original.status}
                 </span>
             </div>
