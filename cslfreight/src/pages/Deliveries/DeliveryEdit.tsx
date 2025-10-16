@@ -1,11 +1,11 @@
 import useAxiosToken from "@/hooks/useAxiosToken"
 import { useState,useEffect } from 'react';
 import { RequestFormData, DeliveryType, PickupBy } from '../../types/request';
-import useAuth from '@/hooks/useAuth'
 import { toast } from "sonner";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery,useQueryClient } from "@tanstack/react-query";
+import { Delivery } from "@/lib/types";
 
 
 const initialFormData: RequestFormData = {
@@ -20,11 +20,10 @@ const initialFormData: RequestFormData = {
 };
 
 export default function RequestForm() {
-  const [isPending, setIsPending] = useState(false)
+  // const [isPending, setIsPending] = useState(false)
   const navigate = useNavigate()
   const axios_instance_token = useAxiosToken()
   const queryClient = useQueryClient()
-  const {auth} = useAuth()
   const [formData, setFormData] = useState<RequestFormData>(initialFormData);
   const [submitted, setSubmitted] = useState(false);
 
@@ -56,8 +55,8 @@ export default function RequestForm() {
       setFormData(prev=>({
         ...prev,
         shippingMark: deliveryDetails.data?.client?.shippingMark || '',
-        deliveryType: deliveryDetails.data?.deliveryType ?? 'Pickup',
-        pickupBy: deliveryDetails.data?.pickupBy ?? 'Self',
+        deliveryType: deliveryDetails.data?.deliveryType as DeliveryType ?? 'Pickup',
+        pickupBy: deliveryDetails.data?.pickupBy as PickupBy ?? 'Self',
         thirdPartyName: deliveryDetails.data?.thirdPartyName || '',
         thirdPartyPhone: deliveryDetails.data?.thirdPartyPhone || '',
         loadedDate: formattedDate,
@@ -119,45 +118,45 @@ export default function RequestForm() {
 
 
   const onSubmit = async (data: RequestFormData) =>{
-          try{
-              setIsPending(true)
-              toast.loading("Submitting request...", {
-                  id: "request"
+    try{
+        // setIsPending(true)
+        toast.loading("Submitting request...", {
+            id: "request"
 
-              })
-  
-              // Transform the data to match backend expectations
-              const payload = {
-                  shippingMark: data.shippingMark,
-                  deliveryType: data.deliveryType,
-                  pickupBy: data.pickupBy,
-                  thirdPartyName: data.thirdPartyName || null,
-                  thirdPartyPhone: data.thirdPartyPhone || null,
-                  loaded: data.loadedDate, // Backend expects 'loaded', not 'loadedDate'
-                  location: data.location,
-                  phone: data.phone
-              }
+        })
 
-              console.log('Sending payload:', payload)
-  
-              const response = await axios_instance_token.patch(`/deliveries/${id}`, payload)
-             console.log(response)
-              setIsPending(false)
-              toast.success("Delivery request updated successfully", {
-                  id: "request"
-              })          
-              queryClient.invalidateQueries({queryKey: ["deliveries", id]})
-              navigate(-1)
-              
-          }catch(err:any){
-              setIsPending(false)
-              if (axios.isAxiosError(err)){
-                  toast.error(err?.response?.data?.message, {
-                      id: "request"
-                  })
-              }
-          }
-      }
+        // Transform the data to match backend expectations
+        const payload = {
+            shippingMark: data.shippingMark,
+            deliveryType: data.deliveryType,
+            pickupBy: data.pickupBy,
+            thirdPartyName: data.thirdPartyName || null,
+            thirdPartyPhone: data.thirdPartyPhone || null,
+            loaded: data.loadedDate, // Backend expects 'loaded', not 'loadedDate'
+            location: data.location,
+            phone: data.phone
+        }
+
+        console.log('Sending payload:', payload)
+
+        const response = await axios_instance_token.patch(`/deliveries/${id}`, payload)
+        console.log(response)
+        // setIsPending(false)
+        toast.success("Delivery request updated successfully", {
+            id: "request"
+        })          
+        queryClient.invalidateQueries({queryKey: ["deliveries", id]})
+        navigate(-1)
+        
+    }catch(err:any){
+        // setIsPending(false)
+        if (axios.isAxiosError(err)){
+            toast.error(err?.response?.data?.message, {
+                id: "request"
+            })
+        }
+    }
+  }
 
   if (submitted) {
     return (

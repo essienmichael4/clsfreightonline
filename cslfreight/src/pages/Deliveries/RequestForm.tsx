@@ -19,7 +19,7 @@ const initialFormData: RequestFormData = {
 };
 
 export default function RequestForm() {
-  const [isPending, setIsPending] = useState(false)
+  // const [isPending, setIsPending] = useState(false)
   const navigate = useNavigate()
   const axios_instance_token = useAxiosToken()
   const {auth} = useAuth()
@@ -81,31 +81,31 @@ export default function RequestForm() {
 
 
   const onSubmit = async (data: RequestFormData) =>{
-          try{
-              setIsPending(true)
-              toast.loading("Submitting request...", {
-                  id: "request"
-              })
-  
-              const response = await axios_instance_token.post("/deliveries", {
-                  ...data
-              })
-             console.log(response)
-              setIsPending(false)
-              toast.success("Delivery request created successfully", {
-                  id: "request"
-              })            
-              navigate(-1)
-              
-          }catch(err:any){
-              setIsPending(false)
-              if (axios.isAxiosError(err)){
-                  toast.error(err?.response?.data?.message, {
-                      id: "request"
-                  })
-              }
-          }
+    try{
+      // setIsPending(true)
+      toast.loading("Submitting request...", {
+        id: "request"
+      })
+
+      const response = await axios_instance_token.post("/deliveries", {
+        ...data
+      })
+      console.log(response)
+      // setIsPending(false)
+      toast.success("Delivery request created successfully", {
+          id: "request"
+      })            
+        navigate(-1)
+        
+    }catch(err:any){
+      // setIsPending(false)
+      if (axios.isAxiosError(err)){
+        toast.error(err?.response?.data?.message, {
+          id: "request"
+        })
       }
+    }
+  }
 
   if (submitted) {
     return (

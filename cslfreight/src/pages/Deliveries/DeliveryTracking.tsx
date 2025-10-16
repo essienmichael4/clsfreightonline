@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Check, AlertCircle, Loader, Package, Calendar, MapPin, Phone, User, Truck } from 'lucide-react';
 import { useParams, Link } from "react-router-dom"
 import useAxiosToken from "@/hooks/useAxiosToken";
 import { useQuery } from "@tanstack/react-query";
+import { Delivery } from '@/lib/types';
 
 
 type StatusStep = 'request' | 'confirmed' | 'ready' | 'delivered';
@@ -37,7 +38,7 @@ function DeliveryTracking() {
     const { status, isPickupReady, isConfirmed } = deliveryDetails.data;
     
     // If delivered
-    if (status === "Delivered") return 3;
+    if (status === "Completed") return 3;
     
     // If ready for pickup/delivery
     if (isPickupReady === "True") return 2;

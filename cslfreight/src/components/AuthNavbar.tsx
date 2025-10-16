@@ -167,6 +167,9 @@ const AuthNavbar = () => {
                   <Link to={"/payments"} onClick={toggleNavbar} className='text-neutral-500'>Payments</Link>
                 </li>
                 <li className='py-4'>
+                  <Link to={"/deliveries"} onClick={toggleNavbar} className='text-neutral-500'>Deliveries</Link>
+                </li>
+                <li className='py-4'>
                   <a href="https://rmbdeals.com" onClick={toggleNavbar} target="_blank" className="text-neutral-500" >Buy RMB</a>
                 </li>
               </ul>
