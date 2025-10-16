@@ -14,6 +14,7 @@ const useRefreshToken = () => {
         dispatch({type: "ADD_AUTH", payload:{
             id: auth?.id,
             email: auth!.email,
+            shippingMark: auth!.shippingMark,
             backendTokens: {
                 accessToken: response.data?.accessToken,
                 refreshToken: auth!.backendTokens.refreshToken
