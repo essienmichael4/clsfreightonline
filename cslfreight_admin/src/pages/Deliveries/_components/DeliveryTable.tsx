@@ -30,7 +30,7 @@ const DeliveryTable = ({status, page, limit, setLimit, setPage}:FilterProps) => 
     },{
         accessorKey: "clientName",
         header:({column})=>(<DataTableColumnHeader column={column} title='Client' />),
-        cell:({row}) => <div className="lg:min-w-[250px] overflow-ellipsis">
+        cell:({row}) => <div className="lg:min-w-[150px] overflow-ellipsis">
                 <p className="text-sm">{row.original.client.name}</p>
                 <p className="text-xs text-gray-600">{row.original.client.shippingMark}</p>
         </div>
@@ -61,7 +61,7 @@ const DeliveryTable = ({status, page, limit, setLimit, setPage}:FilterProps) => 
         header:({column})=>(<DataTableColumnHeader column={column} title='Party Name' />),
         cell:({row}) => {
             return <div className='text-muted-foreground text-nowrap'>
-                {row.original.thirdPartyName}
+                {row.original.thirdPartyName ? row.original.thirdPartyName : "-"}
             </div>
         }
     },{
@@ -69,7 +69,7 @@ const DeliveryTable = ({status, page, limit, setLimit, setPage}:FilterProps) => 
         header:({column})=>(<DataTableColumnHeader column={column} title='Party Phone' />),
         cell:({row}) => {
             return <div className='text-muted-foreground text-nowrap'>
-                {row.original.thirdPartyPhone}
+                {row.original.thirdPartyPhone ? row.original.thirdPartyPhone : "-"}
             </div>
         }
     },{

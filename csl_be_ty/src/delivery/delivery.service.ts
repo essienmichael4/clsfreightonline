@@ -53,21 +53,8 @@ export class DeliveryService {
   async findAll(pageOptionsDto: PageOptionsDto) {
     const query = this.deliveryRepo
       .createQueryBuilder('delivery')
-      .leftJoinAndSelect('delivery.client', 'client')
-      .select([
-        'delivery.id',
-        'delivery.phone',
-        'delivery.location',
-        'delivery.loaded',
-        'delivery.deliveryType',
-        'delivery.pickupBy',
-        'delivery.thirdPartyName',
-        'delivery.thirdPartyPhone',
-        'delivery.status',
-        'delivery.isConfirmed',
-        'delivery.createdAt',
-        'delivery.updatedAt',
-        // Select only specific client fields
+      .leftJoin('delivery.client', 'client') // use leftJoin, not leftJoinAndSelect
+      .addSelect([
         'client.id',
         'client.name',
         'client.email',
@@ -90,7 +77,6 @@ export class DeliveryService {
 
     return new PageDto(response, pageMetaDto);
   }
-
   
   async export() {
     const query = this.deliveryRepo
@@ -143,9 +129,6 @@ export class DeliveryService {
 
     const [deliveries, total] = await query.getManyAndCount();
 
-    // Debug log (optional)
-    console.log(deliveries);
-
     const response = deliveries.map(
       (delivery) => new DeliveryResponseDto(delivery),
     );
@@ -175,9 +158,13 @@ export class DeliveryService {
     return delivery;
   }
 
+  async findOne(id: number) {
+    const delivery = await this.deliveryRepo.findOne({
+      where: {id},
+      relations: {client: true}
+    });
 
-  findOne(id: number) {
-    return this.deliveryRepo.findOne({where: {id}});
+    return new DeliveryResponseDto(delivery)
   }
 
   async edit(id: number, updateDeliveryDto: UpdateDeliveryDto, clientId: number) {

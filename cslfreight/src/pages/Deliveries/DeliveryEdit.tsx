@@ -70,20 +70,6 @@ export default function RequestForm() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const getMinDateTime = () => {
-    const twelveHoursFromNow = new Date(Date.now() + 12 * 60 * 60 * 1000);
-    return twelveHoursFromNow.toISOString().slice(0, 10);
-  };
-
-  const validateDate = () => {
-    if (!formData.loadedDate) return false;
-
-    const selectedDate = new Date(formData.loadedDate);
-    const twelveHoursFromNow = new Date(Date.now() + 12 * 60 * 60 * 1000);
-
-    return selectedDate >= twelveHoursFromNow;
-  };
-
   const isFormValid = () => {
     if (!formData.shippingMark || !formData.deliveryType || !formData.pickupBy) {
       return false;
@@ -98,8 +84,6 @@ export default function RequestForm() {
     if (!formData.loadedDate || !formData.location || !formData.phone) {
       return false;
     }
-
-    return validateDate();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -201,7 +185,7 @@ export default function RequestForm() {
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-6">
             <h1 className="text-3xl font-bold mb-2">Pickup & Delivery Request</h1>
-            <p className="text-blue-100">Complete the form to submit your request</p>
+            <p className="text-blue-100">Pickup/Delivery request must be placed 5 hours ahead of pickup and toward our working hours.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="px-8 py-6 space-y-6">
@@ -329,15 +313,10 @@ export default function RequestForm() {
                 id="loadedDate"
                 value={formData.loadedDate}
                 onChange={(e) => updateFormData('loadedDate', e.target.value)}
-                min={getMinDateTime()}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 ${
-                  formData.loadedDate && !validateDate() ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900`}
                 required
               />
-              {formData.loadedDate && !validateDate() && (
-                <p className="text-red-500 text-sm mt-1">Loading date must be at least 12 hours from now</p>
-              )}
+              <p className="text-gray-500 text-sm mt-1">Day the package was loaded.</p>
             </div>
 
            <div>

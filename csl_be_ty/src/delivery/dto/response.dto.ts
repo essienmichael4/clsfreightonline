@@ -13,6 +13,7 @@ export class DeliveryResponseDto {
   thirdPartyPhone?: string
   status: string
   isConfirmed: string
+  isPickupReady: string
   createdAt: string
   updatedAt?: string
   client?: Partial<Pick<Client, 'id' | 'name' | 'email' | 'shippingMark'>>
@@ -28,6 +29,7 @@ export class DeliveryResponseDto {
     this.thirdPartyPhone = delivery.thirdPartyPhone
     this.status = delivery.status
     this.isConfirmed = delivery.isConfirmed
+    this.isPickupReady = delivery.isPickupReady
     this.createdAt = delivery.createdAt?.toISOString()
     this.updatedAt = delivery.updatedAt?.toISOString()
 
