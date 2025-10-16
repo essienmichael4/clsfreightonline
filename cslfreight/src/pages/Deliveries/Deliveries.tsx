@@ -6,7 +6,7 @@ import { Delivery } from "@/lib/types"
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 
 const emptyData: any[]= []
 const limit = 5
@@ -20,7 +20,9 @@ const Deliveries = () => {
         accessorKey: "id",
         header:({column})=>(<DataTableColumnHeader column={column} title='ID' />),
         cell:({row}) => <div className="text-xs">
-            <span className='text-gray-400'>#</span>{row.original.id}
+            <Link to={`./${row.original.id}`}>
+                <span className='text-gray-400'>#</span>{row.original.id}
+            </Link>
         </div>
         },{
             accessorKey: "shippingMark",
@@ -181,7 +183,7 @@ const Deliveries = () => {
     </div>
 
     return (
-        <div className="mt-4">
+        <div className="mt-4 min-h-screen container mx-auto">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Deliveries</h2>
                 <button onClick={() => navigate("create")} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2">

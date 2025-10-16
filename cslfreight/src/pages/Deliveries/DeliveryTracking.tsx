@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Check, AlertCircle, Loader, Package, Calendar, MapPin, Phone, User, Truck } from 'lucide-react';
+import { useParams, Link } from "react-router-dom"
+import useAxiosToken from "@/hooks/useAxiosToken";
+import { useQuery } from "@tanstack/react-query";
 
-interface FetchedRequest {
-  shippingMark: string;
-  requestType: string;
-  partyType: string;
-  thirdPartyName: string;
-  thirdPartyPhone: string;
-  loadingDate: string;
-  location: string;
-  callNumber: string;
-}
 
 type StatusStep = 'request' | 'confirmed' | 'ready' | 'delivered';
 
@@ -23,39 +16,40 @@ const statusSteps: { id: StatusStep; label: string; description: string }[] = [
 
 function DeliveryTracking() {
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [fetchedRequest, setFetchedRequest] = useState<FetchedRequest | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [currentStatus, setCurrentStatus] = useState<StatusStep>('request');
 
-  useEffect(() => {
-    fetchRequestData();
-  }, []);
+  const {id} = useParams()
+  const axios_instance_token = useAxiosToken()
 
-  const fetchRequestData = async (): Promise<void> => {
-    try {
-      setLoading(true);
+  const deliveryDetails = useQuery<Delivery>({
+    queryKey: ["deliveries", id],
+    queryFn: async() => await axios_instance_token.get(`/deliveries/${id}/client`).then(res => {
+      console.log(res.data);
+      
+      return res.data
+    })
+  })
 
-      const mockRequest: FetchedRequest = {
-        shippingMark: 'PKG-2025-001',
-        requestType: 'pickup',
-        partyType: 'third',
-        thirdPartyName: 'ABC Logistics Inc.',
-        thirdPartyPhone: '+1-555-0123',
-        loadingDate: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().slice(0, 16),
-        location: 'Warehouse A, Building 5',
-        callNumber: 'CALL-2025-5847'
-      };
-
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      setFetchedRequest(mockRequest);
-      setLoading(false);
-    } catch (error) {
-      console.error('Failed to fetch request data:', error);
-      setLoading(false);
-    }
+  // Determine current status based on API data
+  const getCurrentStatusStep = (): number => {
+    if (!deliveryDetails.data) return 0;
+    
+    const { status, isPickupReady, isConfirmed } = deliveryDetails.data;
+    
+    // If delivered
+    if (status === "Delivered") return 3;
+    
+    // If ready for pickup/delivery
+    if (isPickupReady === "True") return 2;
+    
+    // If confirmed by warehouse
+    if (isConfirmed === "Confirmed") return 1;
+    
+    // Default: just created request
+    return 0;
   };
+
+  const currentStatusIndex = getCurrentStatusStep();
 
   const handleNext = () => {
     if (currentStep < 3) {
@@ -76,11 +70,10 @@ function DeliveryTracking() {
   const handleReset = () => {
     setCurrentStep(1);
     setSubmitted(false);
-    setCurrentStatus('request');
-    fetchRequestData();
+    // Status is now derived from data, no need to reset it
   };
 
-  if (loading) {
+  if (deliveryDetails.isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex items-center justify-center p-4">
         <div className="text-center">
@@ -91,14 +84,14 @@ function DeliveryTracking() {
     );
   }
 
-  if (!fetchedRequest) {
+  if (!deliveryDetails.data) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex items-center justify-center p-4">
         <div className="text-center bg-white rounded-2xl shadow-xl p-8">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <p className="text-slate-700 text-xl font-medium">Failed to load request data</p>
           <button
-            onClick={fetchRequestData}
+            onClick={() => deliveryDetails.refetch()}
             className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Try Again
@@ -115,37 +108,40 @@ function DeliveryTracking() {
           <div className="bg-blue-600 p-2 rounded-lg">
             <Package className="w-6 h-6 text-white" />
           </div>
+          <div className="flex item-center justify-between">
           <h3 className="text-xl font-bold text-blue-900">Request Information</h3>
+              <Link to={`edit`}>Edit</Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white/80 backdrop-blur rounded-xl p-4 border border-blue-100">
             <p className="text-sm text-slate-600 mb-1">Shipping Mark</p>
-            <p className="text-lg font-bold text-slate-900">{fetchedRequest.shippingMark}</p>
+            <p className="text-lg font-bold text-slate-900">{deliveryDetails.data.client.shippingMark}</p>
           </div>
 
           <div className="bg-white/80 backdrop-blur rounded-xl p-4 border border-blue-100">
-            <p className="text-sm text-slate-600 mb-1">Request Type</p>
+            <p className="text-sm text-slate-600 mb-1">Delivery Type</p>
             <div className="flex items-center gap-2">
               <Truck className="w-5 h-5 text-blue-600" />
-              <p className="text-lg font-bold text-slate-900 capitalize">{fetchedRequest.requestType}</p>
+              <p className="text-lg font-bold text-slate-900 capitalize">{deliveryDetails.data.deliveryType}</p>
             </div>
           </div>
 
           <div className="bg-white/80 backdrop-blur rounded-xl p-4 border border-blue-100">
-            <p className="text-sm text-slate-600 mb-1">Party Type</p>
+            <p className="text-sm text-slate-600 mb-1">Pickup By</p>
             <p className="text-lg font-bold text-slate-900">
-              {fetchedRequest.partyType === 'third' ? 'Third Party' : 'Self'}
+              {deliveryDetails.data.pickupBy === 'Third Party' ? 'Third Party' : 'Self'}
             </p>
           </div>
 
-          {fetchedRequest.partyType === 'third' && (
+          {deliveryDetails.data.pickupBy === 'Third Party' && (
             <>
               <div className="bg-white/80 backdrop-blur rounded-xl p-4 border border-blue-100">
                 <p className="text-sm text-slate-600 mb-1">Third Party Name</p>
                 <div className="flex items-center gap-2">
                   <User className="w-5 h-5 text-blue-600" />
-                  <p className="text-lg font-bold text-slate-900">{fetchedRequest.thirdPartyName}</p>
+                  <p className="text-lg font-bold text-slate-900">{deliveryDetails.data.thirdPartyName}</p>
                 </div>
               </div>
 
@@ -153,7 +149,7 @@ function DeliveryTracking() {
                 <p className="text-sm text-slate-600 mb-1">Phone Number</p>
                 <div className="flex items-center gap-2">
                   <Phone className="w-5 h-5 text-blue-600" />
-                  <p className="text-lg font-bold text-slate-900">{fetchedRequest.thirdPartyPhone}</p>
+                  <p className="text-lg font-bold text-slate-900">{deliveryDetails.data.thirdPartyPhone}</p>
                 </div>
               </div>
             </>
@@ -175,7 +171,7 @@ function DeliveryTracking() {
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-green-600" />
               <p className="text-lg font-bold text-slate-900">
-                {new Date(fetchedRequest.loadingDate).toLocaleString('en-US', {
+                {new Date(deliveryDetails.data.loaded).toLocaleString('en-US', {
                   dateStyle: 'full',
                   timeStyle: 'short'
                 })}
@@ -187,13 +183,13 @@ function DeliveryTracking() {
             <p className="text-sm text-slate-600 mb-1">Location</p>
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-green-600" />
-              <p className="text-lg font-bold text-slate-900">{fetchedRequest.location}</p>
+              <p className="text-lg font-bold text-slate-900">{deliveryDetails.data.location}</p>
             </div>
           </div>
 
           <div className="bg-white/80 backdrop-blur rounded-xl p-4 border border-green-100">
-            <p className="text-sm text-slate-600 mb-1">Call Number</p>
-            <p className="text-lg font-bold text-slate-900">{fetchedRequest.callNumber}</p>
+            <p className="text-sm text-slate-600 mb-1">Phone</p>
+            <p className="text-lg font-bold text-slate-900">{deliveryDetails.data.phone}</p>
           </div>
         </div>
       </div>
@@ -219,8 +215,8 @@ function DeliveryTracking() {
 
         <div className="space-y-4">
           {statusSteps.map((status, idx) => {
-            const isActive = idx === 0;
-            const isCompleted = idx < statusSteps.findIndex(s => s.id === currentStatus);
+            const isActive = idx === currentStatusIndex;
+            const isCompleted = idx < currentStatusIndex;
 
             return (
               <div key={status.id} className="flex items-start gap-4 group">
@@ -232,7 +228,7 @@ function DeliveryTracking() {
                       ? 'bg-green-500 text-white'
                       : 'bg-slate-200 text-slate-600'
                   }`}>
-                    {isActive || isCompleted ? <Check size={24} /> : idx + 1}
+                    {isCompleted ? <Check size={24} /> : isActive ? <Loader size={24} className="animate-spin" /> : idx + 1}
                   </div>
                   {idx < statusSteps.length - 1 && (
                     <div className={`absolute left-1/2 top-12 w-0.5 h-8 -ml-px transition-colors duration-300 ${
@@ -250,8 +246,18 @@ function DeliveryTracking() {
                   <p className={`text-sm transition-colors duration-300 ${
                     isActive ? 'text-blue-500' : isCompleted ? 'text-green-500' : 'text-slate-500'
                   }`}>
-                    {isActive ? 'Request created from fetched data' : status.description}
+                    {isCompleted ? 'Completed' : isActive ? 'In Progress' : status.description}
                   </p>
+                  
+                  {/* Show actual status values for debugging */}
+                  {isActive && (
+                    <p className="text-xs text-slate-400 mt-1">
+                      {idx === 0 && 'Request Created'}
+                      {idx === 1 && `Confirmation: ${deliveryDetails.data.isConfirmed}`}
+                      {idx === 2 && `Pickup Ready: ${deliveryDetails.data.isPickupReady}`}
+                      {idx === 3 && `Status: ${deliveryDetails.data.status}`}
+                    </p>
+                  )}
                 </div>
               </div>
             );
