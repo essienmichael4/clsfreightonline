@@ -27,6 +27,16 @@ export class FileService {
         const url = await getSignedUrl(this.s3Client, command, {expiresIn: 3600})
         return url
     }
+    
+    async getThumbnailPresignedUrl(filename:string){
+        const getObjectParams = {
+            Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+            Key: `thumbnails/${filename}`
+        }
+        const command = new GetObjectCommand(getObjectParams)
+        const url = await getSignedUrl(this.s3Client, command, {expiresIn: 3600})
+        return url
+    }
 
     async getVideoPresigned(filename:string, contentType: string){
         const key = `videos/${v4()}-${filename.replace(/\s+/g, '_')}`

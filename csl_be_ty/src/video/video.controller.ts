@@ -8,6 +8,7 @@ import { UploadService } from 'src/upload/upload.service';
 import { User, UserInfo } from 'src/decorators/user.decorator';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { Request, Response } from 'express';
+import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 
 const MAX_IMAGE_SIZE_IN_BYTE = 2 * 1024 * 1024
 
@@ -99,11 +100,9 @@ export class VideoController {
      return this.uploadService.streamVideoFromS3(key, req, res);
   }
 
-  async findAll(
-    @Query('search') search?: string,
-    @Query('tag') tag?: string,
+  async findAll(@Query() pageOptionsDto:PageOptionsDto, @Query('search') search?: string, @Query('tag') tag?: string,
   ) {
-    return this.videoService.findAll({ search, tag });
+    return this.videoService.findAll(pageOptionsDto, { search, tag });
   }
 
   @Get(':id')

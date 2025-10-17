@@ -1,4 +1,5 @@
 import { IsArray, IsDefined, IsNotEmpty, IsOptional, IsString, IsEnum } from "class-validator";
+import { Premiere } from "../entities/video.entity";
 
 export class VideoRequestDto{
     @IsString()
@@ -23,8 +24,8 @@ export class UpdateVideoDto {
     tags?: string[];
 
     @IsOptional()
-    @IsEnum(['Public', 'Unlisted', 'Private', 'Scheduled'])
-    premiere?: 'Public' | 'Unlisted' | 'Private' | 'Scheduled';
+    @IsEnum(Premiere)
+    premiere?: Premiere;
 }
 
 // export class UpdateVideoThumbnailDto {

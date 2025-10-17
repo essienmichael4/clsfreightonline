@@ -34,6 +34,10 @@ export class UploadService {
         return await this.fileService.getPresignedUrl(filename)
     }
 
+    async getThumbnailSignedUrl(filename:string){
+        return await this.fileService.getThumbnailPresignedUrl(filename)
+    }
+
     async getVideoSignedUrl(filename:string, contentType: string){
         return await this.fileService.getVideoPresigned(filename, contentType)
     }

@@ -7,6 +7,11 @@ import { User } from 'src/user/entities/user.entity';
 import { VideoLike } from './entities/video-like.entity';
 import { Client } from 'src/user/entities/client.entity';
 import { VideoComment } from './entities/video-comment.entity';
+import { VideoResponseDto } from './dto/response.dto';
+import { UploadService } from 'src/upload/upload.service';
+import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
+import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
+import { PageDto } from 'src/common/dto/page.dto';
 
 @Injectable()
 export class VideoService {
@@ -16,6 +21,8 @@ export class VideoService {
         @InjectRepository(VideoComment) private readonly commentRepo:Repository<VideoComment>,
         @InjectRepository(User) private readonly userRepo:Repository<User>,
         @InjectRepository(Client) private readonly clientRepo:Repository<Client>,
+        private readonly uploadService: UploadService,
+        
     ){}
 
     async addComment(videoId: number, content: string, author: { userId?: number; clientId?: number },) {
@@ -115,30 +122,53 @@ export class VideoService {
         }
     }
 
-    async findAll(query?: { search?: string; tag?: string }) {
+    async findAll(pageOptionsDto: PageOptionsDto, query?: { search?: string; tag?: string }) {
         const { search, tag } = query || {};
 
         const qb = this.videoRepo.createQueryBuilder('video')
-        .leftJoinAndSelect('video.comments', 'comments')
-        .orderBy('video.createdAt', 'DESC');
+        .leftJoinAndSelect('video.uploader', 'uploader')
+        .orderBy('video.createdAt', 'DESC')
+        .skip(pageOptionsDto.skip)
+        .take(pageOptionsDto.take);
 
-        if (search) {
-            qb.andWhere('video.title LIKE :search OR video.description LIKE :search', {
-                search: `%${search}%`,
-            });
-        }
+        qb.andWhere(
+            '(LOWER(video.title) LIKE LOWER(:search) OR LOWER(video.description) LIKE LOWER(:search))',
+            { search: `%${search}%` },
+        );
 
         if (tag) {
-            qb.andWhere(':tag = ANY (string_to_array(video.tags, \',\'))', { tag });
+            qb.andWhere('FIND_IN_SET(:tag, video.tags)', { tag });
         }
 
-        return await qb.getMany();
+        const [videos, total] = await qb.getManyAndCount();
+
+        const response = videos.map(
+            (video) => new VideoResponseDto(video),
+        );
+
+        const videosResponse = await Promise.all(
+            response.map(async (video) => {
+                video.thumbnail = video.thumbnail
+                    ? await this.uploadService.getThumbnailSignedUrl(video.thumbnail)
+                    : null;
+                return video;
+            })
+        )
+        const pageMetaDto = new PageMetaDto({
+              itemCount: total,
+              pageOptionsDto,
+            });
+        
+        return new PageDto(videosResponse, pageMetaDto);
     }
 
     async findOne(id: number) {
-        return await this.videoRepo.findOne({
+        const result = await this.videoRepo.findOne({
             where: { id },
-            relations: ['comments'],
+            relations: {comments: true, uploader: true},
         });
+
+        const response = new VideoResponseDto(result)
+        return response
     }
 }
