@@ -84,6 +84,8 @@ export default function RequestForm() {
     if (!formData.loadedDate || !formData.location || !formData.phone) {
       return false;
     }
+
+    return true
   };
 
   const handleSubmit = (e: React.FormEvent) => {

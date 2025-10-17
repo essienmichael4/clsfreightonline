@@ -187,7 +187,7 @@ const Deliveries = () => {
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Deliveries</h2>
                 <button onClick={() => navigate("create")} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2">
-                    <span>+</span> Create Delivery
+                    Create Schedule
                 </button>
             </div>
             {content}
