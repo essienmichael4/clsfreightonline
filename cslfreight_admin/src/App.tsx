@@ -23,6 +23,7 @@ import Videos from './pages/Video/Videos'
 import VideoDetails from './pages/Video/VideoDetails'
 import Deliveries from './pages/Deliveries/Deliveries'
 import DeliveryDetails from './pages/Deliveries/DeliveryDetails'
+import VideoPlayer from './pages/Video/VideoPlayer'
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
             <Route path='/invoices/edit/:id' element={<EditInvoice />} />
             <Route path='/invoices/:id' element={<Invoice />} />
             <Route path='/videos' element={<Videos />} />
+            <Route path='/videos/:id' element={<VideoPlayer />} />
             <Route path='/video-details' element={<VideoDetails />} />
             <Route path='/deliveries' element={<Deliveries />} />
             <Route path='/deliveries/:id' element={<DeliveryDetails />} />

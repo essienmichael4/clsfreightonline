@@ -1,5 +1,6 @@
 import { useState } from "react"
 import VidoeUploadDialog from "./_components/VidoeUploadDialog"
+import AllVideos from "./_components/AllVideos"
 
 const Vidoes = () => {
     const [show, setShow] = useState(false)
@@ -15,13 +16,14 @@ const Vidoes = () => {
                     onClick={()=> setShow(!show)}
                 >Upload Video</button>
             </div>
-            <div className="flex flex-wrap">
+            {/* <div className="flex flex-wrap">
                 <div className="py-2 md:p-2 lg:p-4 aspect-video w-full md:w-1/2 lg:w-1/3 ">
                     <div className="bg-amber-300 w-full h-full rounded-md">
 
                     </div>
                 </div>
-            </div>
+            </div> */}
+            <AllVideos />
         </div>
     )
 }

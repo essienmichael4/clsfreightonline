@@ -72,7 +72,7 @@ export type Client = {
 }
 
 export type Data = {
-    data: Client[] | Package[] | Payment[] | Invoice[] | Delivery[],
+    data: Client[] | Package[] | Payment[] | Invoice[] | Delivery[] | Video[]
     meta: Meta
 }
 
@@ -208,6 +208,22 @@ export type User = {
     role?: string,
     createdAt?: string,
     updatedAt?:string,
+}
+
+export type Video = {
+    id: number,
+    title?: string,
+    description?: string,
+    thumbnail?: string,
+    key?: string,
+    premiere?: string,
+    isPublished?: string,
+    likesCount?: number,
+    viewsCount?: number;
+    createdAt: string;
+    updatedAt: string;
+    tags?: string[];
+    uploader?: User
 }
 
 export type WarehouseType = {

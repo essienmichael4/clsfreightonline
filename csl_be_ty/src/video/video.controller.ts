@@ -100,6 +100,7 @@ export class VideoController {
      return this.uploadService.streamVideoFromS3(key, req, res);
   }
 
+  @Get()
   async findAll(@Query() pageOptionsDto:PageOptionsDto, @Query('search') search?: string, @Query('tag') tag?: string,
   ) {
     return this.videoService.findAll(pageOptionsDto, { search, tag });
