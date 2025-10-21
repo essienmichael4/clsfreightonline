@@ -31,6 +31,8 @@ import RequestForm from './pages/Deliveries/RequestForm'
 import DeliveryTracking from './pages/Deliveries/DeliveryTracking'
 import Deliveries from './pages/Deliveries/Deliveries'
 import DeliveryEdit from './pages/Deliveries/DeliveryEdit'
+import Videos from './pages/Video/Videos'
+import VideoPlayer from './pages/Video/VideoPlayer'
 
 function App() {
 
@@ -71,6 +73,8 @@ function App() {
               <Route path="/attachments/:id" element={<Attachments />} />
               <Route path="/invoices/" element={<Invoices />} />
               <Route path="/invoices/:id" element={<InvoiceDetails />} />
+              <Route path='/videos' element={<Videos />} />
+              <Route path='/videos/:id' element={<VideoPlayer />} />
             </Route>
           </Route>
         </Route>

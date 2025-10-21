@@ -160,3 +160,19 @@ export type Stats = {
         stat: number
     }
 }
+
+export type Video = {
+    id: number,
+    title?: string,
+    description?: string,
+    thumbnail?: string,
+    key?: string,
+    premiere?: string,
+    isPublished?: string,
+    likesCount?: number,
+    viewsCount?: number;
+    createdAt: string;
+    updatedAt: string;
+    tags?: string[];
+    uploader?: Client
+}
