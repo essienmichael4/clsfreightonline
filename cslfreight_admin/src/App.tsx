@@ -25,6 +25,7 @@ import Deliveries from './pages/Deliveries/Deliveries'
 import DeliveryDetails from './pages/Deliveries/DeliveryDetails'
 import VideoPlayer from './pages/Video/VideoPlayer'
 import VideoSearch from './pages/Video/VideoSearch'
+import EditVideo from './pages/Video/EditVideo'
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
             <Route path='/videos' element={<Videos />} />
             <Route path='/videos/results' element={<VideoSearch />} />
             <Route path='/videos/:id' element={<VideoPlayer />} />
+            <Route path='/videos/:id/edit' element={<EditVideo />} />
             <Route path='/video-details' element={<VideoDetails />} />
             <Route path='/deliveries' element={<Deliveries />} />
             <Route path='/deliveries/:id' element={<DeliveryDetails />} />

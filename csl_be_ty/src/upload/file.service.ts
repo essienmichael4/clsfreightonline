@@ -99,7 +99,7 @@ export class FileService {
         return await this.s3Client.send(
             new DeleteObjectCommand({
             Bucket: this.configService.getOrThrow('BUCKET_NAME'),
-            Key: `videos/${filename}`
+            Key: filename
         }))
     }
 

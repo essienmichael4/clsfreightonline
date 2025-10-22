@@ -28,8 +28,8 @@ const Payments = () => {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(clients);
 
-    XLSX.utils.book_append_sheet(wb, ws, "Clients");
-    XLSX.writeFile(wb, "clients.xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, "Client Payments");
+    XLSX.writeFile(wb, "payments.xlsx");
   };
   
   return (

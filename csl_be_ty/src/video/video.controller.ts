@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpStatus, Param, ParseFilePipeBuilder, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, Param, ParseFilePipeBuilder, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { v4 } from 'uuid';
@@ -83,15 +83,44 @@ export class VideoController {
   }
 
   @UseGuards(JwtGuard)
-  @Post("video-meta")
+  @Patch(':id/like')
+  async toggleLike(@Param('id', ParseIntPipe) id: number, @User() user:UserInfo) {
+    return this.videoService.toggleLike(id, user.sub.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(":id/video-meta")
   async updateVideo(@Body() updateVideoDto: UpdateVideoDto, @User() user:UserInfo) {
     return this.videoService.updateVideoMetadata(updateVideoDto, user.sub.id);
   }
 
   @UseGuards(JwtGuard)
-  @Patch(':id/like')
-  async toggleLike(@Param('id', ParseIntPipe) id: number, @User() user:UserInfo) {
-    return this.videoService.toggleLike(id, user.sub.id);
+  @Patch(':id/edit')
+  @UseInterceptors(
+    FileInterceptor("file", {
+      fileFilter: ImageFileFilter
+    })
+  )
+  public async updateVideoFile(@Body() dto: UpdateVideoDto, @Req() req:any, @User() user:UserInfo,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+      .addMaxSizeValidator({maxSize: MAX_IMAGE_SIZE_IN_BYTE})
+      .build({errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY})
+  ) file: Express.Multer.File){
+    try{
+      if(!file || req.fileValidationError){
+        throw new BadRequestException("Only .jpg, .jpeg, .png files are allowed")
+      }
+      
+      const buffer = file.buffer
+      const filename = `${v4()}-${file.originalname.replace(/\s+/g,'_')}`
+      
+      await this.uploadService.addThumbnail(buffer, filename) 
+      
+      return this.videoService.updateVideoMetadataWithThumbnail(dto, filename, user.sub.id) 
+    }catch(err){
+      throw err
+    }
   }
 
   @Get('stream/:key')
@@ -110,4 +139,8 @@ export class VideoController {
     return this.videoService.findOne(id);
   }
 
+  @Delete(":id")
+  async deleteVideo(@Param('id', ParseIntPipe) id: number) {
+    return this.videoService.deleteVideo(id);
+  }
 }

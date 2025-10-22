@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UpdateVideoDto } from './dto/requests.dto';
 import { Video } from './entities/video.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -156,9 +156,6 @@ export class VideoService {
             })
         )
 
-        console.log(videosResponse);
-        
-
         const pageMetaDto = new PageMetaDto({
               itemCount: total,
               pageOptionsDto,
@@ -168,8 +165,6 @@ export class VideoService {
     }
 
     async findOne(id: string) {
-        console.log("here");
-        
         const result = await this.videoRepo.findOne({
             where: { key: `videos/${id}` },
             relations: {comments: true, uploader: true},
@@ -177,5 +172,31 @@ export class VideoService {
 
         const response = new VideoResponseDto(result)
         return response
+    }
+
+    async deleteVideo(id: number) {
+        // 1️⃣ Find video in DB
+        const video = await this.videoRepo.findOne({ where: { id } });
+        if (!video) {
+            throw new NotFoundException("Video does not exist");
+        }
+
+        try {
+            // 2️⃣ Delete from S3
+            await this.uploadService.deleteVideo(video.key);
+
+            // 3️⃣ Delete thumbnail if it exists
+            if (video.thumbnail) {
+            await this.uploadService.deleteThumbnail(video.thumbnail);
+            }
+        } catch (err) {
+            console.error("S3 delete error:", err);
+            throw new InternalServerErrorException("Failed to delete video from S3");
+        }
+
+        // 4️⃣ Delete record from DB
+        await this.videoRepo.delete(id);
+
+        return { message: "Video deleted successfully", id };
     }
 }
