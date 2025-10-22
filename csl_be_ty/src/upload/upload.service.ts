@@ -11,7 +11,7 @@ export class UploadService {
     }
 
     async addThumbnail(imageBuffer: Buffer, filename:string){
-        return await this.fileService.uploadVideo(imageBuffer, filename)
+        return await this.fileService.uploadThumbnail(imageBuffer, filename)
     }
 
     async addVideo(imageBuffer: Buffer, filename:string){

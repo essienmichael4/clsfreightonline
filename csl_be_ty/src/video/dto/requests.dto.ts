@@ -1,5 +1,6 @@
 import { IsArray, IsDefined, IsNotEmpty, IsOptional, IsString, IsEnum } from "class-validator";
 import { Premiere } from "../entities/video.entity";
+import { Transform } from "class-transformer";
 
 export class VideoRequestDto{
     @IsString()
@@ -20,6 +21,16 @@ export class UpdateVideoDto {
     description?: string;
 
     @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value === 'string') {
+            try {
+            return JSON.parse(value);
+            } catch {
+            return [];
+            }
+        }
+        return value;
+    })
     @IsArray()
     tags?: string[];
 

@@ -26,7 +26,7 @@ const AllVideos = () => {
     );
 
     const handleVideoClick = (id: string) => {
-        navigate(`/videos/${id}`);
+        navigate(`/${id}`);
     };
 
     return (
@@ -39,13 +39,13 @@ const AllVideos = () => {
                 ref={lastVideoRef}
                 onClick={() => handleVideoClick(video.key as string)}
                 key={video.id}
-                className="py-2 md:p-2 lg:p-4 w-full md:w-1/2 lg:w-1/3"
+                className="py-2 md:p-2 lg:p-4 w-full md:w-1/2 lg:w-1/3 cursor-pointer"
                 >
-                    <div className="aspect-video w-full overflow-hidden rounded-md">
+                    <div className="aspect-video w-full overflow-hidden rounded-md cursor-pointer">
                         <img
                             src={video.thumbnail}
                             alt={video.title}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover cursor-pointer"
                         />
                     </div>
                     <div>
@@ -57,7 +57,7 @@ const AllVideos = () => {
             return (
                 <div
                 key={video.id}
-                className="py-2 md:p-2 lg:p-4 w-full md:w-1/2 lg:w-1/3"
+                className="py-2 md:p-2 lg:p-4 w-full md:w-1/2 lg:w-1/3 cursor-pointer"
                 onClick={() => handleVideoClick(video.key as string)}
                 >
                     <div className="aspect-video w-full overflow-hidden rounded-md">

@@ -189,7 +189,8 @@ export type Payment = {
     user?: User,
     paidShippingRate: number,
     reference: string,
-    paymentMethod: string
+    paymentMethod: string,
+    datePaid?: string
 }
 
 export type PackageTypeAndRate = {

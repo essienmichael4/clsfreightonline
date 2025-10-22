@@ -65,6 +65,7 @@ export class UserService {
       paidShippingRate: payment.paidShippingRate,
       reference: payment.reference,
       paymentMethod: payment.paymentMethod,
+      ...(payment.datePaid && {datePaid: payment.datePaid}),
       client,
       user
     })
@@ -170,6 +171,30 @@ export class UserService {
     return new PageDto(data, pageMetaDto);
   }
 
+  async exportPayments(search?: string) {
+    const query = this.paymentRepo
+      .createQueryBuilder("payment")
+      .leftJoinAndSelect("payment.client", "client")
+      .leftJoinAndSelect("payment.user", "user")
+      .orderBy("payment.id", "DESC")
+
+    if (search) {
+      // Normalize the search string once
+      const searchTerm = `%${search.toLowerCase()}%`;
+
+      query.andWhere(
+        new Brackets(qb => {
+          // Use LOWER(...) → portable across Postgres & MySQL
+          qb.where("LOWER(client.name) LIKE :search", { search: searchTerm })
+            .orWhere("LOWER(client.shippingMark) LIKE :search", { search: searchTerm })
+            .orWhere("LOWER(client.email) LIKE :search", { search: searchTerm });
+        }),
+      );
+    }
+
+    const data = await query.getMany();
+    return data;
+  }
 
   async findClientPayments(clientId: number, pageOptionsDto: PageOptionsDto) {
     const [data, total] = await this.paymentRepo.findAndCount({
@@ -190,6 +215,24 @@ export class UserService {
 
     const pageMetaDto = new PageMetaDto({itemCount: total, pageOptionsDto})
     return new PageDto(data, pageMetaDto)
+  }
+
+  async exportClientPayments(clientId: number,) {
+    const data = await this.paymentRepo.find({
+      relations: {
+        client: true,
+      },
+      where: {
+        client: {
+          id: clientId
+        }
+      },
+      order:{
+        id: "DESC"
+      }
+    });
+
+    return data
   }
 
   async clientAttachments(id:number) {
@@ -355,6 +398,7 @@ export class UserService {
       paidShippingRate: paymentRequest.paidShippingRate,
       ...(paymentRequest.paymentMethod && { paymentMethod: paymentRequest.paymentMethod }),
       ...(paymentRequest.reference && { reference: paymentRequest.reference }),
+      ...(paymentRequest.datePaid && {datePaid: paymentRequest.datePaid}),
       client,
       user
     })

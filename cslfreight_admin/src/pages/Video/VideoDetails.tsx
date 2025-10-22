@@ -131,7 +131,7 @@ export default function UploadProgressPage() {
             const autoThumb = new File([blob], "auto-thumbnail.jpg", { type: "image/jpeg" });
             formData.append("file", autoThumb);
         }
-        const response = await axios_instance_token.patch(`/videos/thumbnail`, formData, {
+        const response = await axios_instance_token.post(`/videos/meta-thumbnail`, formData, {
         headers: {
           "content-type": "multipart/form-data",
         }},)

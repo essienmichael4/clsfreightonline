@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
 import useAxiosToken from "@/hooks/useAxiosToken"
 import type { Payment } from "@/lib/types"
@@ -9,10 +10,13 @@ import { type PaymentSchemaType, PaymentSchema } from "@/schema/payments"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
-import { Loader2 } from "lucide-react"
+import { CalendarIcon, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+import { Calendar } from "@/components/ui/calendar"
 
 interface Props{
     trigger?: React.ReactNode,
@@ -32,7 +36,8 @@ const EditPaymentDialog = ({payment, page, limit, trigger}:Props) => {
         defaultValues: {
             paidShippingRate: payment.paidShippingRate,
             paymentMethod: payment.paymentMethod,
-            reference: payment.reference
+            reference: payment.reference,
+            datePaid: payment.datePaid ? new Date(payment.datePaid) : undefined,
         }
     })
 
@@ -117,6 +122,47 @@ const EditPaymentDialog = ({payment, page, limit, trigger}:Props) => {
                                 </FormItem>
                             )} 
                         />
+
+                        <div className='w-full'>
+                            <FormField 
+                                control={form.control}
+                                name="datePaid"
+                                render={({field}) =>(
+                                    <FormItem>
+                                        <FormLabel className='text-xs 2xl:text-sm font-bold'>Date Paid</FormLabel>
+                                        <Popover >
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button 
+                                                    variant={'outline'}
+                                                    className={cn("w-full pl-3 text-xs text-left font-normal", !field.value && 'text-muted-foreground')}>
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick a date</span>
+                                                        )}
+                                                        <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className='p-0 w-auto'>
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={(value)=>{
+                                                        if(!value) return
+                                                        field.onChange(value)
+                                                    }}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormDescription className="text-xs">Select date when payment was made.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <FormField 
                             control={form.control}

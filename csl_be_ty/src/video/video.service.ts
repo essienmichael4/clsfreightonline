@@ -105,6 +105,7 @@ export class VideoService {
         try{
             const user = await this.userRepo.findOne({where: { id: userId }})
             const saveEntity = this.videoRepo.create({
+                key: dto.key,
                 title : dto.title,
                 description: dto.description ,
                 thumbnail: filename,
@@ -131,14 +132,14 @@ export class VideoService {
         .skip(pageOptionsDto.skip)
         .take(pageOptionsDto.take);
 
-        qb.andWhere(
-            '(LOWER(video.title) LIKE LOWER(:search) OR LOWER(video.description) LIKE LOWER(:search))',
-            { search: `%${search}%` },
-        );
+        // qb.andWhere(
+        //     '(LOWER(video.title) LIKE LOWER(:search) OR LOWER(video.description) LIKE LOWER(:search))',
+        //     { search: `%${search}%` },
+        // );
 
-        if (tag) {
-            qb.andWhere('FIND_IN_SET(:tag, video.tags)', { tag });
-        }
+        // if (tag) {
+        //     qb.andWhere('FIND_IN_SET(:tag, video.tags)', { tag });
+        // }
 
         const [videos, total] = await qb.getManyAndCount();
 
@@ -154,6 +155,10 @@ export class VideoService {
                 return video;
             })
         )
+
+        console.log(videosResponse);
+        
+
         const pageMetaDto = new PageMetaDto({
               itemCount: total,
               pageOptionsDto,
@@ -162,9 +167,11 @@ export class VideoService {
         return new PageDto(videosResponse, pageMetaDto);
     }
 
-    async findOne(id: number) {
+    async findOne(id: string) {
+        console.log("here");
+        
         const result = await this.videoRepo.findOne({
-            where: { id },
+            where: { key: `videos/${id}` },
             relations: {comments: true, uploader: true},
         });
 

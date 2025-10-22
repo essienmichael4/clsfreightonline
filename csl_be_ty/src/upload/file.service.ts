@@ -173,13 +173,19 @@ export class FileService {
             throw new NotFoundException('Range header required');
         }
 
+        console.log("here");
+        console.log(key);
+        
+        
         // Get metadata about the video (like file size and type)
         const head = await this.s3Client.send(
             new HeadObjectCommand({
-                Bucket: process.env.AWS_S3_BUCKET_NAME!,
-                Key: key,
+                Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+                Key: `videos/${key}`,
             }),
         );
+        console.log(head);
+        
 
         const fileSize = head.ContentLength!;
         const contentType = head.ContentType || 'video/mp4';
@@ -200,8 +206,8 @@ export class FileService {
 
         // Stream video chunk directly from S3
         const getObjectCommand = new GetObjectCommand({
-            Bucket: process.env.AWS_S3_BUCKET_NAME!,
-            Key: key,
+            Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+            Key: `videos/${key}`,
             Range: `bytes=${start}-${end}`,
         });
 

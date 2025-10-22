@@ -79,11 +79,9 @@ const VideoPlayer = () => {
         </div>
 
         <div className="mt-4">
-          <h3 className="text-2xl font-semibold mb-2">{video.title}</h3>
-          <p className="text-gray-600">{video.description}</p>
-
+          <h3 className="text-xl font-semibold mb-2 line-clamp-2 text-ellipsis overflow-hidden">{video.title}</h3>
           {/* === Likes Section === */}
-          <div className="flex items-center gap-6 mt-4">
+          <div className="flex items-center gap-6 mb-2">
             <button
               onClick={() => likeMutation.mutate()}
               className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors disabled:opacity-50"
@@ -101,6 +99,8 @@ const VideoPlayer = () => {
               <ThumbsDown size={20} />
             </button>
           </div>
+
+          <p className="text-gray-600">{video.description}</p>
         </div>
 
         {/* === Comments Section === */}

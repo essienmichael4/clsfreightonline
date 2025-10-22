@@ -40,14 +40,13 @@ export class VideoController {
       fileFilter: ImageFileFilter
     })
   )
-  public async uploadFile(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateVideoDto, @Req() req:any, @User() user:UserInfo,
+  public async uploadFile(@Body() dto: UpdateVideoDto, @Req() req:any, @User() user:UserInfo,
     @UploadedFile(
       new ParseFilePipeBuilder()
       .addMaxSizeValidator({maxSize: MAX_IMAGE_SIZE_IN_BYTE})
       .build({errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY})
   ) file: Express.Multer.File){
     try{
-
       if(!file || req.fileValidationError){
         throw new BadRequestException("Only .jpg, .jpeg, .png files are allowed")
       }
@@ -107,7 +106,7 @@ export class VideoController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: string) {
     return this.videoService.findOne(id);
   }
 

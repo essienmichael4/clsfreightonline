@@ -13,6 +13,9 @@ export class Payment {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 
+    @Column({nullable:true})
+    datePaid: Date;
+
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0, transformer: {
         to: (value: number) => value,
         from: (value: string) => parseFloat(value),
