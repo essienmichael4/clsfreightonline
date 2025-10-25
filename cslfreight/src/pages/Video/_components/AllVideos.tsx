@@ -26,7 +26,7 @@ const AllVideos = ({search}:{search:string}) => {
     );
 
     const handleVideoClick = (id: string) => {
-        navigate(`/videos/${id}`);
+        navigate(`/${id}`);
     };
 
     return (

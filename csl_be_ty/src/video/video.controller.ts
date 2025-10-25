@@ -56,7 +56,7 @@ export class VideoController {
       
       await this.uploadService.addThumbnail(buffer, filename) 
       
-      return this.videoService.updateVideoMetadataWithThumbnail(dto, filename, user.sub.id) 
+      return this.videoService.addVideoMetadataWithThumbnail(dto, filename, user.sub.id) 
     }catch(err){
       throw err
     }
@@ -90,8 +90,8 @@ export class VideoController {
 
   @UseGuards(JwtGuard)
   @Patch(":id/video-meta")
-  async updateVideo(@Body() updateVideoDto: UpdateVideoDto, @User() user:UserInfo) {
-    return this.videoService.updateVideoMetadata(updateVideoDto, user.sub.id);
+  async updateVideo(@Param('id', ParseIntPipe) id: number, @Body() updateVideoDto: UpdateVideoDto, @User() user:UserInfo) {
+    return this.videoService.updateVideoMetadata(id, updateVideoDto, user.sub.id);
   }
 
   @UseGuards(JwtGuard)
@@ -101,7 +101,7 @@ export class VideoController {
       fileFilter: ImageFileFilter
     })
   )
-  public async updateVideoFile(@Body() dto: UpdateVideoDto, @Req() req:any, @User() user:UserInfo,
+  public async updateVideoFile(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateVideoDto, @Req() req:any, @User() user:UserInfo,
     @UploadedFile(
       new ParseFilePipeBuilder()
       .addMaxSizeValidator({maxSize: MAX_IMAGE_SIZE_IN_BYTE})
@@ -115,9 +115,9 @@ export class VideoController {
       const buffer = file.buffer
       const filename = `${v4()}-${file.originalname.replace(/\s+/g,'_')}`
       
-      await this.uploadService.addThumbnail(buffer, filename) 
+      // 
       
-      return this.videoService.updateVideoMetadataWithThumbnail(dto, filename, user.sub.id) 
+      return this.videoService.updateVideoMetadataWithThumbnail(id, dto, filename, buffer, user.sub.id) 
     }catch(err){
       throw err
     }
@@ -137,6 +137,11 @@ export class VideoController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.videoService.findOne(id);
+  }
+
+  @Get(':id/details')
+  async findVideoDetails(@Param('id', ParseIntPipe) id: number) {
+    return this.videoService.findVideoDetails(id);
   }
 
   @Delete(":id")

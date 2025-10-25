@@ -81,27 +81,40 @@ export class VideoService {
         }
     }
 
-    async updateVideoMetadata(dto: UpdateVideoDto, userId: number) {
-        try{
-            const user = await this.userRepo.findOne({where: { id: userId }})
-            const saveEntity = this.videoRepo.create({
-                title : dto.title,
-                description: dto.description ,
-                tags: dto.tags,
-                premiere: dto.premiere,
-                isPublished: true,
-                uploader: user
-            })
-    
-            await this.videoRepo.save(saveEntity);
-            return { message: 'Video metadata updated successfully'};
-        }catch(err){
-            throw err
-        }
+    async updateVideoMetadata(videoId: number, dto: UpdateVideoDto, userId: number) {
+        try {
+            const result = await this.videoRepo.findOne({
+            where: { id: videoId },
+            relations: { uploader: true },
+            });
 
+            if (!result) {
+            throw new NotFoundException("Video not found");
+            }
+
+            const user = await this.userRepo.findOne({ where: { id: userId } });
+            if (!user) {
+            throw new NotFoundException("User not found");
+            }
+
+            // Merge the updated fields into the existing video
+            result.title = dto.title ?? result.title;
+            result.description = dto.description ?? result.description;
+            result.tags = dto.tags ?? result.tags;
+            result.premiere = dto.premiere ?? result.premiere;
+            result.isPublished = true;
+            result.uploader = user;
+
+            await this.videoRepo.save(result);
+
+            return { message: "Video metadata updated successfully" };
+        } catch (err) {
+            throw err;
+        }
     }
 
-    async updateVideoMetadataWithThumbnail(dto: UpdateVideoDto, filename:string, userId: number) {
+
+    async addVideoMetadataWithThumbnail(dto: UpdateVideoDto, filename:string, userId: number) {
         try{
             const user = await this.userRepo.findOne({where: { id: userId }})
             const saveEntity = this.videoRepo.create({
@@ -122,6 +135,48 @@ export class VideoService {
             throw err
         }
     }
+
+    async updateVideoMetadataWithThumbnail( videoId: number, dto: UpdateVideoDto, filename: string, buffer: Buffer<ArrayBufferLike>, userId: number ) {
+        try {
+            const video = await this.videoRepo.findOne({
+                where: { id: videoId },
+                relations: { uploader: true },
+            });
+
+            if (!video) {
+                throw new NotFoundException('Video not found');
+            }
+
+            const user = await this.userRepo.findOne({ where: { id: userId } });
+            if (!user) {
+                throw new NotFoundException('User not found');
+            }
+
+            // Only delete old thumbnail if one exists and it's different
+            if (video.thumbnail && video.thumbnail !== filename) {
+                await this.uploadService.deleteThumbnail(video.thumbnail);
+            }
+
+            // Upload new thumbnail
+            await this.uploadService.addThumbnail(buffer, filename);
+
+            // Update fields
+            video.title = dto.title ?? video.title;
+            video.description = dto.description ?? video.description;
+            video.tags = dto.tags ?? video.tags;
+            video.premiere = dto.premiere ?? video.premiere;
+            video.thumbnail = filename;
+            video.uploader = user;
+
+            await this.videoRepo.save(video);
+
+            return { message: 'Video metadata updated successfully' };
+        } catch (err) {
+            // Optionally log or wrap error
+            throw err;
+        }
+    }
+
 
     async findAll(pageOptionsDto: PageOptionsDto, query?: { search?: string; tag?: string }) {
         const { search, tag } = query || {};
@@ -164,6 +219,25 @@ export class VideoService {
         return new PageDto(videosResponse, pageMetaDto);
     }
 
+    async findVideoDetails(id: number) {
+        // Fetch video and related uploader
+        const result = await this.videoRepo.findOne({
+            where: { id },
+            relations: { uploader: true },
+        });
+
+        if (!result) {
+            throw new NotFoundException(`Video with ID ${id} not found`);
+        }
+
+        // Generate signed thumbnail URL if available
+        if (result.thumbnail) {
+            result.thumbnail = await this.uploadService.getThumbnailSignedUrl(result.thumbnail);
+        }
+
+        return new VideoResponseDto(result);
+    }
+
     async findOne(id: string) {
         const result = await this.videoRepo.findOne({
             where: { key: `videos/${id}` },
@@ -187,7 +261,7 @@ export class VideoService {
 
             // 3️⃣ Delete thumbnail if it exists
             if (video.thumbnail) {
-            await this.uploadService.deleteThumbnail(video.thumbnail);
+                await this.uploadService.deleteThumbnail(video.thumbnail);
             }
         } catch (err) {
             console.error("S3 delete error:", err);

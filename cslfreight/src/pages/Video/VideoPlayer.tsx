@@ -66,7 +66,7 @@ const VideoPlayer = () => {
   const baseURL = axios_instance_token.defaults.baseURL;
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="container mx-auto flex flex-col md:flex-row">
       {/* ==== LEFT: Video Section ==== */}
       <div className="w-full md:w-2/3 p-4">
         <div className="aspect-video w-full overflow-hidden rounded-md bg-black">
@@ -79,10 +79,10 @@ const VideoPlayer = () => {
         </div>
 
         <div className="mt-4">
-          <h3 className="text-2xl font-semibold mb-2">{video.title}</h3>
+          <h3 className="text-xl font-semibold mb-2">{video.title}</h3>
           
           {/* === Likes Section === */}
-          <div className="flex items-center gap-6 mt-4">
+          <div className="flex items-center gap-6 mb-2">
             <button
               onClick={() => likeMutation.mutate()}
               className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors disabled:opacity-50"
@@ -108,7 +108,7 @@ const VideoPlayer = () => {
         <div className="mt-6">
           <h2 className="text-lg font-semibold mb-2">Comments</h2>
           <div className="space-y-3">
-            <p className="text-sm text-gray-500">No comments yet</p>
+            <p className="text-sm text-gray-500">Coming soon...</p>
           </div>
         </div>
       </div>
