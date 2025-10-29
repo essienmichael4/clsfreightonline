@@ -1,13 +1,14 @@
-import { BadRequestException, Body, Controller, Get, HttpStatus, Param, ParseFilePipeBuilder, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, Param, ParseFilePipeBuilder, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { v4 } from 'uuid';
 import { ImageFileFilter } from 'src/helpers/file-helper';
-import { UpdateVideoDto, VideoRequestDto } from './dto/requests.dto';
+import { CreateCommentDto, UpdateVideoDto, VideoRequestDto } from './dto/requests.dto';
 import { UploadService } from 'src/upload/upload.service';
 import { User, UserInfo } from 'src/decorators/user.decorator';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { Request, Response } from 'express';
+import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 
 const MAX_IMAGE_SIZE_IN_BYTE = 2 * 1024 * 1024
 
@@ -16,18 +17,18 @@ export class VideoController {
   constructor(private readonly videoService: VideoService, private readonly uploadService:UploadService) {}
 
   @UseGuards(JwtGuard)
-  @Post("comment/client")
-  async addComment(@Param('id', ParseIntPipe) id: number, @Body('content') content: string, @User() user:UserInfo) {    
-    return this.videoService.addComment(id, content, { clientId: user.sub.id});
+  @Post(":id/comments/client")
+  async addComment(@Param('id', ParseIntPipe) id: number, @Body() dto: CreateCommentDto, @User() user:UserInfo) {    
+    return this.videoService.addComment(id, dto, { clientId: user.sub.id});
   }
 
   @UseGuards(JwtGuard)
-  @Post("comment/admin")
-  async addAdminComment(@Param('id', ParseIntPipe) id: number, @Body('content') content: string, @User() user:UserInfo) {
-    return this.videoService.addComment(id, content, { userId: user.sub.id });
+  @Post(":id/comments/admin")
+  async addAdminComment(@Param('id', ParseIntPipe) id: number, @Body() dto: CreateCommentDto, @User() user:UserInfo) {
+    return this.videoService.addComment(id, dto, { userId: user.sub.id });
   }
 
-  @Get('comments/:id')
+  @Get(':id/comments')
   async getComments(@Param('id', ParseIntPipe) id: number) {
     return this.videoService.getComments(id);
   }
@@ -39,14 +40,13 @@ export class VideoController {
       fileFilter: ImageFileFilter
     })
   )
-  public async uploadFile(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateVideoDto, @Req() req:any, @User() user:UserInfo,
+  public async uploadFile(@Body() dto: UpdateVideoDto, @Req() req:any, @User() user:UserInfo,
     @UploadedFile(
       new ParseFilePipeBuilder()
       .addMaxSizeValidator({maxSize: MAX_IMAGE_SIZE_IN_BYTE})
       .build({errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY})
   ) file: Express.Multer.File){
     try{
-
       if(!file || req.fileValidationError){
         throw new BadRequestException("Only .jpg, .jpeg, .png files are allowed")
       }
@@ -56,7 +56,7 @@ export class VideoController {
       
       await this.uploadService.addThumbnail(buffer, filename) 
       
-      return this.videoService.updateVideoMetadataWithThumbnail(dto, filename, user.sub.id) 
+      return this.videoService.addVideoMetadataWithThumbnail(dto, filename, user.sub.id) 
     }catch(err){
       throw err
     }
@@ -83,15 +83,62 @@ export class VideoController {
   }
 
   @UseGuards(JwtGuard)
-  @Post("video-meta")
-  async updateVideo(@Body() updateVideoDto: UpdateVideoDto, @User() user:UserInfo) {
-    return this.videoService.updateVideoMetadata(updateVideoDto, user.sub.id);
+  @Post(':id/like')
+  async toggleLike(@Param('id', ParseIntPipe) id: number, @User() user:UserInfo) {
+    return this.videoService.toggleLike(id, user.sub.id);
   }
 
   @UseGuards(JwtGuard)
-  @Patch(':id/like')
-  async toggleLike(@Param('id', ParseIntPipe) id: number, @User() user:UserInfo) {
+  @Post(':id/dislike')
+  async toggleDislike(@Param('id', ParseIntPipe) id: number, @User() user:UserInfo) {
     return this.videoService.toggleLike(id, user.sub.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(":id/video-meta")
+  async updateVideo(@Param('id', ParseIntPipe) id: number, @Body() updateVideoDto: UpdateVideoDto, @User() user:UserInfo) {
+    return this.videoService.updateVideoMetadata(id, updateVideoDto, user.sub.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id/comments/:commentId/client')
+  async updateCommentClient(@Param('commentId') commentId: string, @Body('content') content: string, @User() user:UserInfo) {
+    return this.videoService.updateComment(commentId, { clientId: user.sub.id }, content);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id/comments/:commentId/admin')
+  async updateComment(@Param('commentId') commentId: string, @Body('content') content: string, @User() user:UserInfo) {
+    return this.videoService.updateComment(commentId, { userId: user.sub.id }, content);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id/edit')
+  @UseInterceptors(
+    FileInterceptor("file", {
+      fileFilter: ImageFileFilter
+    })
+  )
+  public async updateVideoFile(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateVideoDto, @Req() req:any, @User() user:UserInfo,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+      .addMaxSizeValidator({maxSize: MAX_IMAGE_SIZE_IN_BYTE})
+      .build({errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY})
+  ) file: Express.Multer.File){
+    try{
+      if(!file || req.fileValidationError){
+        throw new BadRequestException("Only .jpg, .jpeg, .png files are allowed")
+      }
+      
+      const buffer = file.buffer
+      const filename = `${v4()}-${file.originalname.replace(/\s+/g,'_')}`
+      
+      // 
+      
+      return this.videoService.updateVideoMetadataWithThumbnail(id, dto, filename, buffer, user.sub.id) 
+    }catch(err){
+      throw err
+    }
   }
 
   @Get('stream/:key')
@@ -99,16 +146,42 @@ export class VideoController {
      return this.uploadService.streamVideoFromS3(key, req, res);
   }
 
-  async findAll(
-    @Query('search') search?: string,
-    @Query('tag') tag?: string,
+  @Get()
+  async findAll(@Query() pageOptionsDto:PageOptionsDto, @Query('search') search?: string, @Query('tag') tag?: string,
   ) {
-    return this.videoService.findAll({ search, tag });
+    return this.videoService.findAll(pageOptionsDto, { search, tag });
   }
 
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  @Get(':id/admin')
+  async findOne(@Param('id') id: string) {
     return this.videoService.findOne(id);
   }
 
+  @UseGuards(JwtGuard)
+  @Get(':id/client')
+  async findOneForClient(@Param('id') id: string, @User() user:UserInfo) {
+    return this.videoService.findOneWithUserLike(id, user.sub.id);
+  }
+
+  @Get(':id/details')
+  async findVideoDetails(@Param('id', ParseIntPipe) id: number) {
+    return this.videoService.findVideoDetails(id);
+  }
+
+  @Delete(":id")
+  async deleteVideo(@Param('id', ParseIntPipe) id: number) {
+    return this.videoService.deleteVideo(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id/comments/:commentId/client')
+  async deleteCommentClient(@Param('commentId') commentId: string, @User() user:UserInfo) {
+    return this.videoService.deleteComment(commentId, { clientId: user.sub.id });
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id/comments/:commentId')
+  async deleteComment(@Param('commentId') commentId: string, @User() user:UserInfo) {
+    return this.videoService.deleteComment(commentId, { userId: user.sub.id });
+  }
 }

@@ -21,6 +21,10 @@ export class ClientUpdateRequest {
 }
 
 export class ClientPaymentRequest {
+    @IsString()
+    @IsOptional()
+    datePaid:string
+
     @IsNumber()
     @IsPositive()
     paidShippingRate:number 

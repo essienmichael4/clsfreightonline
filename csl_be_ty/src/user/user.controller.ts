@@ -92,6 +92,12 @@ export class UserController {
   findPayments(@Query() pageOptionsDto:PageOptionsDto, @Query("search") search?: string) {
     return this.userService.findPayments(pageOptionsDto, search);
   }
+
+  @UseGuards(JwtGuard)
+  @Get("clients/payments/export")
+  exportPayments(@Query("search") search?: string) {
+    return this.userService.exportPayments(search);
+  }
   
   @UseGuards(JwtGuard)
   @Get("clients/all")
@@ -103,6 +109,12 @@ export class UserController {
   @Get("clients/:id/payments")
   findClientPayments(@Param('id', ParseIntPipe) id: number, @Query() pageOptionsDto:PageOptionsDto,) {
     return this.userService.findClientPayments(id, pageOptionsDto);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("clients/:id/payments/export")
+  exportClientPayments(@Param('id', ParseIntPipe) id: number,) {
+    return this.userService.exportClientPayments(id);
   }
 
   @UseGuards(JwtGuard)

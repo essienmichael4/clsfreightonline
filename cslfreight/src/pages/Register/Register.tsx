@@ -1,5 +1,5 @@
 import shipping from "../../assets/shipping.jpg"
-import logo from "../../assets/logo.webp"
+import logo from '@/assets/csl DONE.png'
 import RegisterForm from "@/components/RegisterForm"
 import { Link } from "react-router-dom"
 import { ArrowLeftIcon } from "lucide-react"
@@ -12,7 +12,7 @@ const Register = () => {
                 <div className="py-8 w-full bg-white/25 ">
                     <div className="px-4 w-full sm:w-3/4">
                         <Link to={"/"} className="font-semibold text-xs flex gap-2 items-center text-blue-700" > <ArrowLeftIcon className="w-4 h-4" /> Go Back</Link>
-                        <div className="w-16 h-16 mb-6 mt-2 md:hidden">
+                        <div className="w-28 h-28 mb-6 mt-2 md:hidden">
                             <Link to={'../'}><img src={logo} alt="logo" /></Link>
                         </div>
                         <div className="md:hidden">
@@ -25,7 +25,7 @@ const Register = () => {
             <div className="flex justify-center items-start w-full lg:w-[50%]">
                 <div className="px-4 w-full sm:w-3/4">
                     <Link to={"/"} className="text-blue-700 font-semibold text-xs flex gap-2 items-center" > <ArrowLeftIcon className="w-4 h-4" /> Go Home</Link>
-                    <div className="w-16 h-16 mb-4 mt-2 hidden md:block">
+                    <div className="w-28 h-28 hidden md:block">
                         <img src={logo} alt="logo" />
                     </div>
                     <div className="hidden md:block">

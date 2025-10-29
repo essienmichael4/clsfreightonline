@@ -90,3 +90,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.pdf-mode h4 {
+  font-size: .9rem !important; /* roughly Tailwind text-md */
+}
+
+.pdf-mode p {
+  font-size: 0.75rem !important; /* roughly Tailwind text-sm */
+}
+
+.pdf-mode div {
+  width: 100%;
+  margin-top: .5rem;
+}

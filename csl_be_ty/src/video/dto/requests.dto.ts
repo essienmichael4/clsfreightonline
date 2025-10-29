@@ -1,4 +1,6 @@
 import { IsArray, IsDefined, IsNotEmpty, IsOptional, IsString, IsEnum } from "class-validator";
+import { Premiere } from "../entities/video.entity";
+import { Transform } from "class-transformer";
 
 export class VideoRequestDto{
     @IsString()
@@ -19,31 +21,30 @@ export class UpdateVideoDto {
     description?: string;
 
     @IsOptional()
+    @Transform(({ value }) => {
+        if (typeof value === 'string') {
+            try {
+            return JSON.parse(value);
+            } catch {
+            return [];
+            }
+        }
+        return value;
+    })
     @IsArray()
     tags?: string[];
 
     @IsOptional()
-    @IsEnum(['Public', 'Unlisted', 'Private', 'Scheduled'])
-    premiere?: 'Public' | 'Unlisted' | 'Private' | 'Scheduled';
+    @IsEnum(Premiere)
+    premiere?: Premiere;
 }
 
-// export class UpdateVideoThumbnailDto {
-//   @IsString()
-//   key: string;
+export class CreateCommentDto {
+  @IsNotEmpty()
+  @IsString()
+  content: string;
 
-//   @IsOptional()
-//   @IsString()
-//   title?: string;
-
-//   @IsOptional()
-//   @IsString()
-//   description?: string;
-
-//   @IsOptional()
-//   @IsArray()
-//   tags?: string[];
-
-//   @IsOptional()
-//   @IsString()
-//    premiere?: string;
-// }
+  // Optional parent comment ID (used for replies)
+  @IsOptional()
+  parentId?: string;
+}

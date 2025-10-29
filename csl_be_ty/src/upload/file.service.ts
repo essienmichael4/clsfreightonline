@@ -27,6 +27,16 @@ export class FileService {
         const url = await getSignedUrl(this.s3Client, command, {expiresIn: 3600})
         return url
     }
+    
+    async getThumbnailPresignedUrl(filename:string){
+        const getObjectParams = {
+            Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+            Key: `thumbnails/${filename}`
+        }
+        const command = new GetObjectCommand(getObjectParams)
+        const url = await getSignedUrl(this.s3Client, command, {expiresIn: 3600})
+        return url
+    }
 
     async getVideoPresigned(filename:string, contentType: string){
         const key = `videos/${v4()}-${filename.replace(/\s+/g, '_')}`
@@ -89,7 +99,7 @@ export class FileService {
         return await this.s3Client.send(
             new DeleteObjectCommand({
             Bucket: this.configService.getOrThrow('BUCKET_NAME'),
-            Key: `videos/${filename}`
+            Key: filename
         }))
     }
 
@@ -166,8 +176,8 @@ export class FileService {
         // Get metadata about the video (like file size and type)
         const head = await this.s3Client.send(
             new HeadObjectCommand({
-                Bucket: process.env.AWS_S3_BUCKET_NAME!,
-                Key: key,
+                Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+                Key: `videos/${key}`,
             }),
         );
 
@@ -190,8 +200,8 @@ export class FileService {
 
         // Stream video chunk directly from S3
         const getObjectCommand = new GetObjectCommand({
-            Bucket: process.env.AWS_S3_BUCKET_NAME!,
-            Key: key,
+            Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+            Key: `videos/${key}`,
             Range: `bytes=${start}-${end}`,
         });
 

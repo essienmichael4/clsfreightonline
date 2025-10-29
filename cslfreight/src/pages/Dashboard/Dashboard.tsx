@@ -37,7 +37,7 @@ const Dashboard = () => {
       <div className='px-2 w-full flex flex-wrap justify-between gap-4 mb-4'>
         <div className="w-full md:w-1/2">
           <h2 className='text-lg lg:text-xl font-semibold'>Dashboard</h2>
-          <p className="text-xs md:w-full text-muted-foreground">Shipping rates show the highest rates per category, hence, discounted rates will reflect on your invoices. Also actual shipping fees may be higher or lower at the time of payment due to changes in USD-GHC rates. Kindly use these estimated shipping fees as a guide for preparation.</p>
+          <p className="text-xs md:w-full text-muted-foreground">Shipping rates show the highest rates per category for CHINA to ACCRA. Rates for other areas like Sunyani, Techiman & Kumasi will be edited on your invoices. Also, discounted shipping rates will reflect on your invoices as not all persons have 1CBM or more. Please note that actual fees may be higher or lower at the time of payment due to changes in USD-GHC rates. Kindly use these estimated shipping fees on your dashboard as a guide.</p>
         </div>
         <div className="flex w-full md:w-[520px] flex-col p-3 rounded-2xl border bg-gradient-to-r from-orange-50 to-orange-500">
           <div className="flex gap-8 justify-between items-center">

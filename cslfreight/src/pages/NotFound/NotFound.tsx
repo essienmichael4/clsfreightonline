@@ -1,4 +1,4 @@
-import logo from '@/assets/logo.webp'
+import logo from '@/assets/csl DONE.png'
 import { Link } from "react-router-dom"
 
 const NotFound = () => {

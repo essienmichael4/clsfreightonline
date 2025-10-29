@@ -1,4 +1,4 @@
-import logo from '@/assets/logo.webp'
+import logo from '@/assets/csl DONE.png'
 import { axios_instance } from "@/api/axios"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"

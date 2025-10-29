@@ -11,6 +11,7 @@ import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
 import { PageDto } from 'src/common/dto/page.dto';
 import { UserService } from 'src/user/user.service';
+import { endOfDay, startOfDay } from 'date-fns';
 
 @Injectable()
 export class PackageService {
@@ -86,7 +87,7 @@ export class PackageService {
     return new PageDto(data, pageMetaDto)
   }
 
-  async findAllClientPackages(id: number, search?: string, loadedDate?: string, ) {
+  async findAllClientPackages(id: number, search?: string, loadedDate?: string) {
     const query = this.packageRepo
       .createQueryBuilder("package")
       .leftJoinAndSelect("package.client", "client")
@@ -116,7 +117,10 @@ export class PackageService {
     }
 
     if (loadedDate) {
-      query.andWhere("DATE(package.loaded) = :loadedDate", { loadedDate: loadedDate.split("T")[0] });
+      const from = startOfDay(new Date(loadedDate)).toISOString();
+      const to = endOfDay(new Date(loadedDate)).toISOString();
+
+      query.andWhere("package.loaded BETWEEN :from AND :to", { from, to });
     }
 
     const data = await query

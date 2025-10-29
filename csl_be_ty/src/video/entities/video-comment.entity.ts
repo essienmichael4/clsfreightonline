@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn,} from 'typeorm';
 import { Video } from './video.entity';
 import { Client } from 'src/user/entities/client.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -35,6 +28,13 @@ export class VideoComment {
   // The video being commented on
   @ManyToOne(() => Video, (video) => video.comments, { onDelete: 'CASCADE' })
   video: Video;
+
+  // 🔁 Self-referencing relationship for replies
+  @ManyToOne(() => VideoComment, (comment) => comment.replies, { nullable: true, onDelete: "CASCADE" })
+  parent?: VideoComment;
+
+  @OneToMany(() => VideoComment, (comment) => comment.parent, { cascade: true })
+  replies?: VideoComment[];
 
   @CreateDateColumn()
   createdAt: Date;

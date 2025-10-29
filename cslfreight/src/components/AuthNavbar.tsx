@@ -1,7 +1,7 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,  DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from './ui/button'
 import Marquee from 'react-fast-marquee'
-import logo from '../assets/logo.webp'
+import logo from '../assets/csl DONE.png'
 import { Badge, CalculatorIcon, FileArchive, LogOut, Menu, User, X } from 'lucide-react'
 import useAuth from '@/hooks/useAuth'
 import { Link, NavLink, useNavigate } from "react-router-dom"
@@ -85,7 +85,7 @@ const AuthNavbar = () => {
           <div className="flex justify-between items-center">
             <div className='flex items-center gap-4'>
               <Link to={"/dashboard"} className="flex items-center flex-shrink-0">
-                  <img src={logo} alt="logo" className='h-10 w-10 mr-2' />
+                  <img src={logo} alt="logo" className='h-16 w-16 mr-2' />
                   <span className="text-xl tracking-tight">CSL Freight</span>
               </Link>
             </div>
@@ -96,6 +96,7 @@ const AuthNavbar = () => {
               <NavLink to={"/shipping-address"} className={({isActive})=> isActive ? "font-medium border-b-4 border-black" : "text-muted-foreground pb-2"}>Shipping Address</NavLink>
               <NavLink to={"/payments"} className={({isActive})=> isActive ? "font-medium border-b-4 border-black" : "text-muted-foreground pb-2"}>Payments</NavLink>
               <NavLink to={"/deliveries"} className={({isActive})=> isActive ? "font-medium border-b-4 border-black" : "text-muted-foreground pb-2"}>Schedule Pick-up/Delivery</NavLink>
+              <NavLink to={"/videos"} className={({isActive})=> isActive ? "font-medium border-b-4 border-black" : "text-muted-foreground pb-2"}>Videos</NavLink>
               <li className="list-none">
                 <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
               </li>
@@ -168,6 +169,9 @@ const AuthNavbar = () => {
                 </li>
                 <li className='py-4'>
                   <Link to={"/deliveries"} onClick={toggleNavbar} className='text-neutral-500'>Schedule Pick-up/Delivery</Link>
+                </li>
+                <li className='py-4'>
+                  <Link to={"/videos"} onClick={toggleNavbar} className='text-neutral-500'>Videos</Link>
                 </li>
                 <li className='py-4'>
                   <a href="https://rmbdeals.com" onClick={toggleNavbar} target="_blank" className="text-neutral-500" >Buy RMB</a>

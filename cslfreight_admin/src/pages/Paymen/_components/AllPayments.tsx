@@ -49,8 +49,8 @@ const AllPayments = ({search, page, setPage}: PaymentsProps) => {
         },{
             accessorKey: "reference",
             header:({column})=>(<DataTableColumnHeader column={column} title='Payment Reference' />),
-            cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500'>{row.original.reference}</span>
+            cell:({row}) => <div className="text-xs text-ellipsis max-w-[300px] overflow-hidden">
+                <span className='text-gray-500 '>{row.original.reference}</span>
             </div>
         },{
             accessorKey: "addedBy",
@@ -75,6 +75,13 @@ const AllPayments = ({search, page, setPage}: PaymentsProps) => {
         columns,
         manualPagination: true,
         getCoreRowModel: getCoreRowModel(), 
+        state:{
+            pagination: {
+                pageIndex: page - 1,
+                pageSize: limit,
+            }
+        },
+        pageCount: paymentQuery.data?.meta?.pageCount,
     })
 
     const content = paymentQuery.isLoading ? <Skeleton>
@@ -169,7 +176,7 @@ const AllPayments = ({search, page, setPage}: PaymentsProps) => {
                             setPage(page)
                           }}
                         />
-                        <span className="ml-1">of {paymentQuery.data?.meta.pageCount}</span>
+                        <span className="ml-1"> of {paymentQuery.data?.meta.pageCount}</span>
                       </span>
 
                       <button

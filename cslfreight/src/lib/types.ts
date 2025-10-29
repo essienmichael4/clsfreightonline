@@ -28,6 +28,22 @@ export type Client = {
     attachments?: Attachment[]
 }
 
+export type Comment = {
+    id: number,
+    content?:string,
+    client?: Client,
+    user?: User,
+    createdAt?: string,
+    updatedAt?:string,
+    replies?: Comment[],
+    parentId?:string
+}
+
+export type User = {
+    name: string,
+    createdAt?: string,
+    updatedAt?:string,
+}
 
 export type Data = {
     data: Client[] | Package[] | Payment[],
@@ -159,4 +175,21 @@ export type Stats = {
         name: string,
         stat: number
     }
+}
+
+export type Video = {
+    id: number,
+    title?: string,
+    description?: string,
+    thumbnail?: string,
+    key?: string,
+    premiere?: string,
+    isPublished?: string,
+    likesCount?: number,
+    viewsCount?: number;
+    createdAt: string;
+    updatedAt: string;
+    tags?: string[];
+    userLiked?: boolean
+    uploader?: Client
 }
