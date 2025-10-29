@@ -173,10 +173,6 @@ export class FileService {
             throw new NotFoundException('Range header required');
         }
 
-        console.log("here");
-        console.log(key);
-        
-        
         // Get metadata about the video (like file size and type)
         const head = await this.s3Client.send(
             new HeadObjectCommand({
@@ -184,8 +180,6 @@ export class FileService {
                 Key: `videos/${key}`,
             }),
         );
-        console.log(head);
-        
 
         const fileSize = head.ContentLength!;
         const contentType = head.ContentType || 'video/mp4';

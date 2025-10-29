@@ -59,7 +59,7 @@ const Login = () => {
     return (
         <div>
             <Form {...form}>
-                <form className='md:w-full xl:w-[80%] mt-8' onSubmit={form.handleSubmit(onSubmit)}>
+                <form className='md:w-full xl:w-[80%] mt-4' onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField 
                         control={form.control}
                         name="email"

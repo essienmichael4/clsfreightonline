@@ -3,7 +3,7 @@ import { VideoService } from './video.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { v4 } from 'uuid';
 import { ImageFileFilter } from 'src/helpers/file-helper';
-import { UpdateVideoDto, VideoRequestDto } from './dto/requests.dto';
+import { CreateCommentDto, UpdateVideoDto, VideoRequestDto } from './dto/requests.dto';
 import { UploadService } from 'src/upload/upload.service';
 import { User, UserInfo } from 'src/decorators/user.decorator';
 import { JwtGuard } from 'src/guards/jwt.guard';
@@ -17,18 +17,18 @@ export class VideoController {
   constructor(private readonly videoService: VideoService, private readonly uploadService:UploadService) {}
 
   @UseGuards(JwtGuard)
-  @Post("comment/client")
-  async addComment(@Param('id', ParseIntPipe) id: number, @Body('content') content: string, @User() user:UserInfo) {    
-    return this.videoService.addComment(id, content, { clientId: user.sub.id});
+  @Post(":id/comments/client")
+  async addComment(@Param('id', ParseIntPipe) id: number, @Body() dto: CreateCommentDto, @User() user:UserInfo) {    
+    return this.videoService.addComment(id, dto, { clientId: user.sub.id});
   }
 
   @UseGuards(JwtGuard)
-  @Post("comment/admin")
-  async addAdminComment(@Param('id', ParseIntPipe) id: number, @Body('content') content: string, @User() user:UserInfo) {
-    return this.videoService.addComment(id, content, { userId: user.sub.id });
+  @Post(":id/comments/admin")
+  async addAdminComment(@Param('id', ParseIntPipe) id: number, @Body() dto: CreateCommentDto, @User() user:UserInfo) {
+    return this.videoService.addComment(id, dto, { userId: user.sub.id });
   }
 
-  @Get('comments/:id')
+  @Get(':id/comments')
   async getComments(@Param('id', ParseIntPipe) id: number) {
     return this.videoService.getComments(id);
   }
@@ -83,8 +83,14 @@ export class VideoController {
   }
 
   @UseGuards(JwtGuard)
-  @Patch(':id/like')
+  @Post(':id/like')
   async toggleLike(@Param('id', ParseIntPipe) id: number, @User() user:UserInfo) {
+    return this.videoService.toggleLike(id, user.sub.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post(':id/dislike')
+  async toggleDislike(@Param('id', ParseIntPipe) id: number, @User() user:UserInfo) {
     return this.videoService.toggleLike(id, user.sub.id);
   }
 
@@ -92,6 +98,18 @@ export class VideoController {
   @Patch(":id/video-meta")
   async updateVideo(@Param('id', ParseIntPipe) id: number, @Body() updateVideoDto: UpdateVideoDto, @User() user:UserInfo) {
     return this.videoService.updateVideoMetadata(id, updateVideoDto, user.sub.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id/comments/:commentId/client')
+  async updateCommentClient(@Param('commentId') commentId: string, @Body('content') content: string, @User() user:UserInfo) {
+    return this.videoService.updateComment(commentId, { clientId: user.sub.id }, content);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id/comments/:commentId/admin')
+  async updateComment(@Param('commentId') commentId: string, @Body('content') content: string, @User() user:UserInfo) {
+    return this.videoService.updateComment(commentId, { userId: user.sub.id }, content);
   }
 
   @UseGuards(JwtGuard)
@@ -134,9 +152,15 @@ export class VideoController {
     return this.videoService.findAll(pageOptionsDto, { search, tag });
   }
 
-  @Get(':id')
+  @Get(':id/admin')
   async findOne(@Param('id') id: string) {
     return this.videoService.findOne(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get(':id/client')
+  async findOneForClient(@Param('id') id: string, @User() user:UserInfo) {
+    return this.videoService.findOneWithUserLike(id, user.sub.id);
   }
 
   @Get(':id/details')
@@ -147,5 +171,17 @@ export class VideoController {
   @Delete(":id")
   async deleteVideo(@Param('id', ParseIntPipe) id: number) {
     return this.videoService.deleteVideo(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id/comments/:commentId/client')
+  async deleteCommentClient(@Param('commentId') commentId: string, @User() user:UserInfo) {
+    return this.videoService.deleteComment(commentId, { clientId: user.sub.id });
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id/comments/:commentId')
+  async deleteComment(@Param('commentId') commentId: string, @User() user:UserInfo) {
+    return this.videoService.deleteComment(commentId, { userId: user.sub.id });
   }
 }

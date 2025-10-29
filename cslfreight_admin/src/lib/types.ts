@@ -71,6 +71,17 @@ export type Client = {
     payments: Payment
 }
 
+export type Comment = {
+    id: number,
+    content?:string,
+    client?: Client,
+    user?: User,
+    createdAt?: string,
+    updatedAt?:string,
+    replies?: Comment[],
+    parentId?: string
+}
+
 export type Data = {
     data: Client[] | Package[] | Payment[] | Invoice[] | Delivery[] | Video[]
     meta: Meta
@@ -220,11 +231,13 @@ export type Video = {
     premiere?: string,
     isPublished?: string,
     likesCount?: number,
-    viewsCount?: number;
-    createdAt: string;
-    updatedAt: string;
-    tags?: string[];
-    uploader?: User
+    viewsCount?: number,
+    createdAt: string,
+    updatedAt: string,
+    tags?: string[],
+    userLiked?: boolean,
+    uploader?: User,
+    comments?: Comment[]
 }
 
 export type WarehouseType = {

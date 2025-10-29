@@ -1,7 +1,7 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,  DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from './ui/button'
 import Marquee from 'react-fast-marquee'
-import logo from '../assets/logo.webp'
+import logo from '../assets/csl DONE.png'
 import { Badge, CalculatorIcon, FileArchive, LogOut, Menu, User, X } from 'lucide-react'
 import useAuth from '@/hooks/useAuth'
 import { Link, NavLink, useNavigate } from "react-router-dom"
@@ -85,7 +85,7 @@ const AuthNavbar = () => {
           <div className="flex justify-between items-center">
             <div className='flex items-center gap-4'>
               <Link to={"/dashboard"} className="flex items-center flex-shrink-0">
-                  <img src={logo} alt="logo" className='h-10 w-10 mr-2' />
+                  <img src={logo} alt="logo" className='h-16 w-16 mr-2' />
                   <span className="text-xl tracking-tight">CSL Freight</span>
               </Link>
             </div>

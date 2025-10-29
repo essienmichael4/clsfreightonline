@@ -1,4 +1,4 @@
-import logo from '../assets/logo.webp'
+import logo from '../assets/csl DONE.png'
 import {LayoutDashboard, Package, Truck, Ship, User, Users, Badge, PiggyBank, ReceiptText, Settings, Video} from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 import { Separator } from '@/components/ui/separator'
@@ -62,9 +62,9 @@ const SideNav = ({ isToggled }: SideNavProps) => {
           to="/"
           className="flex items-center mb-8 px-2 py-1 hover:opacity-90 transition-opacity"
         >
-          <img src={logo} alt="logo" className="h-9 w-9 mr-3" />
+          <img src={logo} alt="logo" className="h-12 w-12 mr-3" />
           {!isToggled && (
-            <span className="text-lg font-semibold tracking-tight">
+            <span className="text-md font-semibold tracking-tight">
               CSL Freight
             </span>
           )}

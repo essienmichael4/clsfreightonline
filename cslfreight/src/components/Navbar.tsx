@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import logo from '../assets/logo.webp'
+import logo from '../assets/csl DONE.png'
 import { Menu, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Marquee from 'react-fast-marquee'
@@ -57,7 +57,7 @@ const Navbar = () => {
       <div className="container mt-3 px-4 mx-auto relative text-sm">
         <div className="flex justify-between items-center">
           <Link to={"/"} className="flex items-center flex-shrink-0">
-            <img src={logo} alt="logo" className='h-10 w-10 mr-2' />
+            <img src={logo} alt="logo" className='h-16 w-16 mr-2' />
             <span className="text-xl tracking-tight">CSL Freight</span>
           </Link>
           <ul className="hidden lg:flex space-x-12">

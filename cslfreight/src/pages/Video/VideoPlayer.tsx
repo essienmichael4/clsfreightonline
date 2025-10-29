@@ -1,11 +1,14 @@
+import useAuth from "@/hooks/useAuth";
 import useAxiosToken from "@/hooks/useAxiosToken";
 import type { Video } from "@/lib/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { useParams } from "react-router-dom";
+import VideoComments from "./_components/VideoComments";
 
 const VideoPlayer = () => {
   const axios_instance_token = useAxiosToken();
+  const {auth} = useAuth()
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
 
@@ -13,7 +16,7 @@ const VideoPlayer = () => {
   const { data: video, isLoading } = useQuery<Video>({
     queryKey: ["video", id],
     queryFn: async () => {
-      const res = await axios_instance_token.get(`/videos/${id}`);
+      const res = await axios_instance_token.get(`/videos/${id}/client`);
       return res.data;
     },
     enabled: !!id,
@@ -22,7 +25,7 @@ const VideoPlayer = () => {
   // === Like mutation ===
   const likeMutation = useMutation({
     mutationFn: async () => {
-      const res = await axios_instance_token.post(`/videos/${id}/like`);
+      const res = await axios_instance_token.post(`/videos/${video?.id}/like`);
       return res.data;
     },
     onMutate: async () => {
@@ -30,16 +33,17 @@ const VideoPlayer = () => {
 
       const previousData = queryClient.getQueryData<Video>(["video", id]);
       if (previousData) {
-        // Optimistically update likes
+        // Optimistic toggle: if already liked, remove; if not, add
+        const isLiked = previousData.userLiked ?? false;
         queryClient.setQueryData<Video>(["video", id], {
           ...previousData,
-          likesCount: (previousData.likesCount ?? 0) + 1,
+          userLiked: !isLiked,
+          likesCount: (previousData.likesCount ?? 0) + (isLiked ? -1 : 1),
         });
       }
       return { previousData };
     },
     onError: (_err, _vars, context) => {
-      // Roll back to previous state if error
       if (context?.previousData) {
         queryClient.setQueryData(["video", id], context.previousData);
       }
@@ -48,6 +52,7 @@ const VideoPlayer = () => {
       queryClient.invalidateQueries({ queryKey: ["video", id] });
     },
   });
+
 
   // === Dislike mutation ===
   const dislikeMutation = useMutation({
@@ -85,7 +90,7 @@ const VideoPlayer = () => {
           <div className="flex items-center gap-6 mb-2">
             <button
               onClick={() => likeMutation.mutate()}
-              className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors disabled:opacity-50"
+              className={`${video.userLiked ? "text-blue-600" : "text-gray-700 hover:text-blue-600"} flex items-center gap-2 transition-colors disabled:opacity-50`}
               disabled={likeMutation.isPending}
             >
               <ThumbsUp size={20} />
@@ -105,12 +110,7 @@ const VideoPlayer = () => {
         </div>
 
         {/* === Comments Section === */}
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2">Comments</h2>
-          <div className="space-y-3">
-            <p className="text-sm text-gray-500">Coming soon...</p>
-          </div>
-        </div>
+        <VideoComments videoId={video.id} clientId={auth?.id} />
       </div>
 
       {/* ==== RIGHT: Sidebar (related videos, etc.) ==== */}

@@ -1,25 +1,28 @@
 import shipping from "../../assets/shipping.jpg"
-import logo from "../../assets/logo.webp"
+import logo from '@/assets/csl DONE.png'
 import Login from "@/components/Login"
 
 const Home = () => {
   return (
     <>
         <div className="h-screen flex flex-col md:flex-row w-full max-h-[800px] items-center md:justify-between">
-            <div className="bg-blue-700 py-8 w-full mb-8 flex justify-center items-start text-white md:hidden">
-                <div className="px-4 w-full sm:w-3/4">
-                    <div className="w-16 h-16 mb-6  md:hidden">
+            <div className="relative  bg-black py-8 w-full mb-8 flex justify-center items-start text-white md:hidden">
+                <div className={`z-0 absolute inset-0 w-full h-full bg-slate-500 flex bg-cover bg-center`} style={{backgroundImage:`url(${shipping})`}}>
+                    <div className="overlay w-full h-full bg-white/50 opacity-40 sm:hidden"></div>
+                </div>
+                <div className="z-10 px-4 w-full sm:w-3/4">
+                    <div className="w-40 h-40 mb-6  md:hidden">
                         <img src={logo} alt="logo" />
                     </div>
                     <div className="md:hidden">
-                        <h2 className="text-4xl mb-2">Sign in</h2>
-                        <p className="text-white/70 text-xs">Welcome to CSL Freight Admin Panel - Let's help you sign in</p>
+                        <h2 className="text-4xl text-black mb-2">Sign in</h2>
+                        <p className="text-black text-xs">Welcome to CSL Freight Admin Panel - Let's help you sign in</p>
                     </div>
                 </div>
             </div>
             <div className="flex justify-center items-start w-full lg:w-[50%]">
                 <div className="px-4 w-full sm:w-3/4">
-                    <div className="w-16 h-16 mb-6 hidden md:block">
+                    <div className="w-28 h-28 mb-2 hidden md:block">
                         <img src={logo} alt="logo" />
                     </div>
                     <div className="hidden md:block">

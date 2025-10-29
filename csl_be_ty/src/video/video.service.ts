@@ -1,5 +1,5 @@
-import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { UpdateVideoDto } from './dto/requests.dto';
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { CreateCommentDto, UpdateVideoDto } from './dto/requests.dto';
 import { Video } from './entities/video.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,6 +12,7 @@ import { UploadService } from 'src/upload/upload.service';
 import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
 import { PageDto } from 'src/common/dto/page.dto';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class VideoService {
@@ -25,13 +26,15 @@ export class VideoService {
         
     ){}
 
-    async addComment(videoId: number, content: string, author: { userId?: number; clientId?: number },) {
+    async addComment( videoId: number, dto: CreateCommentDto, author: { userId?: number; clientId?: number }, parentCommentId?: string) {
+        // 1️⃣ Find video
         const video = await this.videoRepo.findOne({ where: { id: videoId } });
         if (!video) throw new NotFoundException('Video not found');
 
-        const comment = this.commentRepo.create({ content, video });
+        // 2️⃣ Create comment instance
+        const comment = this.commentRepo.create({ content: dto.content, video });
 
-        // Attach either user or client
+        // 3️⃣ Attach user or client as author
         if (author.userId) {
             const user = await this.userRepo.findOne({ where: { id: author.userId } });
             if (!user) throw new NotFoundException('User not found');
@@ -44,17 +47,127 @@ export class VideoService {
             throw new NotFoundException('No valid author found');
         }
 
+        // 4️⃣ Handle reply logic
+        if (dto.parentId) {
+            const parentComment = await this.commentRepo.findOne({
+                where: { id: dto.parentId },
+                relations: ['video'],
+            });
+
+            if (!parentComment) throw new NotFoundException('Parent comment not found');
+
+            // Ensure reply belongs to the same video
+            if (parentComment.video.id !== videoId) {
+                throw new BadRequestException('Parent comment does not belong to this video');
+            }
+
+            comment.parent = parentComment;
+        }
+
+        // 5️⃣ Save and return
         return await this.commentRepo.save(comment);
     }
 
     async getComments(videoId: number) {
-        return this.commentRepo.find({
-            where: { video: { id: videoId } },
-            relations: ['user', 'client'],
-            order: { createdAt: 'DESC' },
+        const comments = await this.commentRepo.find({
+            where: {
+            video: { id: videoId },
+            parent: IsNull(), // ✅ Ensures true SQL NULL check
+            },
+            relations: [
+            'user',
+            'client',
+            'replies',
+            'replies.user',
+            'replies.client',
+            'parent'
+            ],
+            order: {
+            createdAt: 'DESC',
+            replies: {
+                createdAt: 'ASC',
+            },
+            },
         });
+
+        // Optional cleanup: flatten replies to remove deep recursion if unnecessary
+        return comments.map((c) => ({
+            id: c.id,
+            content: c.content,
+            createdAt: c.createdAt,
+            updatedAt: c.updatedAt,
+            user: c.user,
+            client: c.client,
+            parentId: null,
+            replies: c.replies?.map((r) => ({
+                id: r.id,
+                content: r.content,
+                createdAt: r.createdAt,
+                updatedAt: r.updatedAt,
+                user: r.user,
+                client: r.client,
+                parentId: c.id
+            })) ?? [],
+        }));
     }
-    
+
+    async updateComment(commentId: string, author: { userId?: number; clientId?: number }, content: string) {
+        const comment = await this.commentRepo.findOne({
+            where: { id: commentId },
+            relations: ['user', 'client'],
+        });
+
+        if (!comment) throw new NotFoundException('Comment not found');
+
+        // Authorization check
+        if (author.userId && comment.user?.id !== author.userId)
+            throw new ForbiddenException('Not authorized to edit this comment');
+
+        if (author.clientId && comment.client?.id !== author.clientId)
+            throw new ForbiddenException('Not authorized to edit this comment');
+
+        comment.content = content;
+        return await this.commentRepo.save(comment);
+    }
+
+   async deleteComment(commentId: string, author: { userId?: number; clientId?: number },) {
+        const comment = await this.commentRepo.findOne({
+            where: { id: commentId },
+            relations: ['user', 'client', 'replies'],
+        });
+
+        if (!comment) {
+            throw new NotFoundException('Comment not found');
+        }
+
+        let isAdmin = false;
+
+        // 🔍 Check if author is a user (admin)
+        if (author.userId) {
+            const user = await this.userRepo.findOne({
+                where: { id: author.userId },
+            });
+
+            if (!user) throw new NotFoundException('User not found');            
+            isAdmin = true;
+        }
+
+        // 🔍 Check if author is a client (non-admin)
+        if (author.clientId && comment.client?.id !== author.clientId) throw new ForbiddenException('Not authorized to delete this comment');
+
+        // 🧹 Clean up replies if cascade is not working
+        if (comment.replies?.length) {
+            await Promise.all(
+            comment.replies.map(async (reply) => {
+                await this.commentRepo.remove(reply);
+            }),
+            );
+        }
+
+        await this.commentRepo.remove(comment);
+
+        return { message: isAdmin ? 'Comment deleted by admin' : 'Comment deleted successfully' };
+    }
 
     async toggleLike(videoId: number, userId: number) {
         const video = await this.videoRepo.findOne({ where: { id: videoId } });
@@ -247,6 +360,30 @@ export class VideoService {
         const response = new VideoResponseDto(result)
         return response
     }
+
+    async findOneWithUserLike(id: string, clientId: number) {
+        // Step 1: Fetch video with related data
+        const result = await this.videoRepo.findOne({
+            where: { key: `videos/${id}` },
+            relations: {
+            comments: true,
+            uploader: true,
+            likes: {
+                client: true
+            }, // 👈 assuming you have a likes relation
+            },
+        });
+        
+        // Step 2: Determine if user liked the video
+        const userLiked = result.likes?.some(like => like.client.id === clientId) ?? false;
+
+        // Step 4: Build and return response DTO
+        const response = new VideoResponseDto(result);
+        response.userLiked = userLiked
+
+        return response
+    }
+
 
     async deleteVideo(id: number) {
         // 1️⃣ Find video in DB

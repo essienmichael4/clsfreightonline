@@ -1,5 +1,5 @@
+import logo from '@/assets/csl DONE.png'
 import shipping from "../../assets/shipping.jpg"
-import logo from "../../assets/logo.webp"
 import { Link } from "react-router-dom"
 import LoginForm from "@/components/LoginForm"
 import { ArrowLeftIcon } from "lucide-react"
@@ -12,8 +12,8 @@ const Login = () => {
                 <div className="py-8 w-full bg-white/25 ">
                     <div className="px-4 w-full sm:w-3/4">
                         <Link to={"/"} className="font-semibold text-xs flex gap-2 items-center text-blue-700" > <ArrowLeftIcon className="w-4 h-4" /> Go Back</Link>
-                        <div className="w-16 h-16 mb-6 mt-2 md:hidden">
-                            <img src={logo} alt="logo" />
+                        <div className="w-28 h-28 mb-2 mt-2 md:hidden">
+                            <img src={logo} alt="logo" className='w-full h-full' />
                         </div>
                         <div className="md:hidden">
                             <h2 className="text-4xl mb-2 font-semibold">Sign in</h2>
@@ -25,7 +25,7 @@ const Login = () => {
             <div className="flex justify-center items-start w-full lg:w-[50%]">
                 <div className="px-4 w-full sm:w-3/4">
                     <Link to={"/"} className="text-blue-700 font-semibold text-xs flex gap-2 items-center" > <ArrowLeftIcon className="w-4 h-4" /> Go Back</Link>
-                    <div className="w-16 h-16 mt-4 mb-6 hidden md:block">
+                    <div className="w-28 h-28 mt-4 mb-6 hidden md:block">
                         <Link to={'../'}><img src={logo} alt="logo" /></Link>
                     </div>
                     <div className="hidden md:block">

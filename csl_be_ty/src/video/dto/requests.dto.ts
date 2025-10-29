@@ -39,23 +39,12 @@ export class UpdateVideoDto {
     premiere?: Premiere;
 }
 
-// export class UpdateVideoThumbnailDto {
-//   @IsString()
-//   key: string;
+export class CreateCommentDto {
+  @IsNotEmpty()
+  @IsString()
+  content: string;
 
-//   @IsOptional()
-//   @IsString()
-//   title?: string;
-
-//   @IsOptional()
-//   @IsString()
-//   description?: string;
-
-//   @IsOptional()
-//   @IsArray()
-//   tags?: string[];
-
-//   @IsOptional()
-//   @IsString()
-//    premiere?: string;
-// }
+  // Optional parent comment ID (used for replies)
+  @IsOptional()
+  parentId?: string;
+}

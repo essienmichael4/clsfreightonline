@@ -14,6 +14,7 @@ export class VideoResponseDto {
   createdAt: Date;
   updatedAt: Date;
   tags?: string[];
+  userLiked?: boolean;
   uploader?: UserResponseDto; // optional: nested user info
 
   constructor(partial: Partial<VideoResponseDto>) {
