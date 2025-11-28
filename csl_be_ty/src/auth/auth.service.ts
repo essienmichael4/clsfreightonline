@@ -20,7 +20,8 @@ interface ClientSignupParams{
     email:string
     password: string
     shippingMark: string,
-    phone: string
+    phone: string,
+    location: string
 }
 
 interface PayloadParams{
@@ -54,8 +55,8 @@ export class AuthService {
         return user
     }
 
-    async registerClient({email, password,shippingMark, phone}:ClientSignupParams){
-        const user = await this.userService.createClient({email, password, shippingMark, phone})
+    async registerClient({email, password,shippingMark, phone, location}:ClientSignupParams){
+        const user = await this.userService.createClient({email, password, shippingMark, phone, location})
         return user
     }
 

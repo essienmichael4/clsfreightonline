@@ -23,7 +23,7 @@ const CommentItem = ({ comment, videoId, clientId, userId }: Props) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.content);
 
-    const authorName = comment.user?.name || comment.client?.name || "Anonymous";
+    const authorName = comment.user?.name || comment.client?.name || comment.client?.email || "Anonymous";
     const isOwner =
         clientId === comment.client?.id
 

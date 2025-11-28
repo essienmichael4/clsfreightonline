@@ -277,7 +277,7 @@ export class PackageService {
     return packageResponse
   }
 
-  async update(id: number, trackingNumber?:string, customer?:string, email?:string, phone?:string, vessel?:string, packageName?:string, cbm?:number, quantity?:number, description?:string, shippingMark?:string, packageType?:string) {    
+  async update(id: number, trackingNumber?:string, customer?:string, email?:string, phone?:string, vessel?:string, packageName?:string, cbm?:number, quantity?:number, description?:string, shippingMark?:string, packageType?:string, weight?:number) {    
     let client = null;
     let packageRateType = null
     if (shippingMark) {
@@ -302,6 +302,7 @@ export class PackageService {
       ...(phone && { phone }),
       ...(packageName && { package: packageName }),
       ...(cbm !== undefined && { cbm }), // 0 is valid
+      ...(weight !== undefined && { weight }), // 0 is valid
       ...(quantity !== undefined && { quantity }), // 0 is valid
       ...(client && { client }),
       ...(packageRateType && {packageType: packageRateType}),

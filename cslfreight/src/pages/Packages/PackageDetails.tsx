@@ -86,6 +86,10 @@ const PackageDetails = () => {
                     <p>{packageDetail.data?.cbm}</p>
                 </div>
                 <div>
+                    <h4 className='text-xs text-gray-400 mb-2'>Weight</h4>
+                    <p>{packageDetail.data?.weight}</p>
+                </div>
+                <div>
                     <h4 className='text-xs text-gray-400 mb-2'>Quantity</h4>
                     <p>{packageDetail.data?.quantity}</p>
                 </div>

@@ -6,6 +6,27 @@ export const optionalString = (schema: z.ZodString) =>
     schema.or(z.literal("")).optional()
 );
 
+export const optionalNumber = <T extends z.ZodNumber>(schema: T) =>
+  z.preprocess(
+    (val) => {
+      if (val === "" || val === null || val === undefined) return undefined;
+
+      if (typeof val === "string") {
+        const trimmed = val.trim();
+        if (trimmed === "") return undefined;
+        const num = Number(trimmed);
+        return isNaN(num) ? undefined : num;
+      }
+
+      if (typeof val === "number") {
+        return isNaN(val) ? undefined : val;
+      }
+
+      return undefined;
+    },
+    schema.optional()
+);
+
 export const PackageSchema = z.object({
     email: z.string().email({
         message: "Email must be a valid email."
@@ -27,6 +48,7 @@ export const PackageSchema = z.object({
         message: "Must be a valid name."
     }),
     cbm: z.coerce.number().positive().min(0.001),
+    weight: optionalNumber(z.number().nonnegative()),
     quantity: z.coerce.number().positive().min(0),
     loaded: z.coerce.date(),
     received: z.coerce.date(),
@@ -76,6 +98,7 @@ export const EditPackageSchema = z.object({
         })
     ),
     cbm: z.coerce.number().positive().min(0.001).optional(),
+    weight: optionalNumber(z.number().nonnegative()),
     quantity: z.coerce.number().positive().min(0).optional(),
     loaded: z.coerce.date().optional(),
     received: z.coerce.date().optional(),

@@ -32,6 +32,9 @@ export class Package {
   @Column('float')
   cbm: number;
 
+  @Column({type: 'float', nullable: true })
+  weight: number;
+
   @Column({ nullable: true })
   email: string;
 

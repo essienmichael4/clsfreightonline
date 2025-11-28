@@ -41,6 +41,7 @@ export type Comment = {
 
 export type User = {
     name: string,
+    email?:string,
     createdAt?: string,
     updatedAt?:string,
 }
@@ -95,6 +96,7 @@ export type Package = {
     id:number,
     trackingNumber:string,
     cbm:string,
+    weight?:string,
     email:string,
     phone?: string,
     customer: string

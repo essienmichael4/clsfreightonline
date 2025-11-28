@@ -33,7 +33,7 @@ export class AuthController {
     
     const hashedPassword = await hash(body.password, 10)
 
-    const createUser = await this.authService.registerClient({email: body.email.toLowerCase(), password: hashedPassword, shippingMark: body.shippingMark, phone: body.phone})
+    const createUser = await this.authService.registerClient({email: body.email.toLowerCase(), password: hashedPassword, shippingMark: body.shippingMark, phone: body.phone, location: body.location })
     const {password, ...result} = createUser
     const user = new ClientAuthReponse(result)
     

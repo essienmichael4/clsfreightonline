@@ -11,7 +11,6 @@ const useVideos = (page: number, limit: number, search?: string) => {
       const res = await axios_instance_token.get(`/videos`, {
         params: { page, take: limit, search },
       });
-      console.log(res.data);
       
       return res.data;
     },

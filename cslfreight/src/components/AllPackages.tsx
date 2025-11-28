@@ -103,6 +103,12 @@ const AllPackages = ({status}:FilterProps) => {
         cell:({row}) => <div>
             {row.original.cbm}
         </div>
+    },{
+        accessorKey: "weight",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Weight' />),
+        cell:({row}) => <div>
+            {row.original?.weight}
+        </div>
     }]
 
     const table = useReactTable({
@@ -164,7 +170,7 @@ const AllPackages = ({status}:FilterProps) => {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex items-center justify-start space-x-2 py-4">
                 <Button
                 variant="outline"
                 size="sm"

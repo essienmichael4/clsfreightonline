@@ -8,7 +8,6 @@ import Whatsapp from './components/Whatsapp'
 import Search from './pages/Search'
 import Address from './pages/Address'
 import Terms from './pages/Terms'
-import Calculator from './components/Calculator'
 import NotFound from './pages/NotFound/NotFound'
 import Loading from './pages/Loading'
 import RequireAuth from './components/RequireAuth'
@@ -39,7 +38,6 @@ function App() {
     <>
       <Routes>
         <Route element={<Whatsapp />}>
-        <Route element={<Calculator />}>
           <Route element={<Layout />}>
             <Route path='/' element={<Home />} />
             <Route path='/contact' element={<Contact />} />
@@ -76,7 +74,6 @@ function App() {
               <Route path='/videos/:id' element={<VideoPlayer />} />
             </Route>
           </Route>
-        </Route>
         </Route>
         {/* </Route> */}
       </Routes>

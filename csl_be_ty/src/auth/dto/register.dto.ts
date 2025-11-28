@@ -32,6 +32,10 @@ export class ClientSignUpRequest{
     @IsString()
     @IsDefined()
     shippingMark?:string
+
+    @IsString()
+    @IsDefined()
+    location?:string
 }
 
 

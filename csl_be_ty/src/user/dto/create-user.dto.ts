@@ -32,6 +32,10 @@ export class CreateClientDto {
     @IsString()
     @IsDefined()
     phone?:string
+
+    @IsString()
+    @IsDefined()
+    location?:string
 }
 
 export class AttachmentDto{

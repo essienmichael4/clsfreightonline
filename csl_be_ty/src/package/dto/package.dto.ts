@@ -33,6 +33,10 @@ export class PackageRequest {
     cbm:number
 
     @IsNumber()
+    @IsOptional()
+    weight?:number
+
+    @IsNumber()
     quantity:number
 
     @IsString()
@@ -86,6 +90,10 @@ export class EditPackageRequest {
     @IsNumber()
     @IsOptional()
     cbm?:number
+
+    @IsNumber()
+    @IsOptional()
+    weight?:number
 
     @IsNumber()
     @IsOptional()

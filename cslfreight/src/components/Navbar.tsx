@@ -60,7 +60,7 @@ const Navbar = () => {
             <img src={logo} alt="logo" className='h-16 w-16 mr-2' />
             <span className="text-xl tracking-tight">CSL Freight</span>
           </Link>
-          <ul className="hidden lg:flex space-x-12">
+          <ul className="hidden lg:flex space-x-6">
             <li>
               <Link to={"/"} className='text-neutral-500'>Home</Link>
             </li>
@@ -72,6 +72,9 @@ const Navbar = () => {
             </li>
             <li>
               <Link to={"/container-loadings"} className='text-neutral-500'>Container Loadings</Link>
+            </li>
+            <li>
+              <a href="https://forms.gle/PLCL6KGaXaFbKkoT8" target="_blank" className="text-neutral-500" >Cars/Motors</a>
             </li>
             <li>
               <a href="https://rmbdeals.com" target="_blank" className="text-neutral-500" >Buy RMB</a>
@@ -103,6 +106,9 @@ const Navbar = () => {
               </li>
               <li className='py-4'>
                 <Link to={"/container-loadings"} onClick={toggleNavbar} className='text-neutral-500'>Container Loadings</Link>
+              </li>
+              <li className='py-4'>
+                <a href="https://forms.gle/PLCL6KGaXaFbKkoT8" onClick={toggleNavbar} target="_blank" className="text-neutral-500" >Cars/Motors</a>
               </li>
               <li className='py-4'>
                 <a href="https://rmbdeals.com" onClick={toggleNavbar} target="_blank" className="text-neutral-500" >Buy RMB</a>

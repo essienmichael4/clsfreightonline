@@ -42,6 +42,7 @@ const EditPackage = ({item, status, trigger, page, limit, search}:Props) => {
             vessel: item.vessel,
             customer: item.customer,
             cbm: Number(item.cbm),
+            weight: Number(item.weight),
             quantity: Number(item.quantity),
             description: item.description
         }
@@ -82,6 +83,7 @@ const EditPackage = ({item, status, trigger, page, limit, search}:Props) => {
                 vessel: item.vessel,
                 customer: item.customer,
                 cbm: Number(item.cbm),
+                weight: Number(item.weight),
                 quantity: Number(item.quantity),
                 description: item.description
             })
@@ -209,6 +211,20 @@ const EditPackage = ({item, status, trigger, page, limit, search}:Props) => {
                             <div className='w-full sm:w-1/2 px-1'>
                                 <FormField 
                                     control={form.control}
+                                    name="weight"
+                                    render={({field}) =>(
+                                        <FormItem className='w-full'>
+                                            <FormLabel className='text-xs'>Weight</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                        </FormItem>
+                                    )} 
+                                />
+                            </div>
+                            <div className='w-full sm:w-1/2 px-1'>
+                                <FormField 
+                                    control={form.control}
                                     name="quantity"
                                     render={({field}) =>(
                                         <FormItem className='w-full'>
@@ -248,7 +264,7 @@ const EditPackage = ({item, status, trigger, page, limit, search}:Props) => {
                                     )} 
                                 />
                             </div>
-                            <div className='w-full sm:w-1/2 px-1'>
+                            <div className='w-full px-1'>
                                 <FormField 
                                     name="packageType"
                                     render={({}) =>(

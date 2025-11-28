@@ -62,7 +62,7 @@ const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProp
     },{
         accessorKey: "package",
         header:({column})=>(<DataTableColumnHeader column={column} title='Package' />),
-        cell:({row}) => <div>
+        cell:({row}) => <div className='max-w-[300px] text-ellipsis overflow-hidden'>
             {row.original.package}
         </div>
     },{
@@ -92,6 +92,12 @@ const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProp
         header:({column})=>(<DataTableColumnHeader column={column} title='CBM' />),
         cell:({row}) => <div>
             {row.original.cbm}
+        </div>
+    },{
+        accessorKey: "weight",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Weight' />),
+        cell:({row}) => <div>
+            {row.original?.weight}
         </div>
     },{
         accessorKey: "ids",
