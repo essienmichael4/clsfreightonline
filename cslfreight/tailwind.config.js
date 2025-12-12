@@ -2,7 +2,7 @@
 export default {
     darkMode: ["class"],
     content: [
-    "./index.html", "./src/**/*.{js,ts,jsx,tsx}"
+    "./index.html", "./src/**/*.{js,ts,jsx,tsx}", './node_modules/preline/dist/*.js',
   ],
   theme: {
   	extend: {
@@ -73,10 +73,18 @@ export default {
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+			scroll: "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+  		},
+		keyframes: {
+			scroll: {
+				to: {
+					transform: "translate(calc(-50% - 0.5rem))",
+				},
+			},
+		},
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require('@tailwindcss/forms'),],
 }
 

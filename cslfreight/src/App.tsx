@@ -1,5 +1,5 @@
 import './App.css'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Contact from './pages/Contact'
@@ -31,8 +31,29 @@ import Deliveries from './pages/Deliveries/Deliveries'
 import DeliveryEdit from './pages/Deliveries/DeliveryEdit'
 import Videos from './pages/Video/Videos'
 import VideoPlayer from './pages/Video/VideoPlayer'
+import { useEffect } from 'react'
+
+async function loadPreline() {
+  return import('preline/dist/index.js');
+}
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const initPreline = async () => {
+      await loadPreline();
+
+      if (
+        window.HSStaticMethods &&
+        typeof window.HSStaticMethods.autoInit === 'function'
+      ) {
+        window.HSStaticMethods.autoInit();
+      }
+    };
+
+    initPreline();
+  }, [location.pathname]);
 
   return (
     <>

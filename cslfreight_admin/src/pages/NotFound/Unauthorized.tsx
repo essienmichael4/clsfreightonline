@@ -1,6 +1,6 @@
 import useAuth from "@/hooks/useAuth"
 import { Link } from "react-router-dom"
-import logo from '@/assets/logo.jpg'
+import logo from '@/assets/csl DONE.png'
 
 const Unauthorized = () => {
     const {auth} = useAuth()

@@ -1,8 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* Preline UI */
+@import "preline/variants.css";
+@source "preline/dist";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Plugins */
+@plugin "@tailwindcss/forms";
 
 :root {
   font-family: "Poppins", sans-serif;
@@ -54,6 +60,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -91,12 +98,23 @@
   }
 }
 
+/* Adds pointer cursor to buttons */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* Defaults hover styles on all devices */
+@custom-variant hover (&:hover);
+
 .pdf-mode h4 {
-  font-size: .9rem !important; /* roughly Tailwind text-md */
+  font-size: .9rem !important;
 }
 
 .pdf-mode p {
-  font-size: 0.75rem !important; /* roughly Tailwind text-sm */
+  font-size: 0.75rem !important;
 }
 
 .pdf-mode div {

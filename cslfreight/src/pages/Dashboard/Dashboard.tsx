@@ -1,6 +1,8 @@
 import ShippingReport from "@/components/ShippingReport"
 import Statistics from "@/components/Statistics"
 import { DateRangePicker } from "@/components/ui/date-range-picker"
+import { SelectSeparator } from "@/components/ui/select"
+import useAuth from "@/hooks/useAuth"
 import useAxiosToken from "@/hooks/useAxiosToken"
 import { PackageTypeAndRate } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
@@ -9,6 +11,7 @@ import { useState } from "react"
 
 const Dashboard = () => {
   const axios_instance_token = useAxiosToken()
+  const {auth} = useAuth()
   const [dateRange, setDateRange] = useState<{from: Date, to: Date}>({
     from: startOfMonth(subMonths(new Date(), 5)),
     to: new Date()
@@ -30,11 +33,26 @@ const Dashboard = () => {
       })
   })
 
-
-
   return (
     <div className="container w-full mx-auto mt-4 px-4">
-      <div className='px-2 w-full flex flex-wrap justify-between gap-4 mb-4'>
+      <div className="mb-6 flex items-center gap-4 flex-wrap sm:flex-nowrap">
+        <div>
+          <span className="text-4xl">
+          ✨
+          </span>
+        </div>
+        <div>
+          <h1 className="text-sm md:text-xl font-semibold mb-1">
+            Welcome, {auth?.email}
+          </h1>
+
+          <p className="text-xs lg:text-sm text-zinc-600 dark:text-zinc-300">
+            🎄 Wishing you a joyful Christmas filled with peace, good vibes, and blessings! ✨<br /> - from CSL Team.
+          </p>
+        </div>
+      </div>
+      <SelectSeparator />
+      <div className='px-2 mt-4 w-full flex flex-wrap justify-between gap-4 mb-4'>
         <div className="w-full md:w-1/2">
           <h2 className='text-lg lg:text-xl font-semibold'>Dashboard</h2>
           <p className="text-xs md:w-full text-muted-foreground">Shipping rates show the highest rates per category for CHINA to ACCRA. Rates for other areas like Sunyani, Techiman & Kumasi will be edited on your invoices. Also, discounted shipping rates will reflect on your invoices as not all persons have 1CBM or more. Please note that actual fees may be higher or lower at the time of payment due to changes in USD-GHC rates. Kindly use these estimated shipping fees on your dashboard as a guide.</p>

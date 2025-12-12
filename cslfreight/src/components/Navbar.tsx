@@ -57,8 +57,8 @@ const Navbar = () => {
       <div className="container mt-3 px-4 mx-auto relative text-sm">
         <div className="flex justify-between items-center">
           <Link to={"/"} className="flex items-center flex-shrink-0">
-            <img src={logo} alt="logo" className='h-16 w-16 mr-2' />
-            <span className="text-xl tracking-tight">CSL Freight</span>
+            <img src={logo} alt="logo" className='h-16 w-32 mr-2' />
+            {/* <span className="text-xl tracking-tight">CSL Freight</span> */}
           </Link>
           <ul className="hidden lg:flex space-x-6">
             <li>

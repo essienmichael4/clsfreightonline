@@ -30,7 +30,7 @@ export class AuthController {
     const userExists = await this.authService.findClient(body.email)
     if(userExists) throw new ConflictException("Email already exists")
     if(body.confirmPassword !== body.password) throw new ConflictException("Passwords do not match")
-    
+    console.log(body)
     const hashedPassword = await hash(body.password, 10)
 
     const createUser = await this.authService.registerClient({email: body.email.toLowerCase(), password: hashedPassword, shippingMark: body.shippingMark, phone: body.phone, location: body.location })

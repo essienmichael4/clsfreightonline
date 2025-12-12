@@ -55,7 +55,7 @@ export class AuthService {
         return user
     }
 
-    async registerClient({email, password,shippingMark, phone, location}:ClientSignupParams){
+    async registerClient({email, password, shippingMark, phone, location}:ClientSignupParams){
         const user = await this.userService.createClient({email, password, shippingMark, phone, location})
         return user
     }

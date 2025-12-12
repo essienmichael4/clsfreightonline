@@ -32,7 +32,7 @@ const EditWarehouse = ({trigger, warehouse}:Props) => {
     })
 
     const editAddress = async (data:AddWarehouseSchemaType)=>{
-        const response = await axios_instance_token.patch(`/settings/warehouses/:id`, {
+        const response = await axios_instance_token.patch(`/settings/warehouses/${warehouse.id}`, {
             ...data
         },)
 

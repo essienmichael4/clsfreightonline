@@ -85,8 +85,8 @@ const AuthNavbar = () => {
           <div className="flex justify-between items-center">
             <div className='flex items-center gap-4'>
               <Link to={"/dashboard"} className="flex items-center flex-shrink-0">
-                  <img src={logo} alt="logo" className='h-16 w-16 mr-2' />
-                  <span className="text-xl tracking-tight">CSL Freight</span>
+                  <img src={logo} alt="logo" className='h-16 w-32 mr-2' />
+                  {/* <span className="text-xl tracking-tight">CSL Freight</span> */}
               </Link>
             </div>
             <div className="hidden md:flex gap-4">

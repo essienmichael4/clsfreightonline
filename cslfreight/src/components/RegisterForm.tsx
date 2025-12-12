@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import { RegisterSchema, RegisterSchemaType } from "@/schema/login";
 import useAuth from "@/hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
+import { axios_instance } from "@/api/axios";
 
 const RegisterFormStep = () => {
   const [step, setStep] = useState(1);
@@ -45,7 +46,7 @@ const RegisterFormStep = () => {
       setIsPending(true);
       toast.loading("Signing Up...", { id: "register" });
 
-      const response = await axios.post("/auth/signup/client", {
+      const response = await axios_instance.post("/auth/signup/client", {
         email: data.email,
         password: data.password,
         confirmPassword: data.confirmPassword,
