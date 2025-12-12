@@ -22,7 +22,7 @@ const Home = () => {
             </div>
             <div className="flex justify-center items-start w-full lg:w-[50%]">
                 <div className="px-4 w-full sm:w-3/4">
-                    <div className="w-28 h-28 mb-2 hidden md:block">
+                    <div className="w-48 h-28 mb-2 hidden md:block">
                         <img src={logo} alt="logo" />
                     </div>
                     <div className="hidden md:block">

@@ -62,10 +62,10 @@ const SideNav = ({ isToggled }: SideNavProps) => {
           to="/"
           className="flex items-center mb-8 px-2 py-1 hover:opacity-90 transition-opacity"
         >
-          <img src={logo} alt="logo" className="h-12 w-12 mr-3" />
+          <img src={logo} alt="logo" className="h-12 w-28 mr-3" />
           {!isToggled && (
             <span className="text-md font-semibold tracking-tight">
-              CSL Freight
+              {/* CSL Freight */}
             </span>
           )}
         </Link>

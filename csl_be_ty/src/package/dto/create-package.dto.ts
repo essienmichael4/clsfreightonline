@@ -21,6 +21,10 @@ export class CreatePackageDto {
     cbm:number
 
     @IsNumber()
+    @IsOptional()
+    weight:number
+
+    @IsNumber()
     quantity:number
 
     @IsString()

@@ -177,6 +177,7 @@ export type Package = {
     id:number,
     trackingNumber:string,
     cbm:string,
+    weight?:string,
     email:string,
     phone?: string,
     customer: string

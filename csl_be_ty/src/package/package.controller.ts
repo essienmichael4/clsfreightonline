@@ -31,6 +31,7 @@ export class PackageController {
       customer: body.customer, 
       trackingNumber: body.trackingNumber,
       cbm: body.cbm,
+      weight: body.weight,
       quantity: body.quantity,
       package: body.package,
       email: body.email,
@@ -129,7 +130,7 @@ export class PackageController {
   @UseGuards(JwtGuard)
   @Patch(':id')
   async updatePackage(@Param('id', ParseIntPipe) id: number, @Body() editPackageRequest: EditPackageRequest) {
-    return await this.packageService.update(id, editPackageRequest.trackingNumber, editPackageRequest.customer, editPackageRequest.email, editPackageRequest.phone, editPackageRequest.vessel, editPackageRequest.package, editPackageRequest.cbm,editPackageRequest.quantity, editPackageRequest.description, editPackageRequest.shippingMark, editPackageRequest.packageType);
+    return await this.packageService.update(id, editPackageRequest.trackingNumber, editPackageRequest.customer, editPackageRequest.email, editPackageRequest.phone, editPackageRequest.vessel, editPackageRequest.package, editPackageRequest.cbm,editPackageRequest.quantity, editPackageRequest.description, editPackageRequest.shippingMark, editPackageRequest.packageType, editPackageRequest.weight);
   }
 
   @UseGuards(JwtGuard)

@@ -213,6 +213,20 @@ const CreatePackage = ({trigger}:Props) => {
                             <div className='w-full sm:w-1/2 px-1'>
                                 <FormField 
                                     control={form.control}
+                                    name="weight"
+                                    render={({field}) =>(
+                                        <FormItem className='w-full'>
+                                            <FormLabel className='text-xs'>Weight</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                        </FormItem>
+                                    )} 
+                                />
+                            </div>
+                            <div className='w-full sm:w-1/2 px-1'>
+                                <FormField 
+                                    control={form.control}
                                     name="quantity"
                                     render={({field}) =>(
                                         <FormItem className='w-full'>
@@ -387,7 +401,7 @@ const CreatePackage = ({trigger}:Props) => {
                                     )} 
                                 />
                             </div>
-                            <div className='w-full sm:w-1/2 px-1'>
+                            <div className='w-full px-1'>
                                 <FormField 
                                     name="packageType"
                                     render={({}) =>(

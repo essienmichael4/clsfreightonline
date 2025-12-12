@@ -1,6 +1,6 @@
 import { useState } from "react"
-import hero from "../assets/hero.jpg"
 import TrackingNumbersTags from "./TrackingNumbersTags"
+import PrelineCarousel from "./PrelineCarousel"
 
 const Hero = () => {
   const [tag, setTag] = useState('')
@@ -45,9 +45,9 @@ const Hero = () => {
           handleKeyDown={handleKeyDown}
           removeTag={removeTag}
         />
-        
-        <div className="flex justify-center mt-10 mb-4">
-            <img src={hero} alt="" className="rounded-lg w-full mx-2"/>
+
+        <div className="w-full p-0 md:p-6 mt-10">
+          <PrelineCarousel />
         </div>
     </div>
   )

@@ -13,6 +13,9 @@ export const RegisterSchema = z.object({
     shippingMark: z.string().min(2, {
         message: "Must be a valid Shipping Mark."
     }),
+    location: z.string().min(2, {
+        message: "Must be a valid location."
+    }),
     email: z.string().email({
         message: "Email must be a valid email."
     }),

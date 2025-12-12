@@ -1,5 +1,5 @@
 import './App.css'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Contact from './pages/Contact'
@@ -8,7 +8,6 @@ import Whatsapp from './components/Whatsapp'
 import Search from './pages/Search'
 import Address from './pages/Address'
 import Terms from './pages/Terms'
-import Calculator from './components/Calculator'
 import NotFound from './pages/NotFound/NotFound'
 import Loading from './pages/Loading'
 import RequireAuth from './components/RequireAuth'
@@ -32,14 +31,34 @@ import Deliveries from './pages/Deliveries/Deliveries'
 import DeliveryEdit from './pages/Deliveries/DeliveryEdit'
 import Videos from './pages/Video/Videos'
 import VideoPlayer from './pages/Video/VideoPlayer'
+import { useEffect } from 'react'
+
+async function loadPreline() {
+  return import('preline/dist/index.js');
+}
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const initPreline = async () => {
+      await loadPreline();
+
+      if (
+        window.HSStaticMethods &&
+        typeof window.HSStaticMethods.autoInit === 'function'
+      ) {
+        window.HSStaticMethods.autoInit();
+      }
+    };
+
+    initPreline();
+  }, [location.pathname]);
 
   return (
     <>
       <Routes>
         <Route element={<Whatsapp />}>
-        <Route element={<Calculator />}>
           <Route element={<Layout />}>
             <Route path='/' element={<Home />} />
             <Route path='/contact' element={<Contact />} />
@@ -76,7 +95,6 @@ function App() {
               <Route path='/videos/:id' element={<VideoPlayer />} />
             </Route>
           </Route>
-        </Route>
         </Route>
         {/* </Route> */}
       </Routes>

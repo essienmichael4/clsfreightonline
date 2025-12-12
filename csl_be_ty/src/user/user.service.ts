@@ -43,6 +43,11 @@ export class UserService {
 
   async createClient(createUserDto: CreateClientDto) {
     const user = this.clientRepo.create(createUserDto)
+    const clientDetails = this.detailsRepo.create({
+      location: createUserDto.location,
+    });
+
+    user.clientDetails = clientDetails;
     return await this.clientRepo.save(user)
   }
 

@@ -6,6 +6,19 @@ import { BrowserRouter } from 'react-router-dom'
 import ReactQueryProvider from './components/ReactQueryProvider.tsx'
 import AuthProvider from './context/authContext.tsx'
 import { Toaster } from 'sonner'
+import $ from 'jquery';
+import _ from 'lodash';
+import noUiSlider from 'nouislider';
+import 'datatables.net';
+import 'dropzone/dist/dropzone-min.js';
+import * as VanillaCalendarPro from 'vanilla-calendar-pro';
+
+window._ = _;
+window.$ = $;
+window.jQuery = $;
+window.DataTable = $.fn.dataTable;
+window.noUiSlider = noUiSlider;
+window.VanillaCalendarPro = VanillaCalendarPro;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

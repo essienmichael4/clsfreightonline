@@ -22,8 +22,6 @@ const PackageDetails = () => {
     const packageDetail = useQuery<Package>({
         queryKey: ["package", id],
         queryFn: async() => await axios_instance_token.get(`/packages/${id}`).then(res => {
-            console.log(res.data);
-            
             return res.data
         })
     })
@@ -131,6 +129,10 @@ const PackageDetails = () => {
                 <div>
                     <h4 className='text-xs text-gray-400 mb-2'>CBM</h4>
                     <p>{packageDetail.data?.cbm}</p>
+                </div>
+                <div>
+                    <h4 className='text-xs text-gray-400 mb-2'>Weight</h4>
+                    <p>{packageDetail.data?.weight}</p>
                 </div>
                 <div>
                     <h4 className='text-xs text-gray-400 mb-2'>Quantity</h4>
