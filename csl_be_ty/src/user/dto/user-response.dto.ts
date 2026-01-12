@@ -34,6 +34,7 @@ export class UserResponseDto {
     public createdAt:Date 
     public updatedAt:Date 
     public role:string 
+    
     @Exclude()
     public password: string
 
@@ -51,6 +52,7 @@ export class ClientResponseDto {
     public updatedAt:Date 
     public phone?:string 
     public isDeleted: string;
+    public approvalStatus?:string
 
     @Exclude()
     public password: string

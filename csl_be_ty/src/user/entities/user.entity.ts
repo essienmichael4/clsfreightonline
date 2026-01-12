@@ -3,11 +3,12 @@ import { Announcement } from "src/announcement/entities/announcement.entity";
 import { ClientAnnouncement } from "src/announcement/entities/clientAnnouncement.entity";
 import { Deleted, Package } from "src/package/entities/package.entity";
 import { PackageEdit } from "src/package/entities/packageEdits.entity";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Payment } from "./payment.entity";
 import { Marque } from "src/settings/entities/marque.entity";
 import { Video } from "src/video/entities/video.entity";
 import { VideoComment } from "src/video/entities/video-comment.entity";
+import { Department } from "src/department/entities/department.entity";
 
 export enum Role {
     ADMIN = 'ADMIN',
@@ -70,4 +71,7 @@ export class User {
     @OneToMany(() => VideoComment, (comment) => comment.user)
     comments: VideoComment[];
 
+    @ManyToMany(() => Department, (department) => department.admins, { eager: false })
+    @JoinTable()
+    departments?: Department[];
 }

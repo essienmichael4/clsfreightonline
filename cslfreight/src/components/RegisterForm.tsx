@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { RegisterSchema, RegisterSchemaType } from "@/schema/login";
-import useAuth from "@/hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { axios_instance } from "@/api/axios";
 
@@ -21,10 +20,9 @@ const RegisterFormStep = () => {
   const [phone, setPhone] = useState("");
   const [isPending, setIsPending] = useState(false);
 
-  const { dispatch } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/dashboard";
+  const from = location.state?.from?.pathname || "/login";
 
   const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema),
@@ -55,9 +53,8 @@ const RegisterFormStep = () => {
         location: data.location,
       });
 
-      dispatch({ type: "ADD_AUTH", payload: response.data });
       form.reset();
-      toast.success("Register successful", { id: "register" });
+      toast.success(response.data.message, { id: "register" });
       navigate(from, { replace: true });
     } catch (err: any) {
       if (axios.isAxiosError(err)) {

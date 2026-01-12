@@ -18,6 +18,7 @@ import { SettingsModule } from './settings/settings.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { VideoModule } from './video/video.module';
 import { DeliveryModule } from './delivery/delivery.module';
+import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [
@@ -27,10 +28,10 @@ import { DeliveryModule } from './delivery/delivery.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+        type: 'mysql',
         // timezone: 'Z',
         host: configService.get("DB_HOST"),
-        port: +configService.get("DB_PORT"),
+        // port: +configService.get("DB_PORT"),
         username: configService.get("DB_USERNAME"),
         password: configService.get("DB_PASSWORD"),
         database: configService.get("DB_NAME"),
@@ -51,7 +52,8 @@ import { DeliveryModule } from './delivery/delivery.module';
     SettingsModule,
     InvoiceModule,
     VideoModule,
-    DeliveryModule
+    DeliveryModule,
+    DepartmentModule
   ],
   controllers: [AppController],
   providers: [AppService],

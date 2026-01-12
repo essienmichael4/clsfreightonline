@@ -11,6 +11,8 @@ import { useDebounce } from "use-debounce"
 import { useQuery } from "@tanstack/react-query"
 import useAxiosToken from "@/hooks/useAxiosToken"
 import * as XLSX from "xlsx"
+import ApprovalDialog from "./_components/ApprovalDialog"
+import { FcApprove } from "react-icons/fc";
 
 const emptyData: any[]= []
 
@@ -74,11 +76,18 @@ const Clients = () => {
             {new Date(row.original.createdAt as string).toDateString()}
         </div>
     },{
+        accessorKey: "approvalStatus",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Approval Status' />),
+        cell:({row}) => <div className='text-muted-foreground text-nowrap'>
+            {row.original.approvalStatus || "Pending"}
+        </div>
+    },{
     accessorKey: "actions",
     header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
     cell:({row}) => <div>
       <span className="flex gap-2 items-center">
           <EditClientDialog page={page} limit={limit} search={debouncedValue} client={row.original} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
+          <ApprovalDialog page={page} limit={limit} search={debouncedValue} client={row.original} trigger={<button className="cursor-pointer"><FcApprove  className="w-5 h-5"/></button>} />
           {/* <DeleteUser user={row.original} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} /> */}
       </span>
     </div>

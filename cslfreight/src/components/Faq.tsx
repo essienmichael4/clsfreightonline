@@ -28,13 +28,13 @@ const Faqs = () => {
                         <AccordionItem value="item-3" className="md:py-8">
                             <AccordionTrigger className="md:text-xl">How can I get in touch?</AccordionTrigger>
                             <AccordionContent>
-                                You can call or WhatsApp 0244699112 or visit our office at Tabora Junction (google map: CSL FREIGHT FORWARDING).
+                                You can call or WhatsApp 0244699112 or visit our office at Achimota Mile 7, adjacent the Mile 7 Police Station (google map: CSL FREIGHT FORWARDING).
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4" className="md:py-8">
                             <AccordionTrigger className="md:text-xl">I am not in Accra, how do I get my packages when they arrive?</AccordionTrigger>
                             <AccordionContent>
-                            All containers are first offloaded in Accra. Packages in Kumasi, Sunyani & Koforidua will be sent to our warehouses in these locations. 
+                            All containers are first offloaded in Accra. Packages in Kumasi and Sunyani will be sent to our warehouses in these locations. 
                             If you are not in any of these areas, your packages will be sent to your cargo station for free.
                             </AccordionContent>
                         </AccordionItem>

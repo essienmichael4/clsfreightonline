@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { LoadingType } from "@/lib/types"
 import { axios_instance } from "@/api/axios"
+import Footer from "@/components/Footer"
 
 const Loading = () => {
 
@@ -51,6 +52,7 @@ const Loading = () => {
                     )}
                 </div>
             </div>
+            <Footer />  
         </>
     )
 }

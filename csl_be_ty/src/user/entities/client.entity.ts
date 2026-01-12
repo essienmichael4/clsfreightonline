@@ -14,6 +14,12 @@ export enum Deleted {
     FALSE = 'FALSE',
 }
 
+export enum ApprovalStatus {
+    PENDING = 'PENDING',
+    APPROVED = 'APPROVED',
+    REJECTED = 'REJECTED',
+}
+
 @Entity({name: "client"})
 export class Client {
     @PrimaryGeneratedColumn()
@@ -50,6 +56,12 @@ export class Client {
 
     @Column({ default: Deleted.FALSE })
     isDeleted: Deleted;
+
+    @Column({ default: ApprovalStatus.PENDING })
+    approvalStatus: ApprovalStatus;
+
+    @Column({ nullable: true, default: "regular"})
+    accountStage: string;
 
     @OneToMany(() => Package, (packageEntity) => packageEntity.user)
     packages: Package[];

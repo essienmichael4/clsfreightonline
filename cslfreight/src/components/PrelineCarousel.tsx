@@ -57,7 +57,7 @@ export default function HeroCarousel() {
       </div>
 
       {/* Prev */}
-      <button
+      {/* <button
         type="button"
         className="hs-carousel-prev hs-carousel-disabled:opacity-50 hs-carousel-disabled:pointer-events-none
           absolute inset-y-0 start-0 
@@ -71,10 +71,10 @@ export default function HeroCarousel() {
         <svg className="size-5 sm:size-6" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="m15 18-6-6 6-6"></path>
         </svg>
-      </button>
+      </button> */}
 
       {/* Next */}
-      <button
+      {/* <button
         type="button"
         className="hs-carousel-next hs-carousel-disabled:opacity-50 hs-carousel-disabled:pointer-events-none
           absolute inset-y-0 end-0 
@@ -88,7 +88,7 @@ export default function HeroCarousel() {
         <svg className="size-5 sm:size-6" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="m9 18 6-6-6-6"></path>
         </svg>
-      </button>
+      </button> */}
 
       {/* Pagination */}
       <div className="hs-carousel-pagination flex justify-center absolute 

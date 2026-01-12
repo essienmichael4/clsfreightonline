@@ -2,7 +2,7 @@ import ShippingReport from "@/components/ShippingReport"
 import Statistics from "@/components/Statistics"
 import { DateRangePicker } from "@/components/ui/date-range-picker"
 import { SelectSeparator } from "@/components/ui/select"
-import useAuth from "@/hooks/useAuth"
+// import useAuth from "@/hooks/useAuth"
 import useAxiosToken from "@/hooks/useAxiosToken"
 import { PackageTypeAndRate } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
@@ -11,7 +11,7 @@ import { useState } from "react"
 
 const Dashboard = () => {
   const axios_instance_token = useAxiosToken()
-  const {auth} = useAuth()
+  // const {auth} = useAuth()
   const [dateRange, setDateRange] = useState<{from: Date, to: Date}>({
     from: startOfMonth(subMonths(new Date(), 5)),
     to: new Date()
@@ -43,11 +43,11 @@ const Dashboard = () => {
         </div>
         <div>
           <h1 className="text-sm md:text-xl font-semibold mb-1">
-            Welcome, {auth?.email}
+            Welcome to the CSL Client Portal
           </h1>
 
           <p className="text-xs lg:text-sm text-zinc-600 dark:text-zinc-300">
-            🎄 Wishing you a joyful Christmas filled with peace, good vibes, and blessings! ✨<br /> - from CSL Team.
+            We’re glad to have you here. This portal gives you easy access to your shipments, invoices, tracking updates, and important notices—all in one place
           </p>
         </div>
       </div>

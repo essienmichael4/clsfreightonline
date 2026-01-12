@@ -4,7 +4,7 @@ import { AttachmentDto, CreateUserDto } from './dto/create-user.dto';
 import { v4 } from 'uuid';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { User, UserInfo } from 'src/decorators/user.decorator';
-import { ClientInfoUpdateRequest, ClientPaymentRequest, ClientUpdateRequest, UpdateUserPasswordRequest, UpdateUserRequest } from './dto/updateUser.dto';
+import { ClientApprovalUpdateRequest, ClientInfoUpdateRequest, ClientPaymentRequest, ClientUpdateRequest, UpdateUserPasswordRequest, UpdateUserRequest } from './dto/updateUser.dto';
 import { compare, hash } from 'bcryptjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageFileFilter } from 'src/helpers/file-helper';
@@ -168,13 +168,19 @@ export class UserController {
     const {password, ...result} = updated
 
     return {user: result ,message: "User details updated successfully"}
-    // return
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('clients/:id/approval')
+  async updateClientApproval(@Param('id', ParseIntPipe) id: number, @Body() clientApprovalUpdateRequest: ClientApprovalUpdateRequest, @User() user:UserInfo) {
+    const updated = await this.userService.updateClientApproval(id, clientApprovalUpdateRequest)
+    
+    return {user: updated ,message: "Client approval status updated successfully"}
   }
 
   @UseGuards(JwtGuard)
   @Patch('password/:id')
   async updatePassword(@Param('id', ParseIntPipe) id: number, @Body() updateUserPasswordRequest: UpdateUserPasswordRequest, @User() user:UserInfo) {
-    // return this.userService.update(+id, updateUserDto);
     if(id !== user.sub.id) throw new UnauthorizedException()
 
     const updatedUser = await this.userService.findUserById(id)
