@@ -58,10 +58,17 @@ const Contact = () => {
                             </div>
                             <p className="font-bold mt-12 text-lg">Visit our office</p>
                             <div className="mt-8 flex flex-col gap-6">
-                                <p>Accra: Tabora Junction around Lapaz</p>
-                                <p>Sunyani: Estate Experimental Junction</p>
-                                <p>Kumasi: Atonsu S-line</p>
-                                <p>Koforidua: Old Estate</p>
+                                <p>Accra: Achimota Mile 7 (Adjacent the Mile 7 Police Station)</p>
+                                
+                                <div>
+                                    <p>Sunyani: Estate Experimental Junction</p>
+                                    <span className="text-xs">Contact: (+233) 20 417 7774</span>
+                                </div>
+                                <div>
+                                    <p>Kumasi: Atonsu Kuwait Junction</p>
+                                    <span className="text-xs">Contact: (+233) 25 799 2447</span>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>

@@ -1,5 +1,6 @@
 import { IsDefined, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator"
 import { Role } from "../entities/user.entity"
+import { ApiProperty } from "@nestjs/swagger"
 
 export class CreateUserDto {
     @IsString()
@@ -15,6 +16,16 @@ export class CreateUserDto {
 
     @IsEnum(Role)
     role:Role
+
+    @ApiProperty({
+        type: String,
+        isArray: true,
+        description: "option values",
+        example: ["Operations Manager", "Carrier"],
+        required: false
+    })
+    @IsOptional()
+    departments?:string[]
 }
 
 export class CreateClientDto {

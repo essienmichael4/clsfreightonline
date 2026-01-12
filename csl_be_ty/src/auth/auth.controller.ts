@@ -30,14 +30,13 @@ export class AuthController {
     const userExists = await this.authService.findClient(body.email)
     if(userExists) throw new ConflictException("Email already exists")
     if(body.confirmPassword !== body.password) throw new ConflictException("Passwords do not match")
-    console.log(body)
     const hashedPassword = await hash(body.password, 10)
 
     const createUser = await this.authService.registerClient({email: body.email.toLowerCase(), password: hashedPassword, shippingMark: body.shippingMark, phone: body.phone, location: body.location })
     const {password, ...result} = createUser
     const user = new ClientAuthReponse(result)
     
-    return {user ,message: "User created successfully"}
+    return {user, message: "Account created successfully and pending approval"}
   }
 
   @Post("signin")
@@ -73,7 +72,10 @@ export class AuthController {
   async signinClient(@Body() body:UserSignInRequest){    
     const userExists = await this.authService.findClient(body.email)
     if(!userExists) throw new HttpException("Invalid credentials", 401)
-    
+
+    if(userExists.approvalStatus === 'PENDING') throw new HttpException("Your account is still pending approval", 401)
+    if(userExists.approvalStatus === 'REJECTED') throw new HttpException("Your account has been rejected", 401)
+
     const isValidPassword = await compare(body.password, userExists.password)
     if(!isValidPassword) throw new HttpException("Invalid credentials", 401)
 

@@ -3,10 +3,10 @@ import { CreateClientDto, CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Brackets, EntityManager, Like, Repository } from 'typeorm';
+import { Brackets, EntityManager, In, Like, Repository } from 'typeorm';
 import { Client, Deleted } from './entities/client.entity';
 import { hash } from 'bcryptjs';
-import { ClientInfoUpdateRequest, ClientPaymentRequest } from './dto/updateUser.dto';
+import { ClientApprovalUpdateRequest, ClientInfoUpdateRequest, ClientPaymentRequest } from './dto/updateUser.dto';
 import { Details } from './entities/details.entity';
 import { PageMetaDto } from 'src/common/dto/pageMeta.dto';
 import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
@@ -18,12 +18,14 @@ import { MembershipTier } from './entities/membership.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { CreateMembershipTierDto } from './dto/request.dto';
 import { Payment } from './entities/payment.entity';
+import { Department } from 'src/department/entities/department.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepo:Repository<User>,
     @InjectRepository(Client) private readonly clientRepo:Repository<Client>,
+    @InjectRepository(Department) private readonly departmentRepo:Repository<Department>,
     @InjectRepository(Payment) private readonly paymentRepo:Repository<Payment>,
     @InjectRepository(Details) private readonly detailsRepo:Repository<Details>,
     @InjectRepository(Attachment) private readonly attachmentRepo:Repository<Attachment>,
@@ -32,7 +34,23 @@ export class UserService {
   ){}
 
   async create(createUserDto: CreateUserDto) {
-    const user = this.userRepo.create(createUserDto)
+    const user = this.userRepo.create({
+      name: createUserDto.name,
+      email: createUserDto.email,
+      password: await this.hashPassword(createUserDto.password),
+      role: createUserDto.role,
+    })
+    if (createUserDto.departments && createUserDto.departments.length > 0) {
+      // fetch departments by name or id
+      const departments = await this.departmentRepo.find({
+        where: {
+          code: In(createUserDto.departments) // if using names
+          // id: In(createUserDto.departments) // if using ID instead
+        }
+      });
+
+      user.departments = departments;
+    }
     return await this.userRepo.save(user)
   }
 
@@ -47,6 +65,7 @@ export class UserService {
       location: createUserDto.location,
     });
 
+    user.accountStage = "new";
     user.clientDetails = clientDetails;
     return await this.clientRepo.save(user)
   }
@@ -389,6 +408,12 @@ export class UserService {
     client.clientDetails.nextOfKinPhone = clientInfo.nextOfKinPhone ?? null;
 
     return await this.clientRepo.save(client);
+  }
+
+  async updateClientApproval(id: number, clientApprovalUpdateRequest: ClientApprovalUpdateRequest) {
+    return await this.clientRepo.update(id, {
+      approvalStatus: clientApprovalUpdateRequest.approvalStatus
+    })
   }
 
   async updatePayment(clientMark: string, userId: number, paymentId: number, paymentRequest: ClientPaymentRequest){

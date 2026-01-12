@@ -34,7 +34,7 @@ const Payments = () => {
                     <h2 className="font-bold text-3xl sm:font-normal  tracking-wide">Payment Info</h2>
                     <p className="text-xs md:w-1/2 text-muted-foreground">
                         Please confirm your payments with CSL accounts officer on Call/WhatsApp via <span className="text-nowrap">(+233) 244 699 112</span> only.
-                        You can also send payment slips to the front desk of CSL Freight at Tabora Junction.
+                        You can also send payment slips to the front desk of CSL Freight at Achimota Mile 7, adjacent the Mile 7 Police Station.
                     </p>
                 </div>
                 <div className="px-4 mt-4">

@@ -16,8 +16,8 @@ const Footer = () => {
                         <p>(+233) 503 333 889</p>
                     </div>
                     <div className="mt-8 italic flex flex-col gap-2">
-                        <p>First Storey Building on the Right</p>
-                        <p>Tabora Junction Bus Stop - Alaji Road</p>
+                        <p>Achimota Mile 7</p>
+                        <p>(Adjacent the Mile 7 Police Station)</p>
                         <p>Accra, Ghana</p>
                     </div>
                 </div>
@@ -79,7 +79,8 @@ const Footer = () => {
             <div className='mt-8 flex items-center justify-between border-t pt-4 flex-col sm:flex-row gap-4'>
                 <p className="text-xs">© 2025 Clixmart Group/CSL Freight Forwarding. All rights reserved</p>
                 <div className='flex gap-8 '>
-                    <p className="text-xs">Privacy Policy</p>
+                    <Link to="/privacy-policy" className="text-xs">Privacy Policy</Link>
+                    <Link to="/terms-of-use" className="text-xs">Terms of Use</Link>
                 </div>
             </div>
         </div>

@@ -1,4 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
+import { ApprovalStatus } from "../entities/client.entity"
 
 export class UpdateUserRequest {
     @IsString()
@@ -54,6 +55,12 @@ export class ClientInfoUpdateRequest {
     @IsString()
     @IsOptional()
     dob:string
+}
+
+export class ClientApprovalUpdateRequest {
+    @IsEnum(ApprovalStatus)
+    @IsOptional()
+    approvalStatus:ApprovalStatus
 }
 
 export class UpdateUserPasswordRequest {

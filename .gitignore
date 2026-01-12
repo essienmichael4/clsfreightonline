@@ -1,5 +1,6 @@
 # compiled output
 csl_be_ty/dist
+csl_be_ty/dist.zip
 csl_be_ty/node_modules
 
 csl_be_ty/.env

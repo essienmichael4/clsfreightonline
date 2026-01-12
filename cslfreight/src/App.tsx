@@ -32,6 +32,10 @@ import DeliveryEdit from './pages/Deliveries/DeliveryEdit'
 import Videos from './pages/Video/Videos'
 import VideoPlayer from './pages/Video/VideoPlayer'
 import { useEffect } from 'react'
+import CookiesPolicy from './pages/Policies/CookiesPolicy'
+import PrivacyPolicy from './pages/Policies/PrivacyPolicy'
+import TermsOfUse from './pages/Policies/TermsOfUse'
+import PolicyLayout from './components/PolicyLayout'
 
 async function loadPreline() {
   return import('preline/dist/index.js');
@@ -68,11 +72,16 @@ function App() {
             <Route path='/terms' element={<Terms />} />
             <Route path='/container-loadings' element={<Loading />} />
             <Route path='*' element={<NotFound />} />
+            <Route element={<PolicyLayout />}>
+              <Route path='terms-of-use' element={<TermsOfUse />} />
+              <Route path='cookies-policy' element={<CookiesPolicy />} />
+              <Route path='privacy-policy' element={<PrivacyPolicy />} />
+            </Route>
           </Route>
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/reset-password' element={<PasswordReset />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password' element={<PasswordReset />} />
         </Route>
         <Route element={<RequireAuth />}>
           <Route element={<AuthLayout />}>

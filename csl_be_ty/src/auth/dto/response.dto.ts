@@ -24,6 +24,7 @@ export class ClientAuthReponse{
     shippingMark:string
     createdAt:Date 
     updatedAt:Date 
+    approvalStatus?:string
 
     membershipTier?:MembershipTierDto
 

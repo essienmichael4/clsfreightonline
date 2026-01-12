@@ -63,6 +63,7 @@ export type Client = {
     shippingMark: string,
     createdAt?: string,
     updatedAt?:string,
+    approvalStatus?:string,
     packages: Package[]
     clientDetails?:Details,
     totalShippingRate?: number,
