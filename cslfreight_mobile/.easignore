@@ -1,0 +1,62 @@
+# EAS Build ignore file
+# Exclude files that cause issues during extraction
+
+# Backup directories and temporary files
+.expo.bak/
+.expo/
+*.bak
+
+# Development/build artifacts
+node_modules/
+dist/
+build/
+.gradle/
+android/.gradle/
+coverage/
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# Git and build config
+.git/
+.gitignore
+.github/
+.gitmodules
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.keystore
+
+# Development cache
+.eslintcache
+.next/
+out/
+.cache/
+.parcel-cache/
+
+# Testing
+.jest_cache/
+.nyc_output/
+
+# Misc
+.turbo/
+.vercel/
+.nvmrc
