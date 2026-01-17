@@ -110,23 +110,40 @@ export class UserService {
     })
   }
 
-  async findClients(pageOptionsDto:PageOptionsDto, search?:string){
-    const query = this.clientRepo.createQueryBuilder("client");
-
+  async findClients(pageOptionsDto: PageOptionsDto, search?: string) {
+    const query = this.clientRepo
+      .createQueryBuilder("client")
+      .leftJoinAndSelect("client.clientDetails", "details");
+      
     if (search) {
-      query.where("client.shippingMark LIKE :search", { search: `%${search}%` })
-          .orWhere("client.email LIKE :search", { search: `%${search}%` });
+      query.where(
+        "client.shippingMark LIKE :search OR client.email LIKE :search",
+        { search: `%${search}%` },
+      );
     }
 
-    if (pageOptionsDto.skip !== undefined && pageOptionsDto.take !== undefined) {
+    query.andWhere("client.isDeleted = :deleted", {
+      deleted: Deleted.FALSE,
+    });
+
+    if (
+      pageOptionsDto.skip !== undefined &&
+      pageOptionsDto.take !== undefined
+    ) {
       query.skip(pageOptionsDto.skip).take(pageOptionsDto.take);
     }
 
-    const clientsCount = await this.clientRepo.count()
+    // IMPORTANT: count must respect filters
+    const clientsCount = await query.getCount();
 
     const clients = await query.getMany();
-    const pageMetaDto = new PageMetaDto({itemCount: clientsCount, pageOptionsDto})
-    return new PageDto(clients, pageMetaDto)
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount: clientsCount,
+      pageOptionsDto,
+    });
+
+    return new PageDto(clients, pageMetaDto);
   }
 
   async findMemberships(pageOptionsDto: PageOptionsDto, name?: string) {
@@ -282,19 +299,29 @@ export class UserService {
     return attachmentsResponse
   }
 
-  async findUserByEmail(email:string){
-    return await this.userRepo.findOneBy({email})
+  async findUserByEmail(email: string) {
+    return await this.userRepo
+      .createQueryBuilder("user")
+      .addSelect("user.password")
+      .leftJoinAndSelect("user.departments", "department")
+      .where("user.email = :email", { email })
+      .getOne();
   }
 
   async findUserById(id:number){
     return await this.userRepo.findOneBy({id})
   }
 
-  async findClientByEmail(email:string){
-    return await this.clientRepo.findOne({
-      relations: {membershipTier: true},
-      where: {email}
-    })
+  async findClientByEmail(email: string) {
+    return this.clientRepo
+      .createQueryBuilder("client")
+      .addSelect("client.password")
+      .leftJoinAndSelect("client.membershipTier", "tier")
+      .where("client.email = :email", { email })
+      .andWhere("client.isDeleted = :deleted", {
+        deleted: Deleted.FALSE,
+      })
+      .getOne();
   }
 
   async findClientById(id:number){
@@ -373,14 +400,44 @@ export class UserService {
     return await this.userRepo.findOneBy({id});
   }
 
-  async updateClient(id: number, shippingMark?:string, phone?:string) {
-    await this.clientRepo.update(id, {
-      ...(shippingMark && { shippingMark }),
-      ...(phone && { phone }),
-    })
-  
-    return await this.clientRepo.findOneBy({id});
+  async updateClient(
+    id: number,
+    shippingMark?: string,
+    phone?: string,
+    location?: string,
+  ) {
+    const client = await this.clientRepo.findOne({
+      where: { id },
+      relations: {
+        clientDetails: true,
+      },
+    });
+
+    if (!client) {
+      throw new NotFoundException("Client not found");
+    }
+
+    if (shippingMark !== undefined) {
+      client.shippingMark = shippingMark;
+    }
+
+    if (phone !== undefined) {
+      client.phone = phone;
+    }
+
+    if (location !== undefined) {
+      if (!client.clientDetails) {
+        client.clientDetails = this.detailsRepo.create({ location });
+      } else {
+        client.clientDetails.location = location;
+      }
+    }
+
+    await this.clientRepo.save(client);
+
+    return client;
   }
+
 
   async updateClientDetails(id: number, clientInfo:ClientInfoUpdateRequest) {
     const client = await this.clientRepo.findOne({
@@ -446,6 +503,14 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async removeClient(id: number) {
+    try{
+      return await this.clientRepo.delete(id )
+    }catch(err){
+      throw err
+    }
   }
 
   async deleteAttachment(id: number, attachmentId: number){

@@ -4,6 +4,7 @@ export const EditClientSchema = z.object({
     shippingMark: z.string().min(2, {
         message: "Must be a valid Shipping Mark."
     }),
+    location: z.string().optional().or(z.literal('')),
     phone: z.string({
         message: "Must be a valid phone."
     }),

@@ -6,7 +6,8 @@ export type AuthType = {
         name: string,
         email: string,
         role?: string,
-        id: number | undefined
+        id: number | undefined,
+        departments: Department[]
     },
     backendTokens: {
         accessToken: string,
@@ -86,6 +87,16 @@ export type Comment = {
 export type Data = {
     data: Client[] | Package[] | Payment[] | Invoice[] | Delivery[] | Video[]
     meta: Meta
+}
+
+export type Department = {
+    id: number,
+    name: string,
+    code: string,
+    description?: string,
+    createdAt: string,
+    updatedAt: string,
+    admins?: User[]
 }
 
 export type Details = {
@@ -222,6 +233,7 @@ export type User = {
     role?: string,
     createdAt?: string,
     updatedAt?:string,
+    departments?: Department[]
 }
 
 export type Video = {

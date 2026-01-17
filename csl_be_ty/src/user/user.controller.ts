@@ -155,7 +155,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   @Patch('clients/:id')
   async updateClient(@Param('id', ParseIntPipe) id: number, @Body() clientUpdateRequest: ClientUpdateRequest, @User() user:UserInfo) {
-    const updated = await this.userService.updateClient(id, clientUpdateRequest.shippingMark, clientUpdateRequest.phone)
+    const updated = await this.userService.updateClient(id, clientUpdateRequest.shippingMark, clientUpdateRequest.phone, clientUpdateRequest.location)
     const {password, ...result} = updated
 
     return {user: result ,message: "User password updated successfully"}
@@ -235,6 +235,12 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete('clients/:id')
+  removeClient(@Param('id') id: string, @User() user:UserInfo) {
+    return this.userService.removeClient(+id);
   }
 
   @Delete('clients/:id/attachments/:attachmentId')

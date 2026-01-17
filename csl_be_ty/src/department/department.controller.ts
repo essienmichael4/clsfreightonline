@@ -5,7 +5,7 @@ import { UpdateDepartmentDto } from './dto/update-department.dto';
 import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 import { FindDepartmentUserDto } from './dto/request.dto';
 
-@Controller('department')
+@Controller('departments')
 export class DepartmentController {
   constructor(private readonly departmentService: DepartmentService) {}
 
