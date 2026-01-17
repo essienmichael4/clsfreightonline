@@ -19,6 +19,10 @@ export class ClientUpdateRequest {
     @IsString()
     @IsOptional()
     phone:string
+
+    @IsString()
+    @IsOptional()
+    location:string 
 }
 
 export class ClientPaymentRequest {

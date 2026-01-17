@@ -1,3 +1,4 @@
+import logo from '@/assets/csl DONE.png'
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb"
 import useAxiosToken from "@/hooks/useAxiosToken"
 import type { InvoiceAddressType, WarehouseType, HelplineType, Client, Package, BankType, Invoice } from "@/lib/types"
@@ -691,7 +692,10 @@ const EditInvoice = () => {
                                             <p className="text-sm">{invoiceAddress.data?.streetAddress}</p>
                                             <p className="text-sm">{invoiceAddress.data?.box}.{invoiceAddress.data?.city}.{invoiceAddress.data?.state}</p>
                                         </div>
-                                        <h3 className="text-4xl text-blue-800 font-bold">Invoice</h3>
+                                        <div className="-mt-8">
+                                            <img src={logo} className='h-20 w-40' alt="" />
+                                            <h3 className="text-center text-4xl text-blue-800 font-bold">Invoice</h3>
+                                        </div>
                                     </div>
                                     <div className="mt-4">
                                         <p className="font-bold text-ms"><span>ID: </span><span>{date}</span></p>

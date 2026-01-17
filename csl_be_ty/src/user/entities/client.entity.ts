@@ -36,7 +36,7 @@ export class Client {
     })
     email:string
 
-    @Column()
+    @Column({ select: false })
     password:string
 
     @Column({nullable: true})
@@ -63,7 +63,7 @@ export class Client {
     @Column({ nullable: true, default: "regular"})
     accountStage: string;
 
-    @OneToMany(() => Package, (packageEntity) => packageEntity.user)
+    @OneToMany(() => Package, (packageEntity) => packageEntity.client)
     packages: Package[];
 
     @OneToMany(() => Invoice, (invoice) => invoice.client)

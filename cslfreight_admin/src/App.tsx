@@ -8,6 +8,7 @@ import RequireAuth from './components/RequireAuth'
 import Users from './pages/User/Users'
 import Package from './pages/Package/Package'
 import UserProfile from './pages/User/User'
+import UsersTable from './pages/User/UsersTable'
 import NotFound from './pages/NotFound/NotFound'
 import Loading from './pages/Loading/Loading'
 import Settings from './pages/Settings/Settings'
@@ -26,6 +27,7 @@ import DeliveryDetails from './pages/Deliveries/DeliveryDetails'
 import VideoPlayer from './pages/Video/VideoPlayer'
 import VideoSearch from './pages/Video/VideoSearch'
 import EditVideo from './pages/Video/EditVideo'
+import Departments from './pages/User/Departments'
 
 function App() {
 
@@ -40,7 +42,10 @@ function App() {
             <Route path='/packages/:id' element={<Package />} />
             <Route path='/loadings' element={<Loading />} />
             <Route path='/loadings/:id' element={<Package />} />
-            <Route path='/users' element={<Users />} />
+            <Route path='/users' element={<Users />} >
+              <Route index element={<UsersTable />} />
+              <Route path='departments' element={<Departments />} />
+            </Route>
             <Route path='/users/:id' element={<UserProfile />} />
             <Route path='/clients' element={<Clients />} />
             <Route path='/clients/:id' element={<ClientDetails />} />

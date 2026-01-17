@@ -7,7 +7,8 @@ export const AuthContext = createContext<AuthContextType>({
             id: undefined,
             name:"",
             email: "",
-            role: ""
+            role: "",
+            departments: []
         },
         backendTokens: {
             accessToken: "",

@@ -33,6 +33,7 @@ const EditClientDialog = ({client, trigger, page, limit, search}:Props) => {
         resolver:zodResolver(EditClientSchema),
         defaultValues:{
             phone: client.phone,
+            location: client?.clientDetails?.location,
             shippingMark: client.shippingMark
         }
     })
@@ -93,6 +94,18 @@ const EditClientDialog = ({client, trigger, page, limit, search}:Props) => {
                             render={({field}) =>(
                                 <FormItem>
                                     <FormLabel className='text-xs'>Shipping Mark</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )} 
+                        />
+                        <FormField 
+                            control={form.control}
+                            name="location"
+                            render={({field}) =>(
+                                <FormItem>
+                                    <FormLabel className='text-xs'>Location</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
                                     </FormControl>
