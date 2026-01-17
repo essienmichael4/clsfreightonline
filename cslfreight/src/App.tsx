@@ -32,6 +32,7 @@ import DeliveryEdit from './pages/Deliveries/DeliveryEdit'
 import Videos from './pages/Video/Videos'
 import VideoPlayer from './pages/Video/VideoPlayer'
 import { useEffect } from 'react'
+import DeleteAccount from './pages/DeleteAccount/DeleteAccount'
 import CookiesPolicy from './pages/Policies/CookiesPolicy'
 import PrivacyPolicy from './pages/Policies/PrivacyPolicy'
 import TermsOfUse from './pages/Policies/TermsOfUse'
@@ -71,6 +72,7 @@ function App() {
             <Route path='/address' element={<Address />} />
             <Route path='/terms' element={<Terms />} />
             <Route path='/container-loadings' element={<Loading />} />
+            <Route path='/delete-account' element={<DeleteAccount />} />
             <Route path='*' element={<NotFound />} />
             <Route element={<PolicyLayout />}>
               <Route path='terms-of-use' element={<TermsOfUse />} />

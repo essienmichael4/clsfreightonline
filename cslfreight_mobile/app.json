@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "CSL Freight Mobile",
+    "slug": "samuel-mahama",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "cslfreight",
+    "icon": "./src/assets/icon.png",
+    "splash": {
+      "image": "./src/assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.csl.freight.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.csl.freight.mobile"
+    },
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-dev-client"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ef28131f-842c-44fa-9430-6d3ca93e41e7"
+      }
+    },
+    "owner": "samuel_mahama"
+  }
+}
