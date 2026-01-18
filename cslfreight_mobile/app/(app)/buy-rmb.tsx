@@ -3,13 +3,12 @@ import {
     View,
     Text,
     StyleSheet,
+    SafeAreaView,
     ScrollView,
     TouchableOpacity,
     Linking,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
 import { colors, spacing, typography, borderRadius } from '@/theme';
 
 export default function BuyRMBScreen() {
@@ -44,7 +43,7 @@ export default function BuyRMBScreen() {
 
                     {/* Info Card */}
                     <View style={styles.infoCard}>
-                        <MaterialIcons name="currency-exchange" size={56} color={colors.primary} />
+                        <Text style={styles.infoIcon}>💱</Text>
                         <Text style={styles.infoTitle}>Exchange Currency Online</Text>
                         <Text style={styles.infoText}>
                             Get the best rates for Chinese Yuan (RMB) exchange. Click the button below to visit our partner site and complete your currency exchange.
@@ -54,7 +53,7 @@ export default function BuyRMBScreen() {
                     {/* Main CTA Button */}
                     <TouchableOpacity style={styles.ctaButton} onPress={handleOpenRMBDeals}>
                         <Text style={styles.ctaButtonText}>Visit RMB Deals</Text>
-                        <MaterialIcons name="arrow-forward" size={20} color={colors.white} />
+                        <Text style={styles.ctaButtonIcon}>→</Text>
                     </TouchableOpacity>
 
                     {/* Features */}
@@ -62,7 +61,7 @@ export default function BuyRMBScreen() {
                         <Text style={styles.featuresTitle}>Why Use RMB Deals?</Text>
 
                         <View style={styles.featureItem}>
-                            <MaterialIcons name="check-circle" size={24} color={colors.primary} style={styles.featureIcon} />
+                            <Text style={styles.featureIcon}>✓</Text>
                             <View style={styles.featureContent}>
                                 <Text style={styles.featureTitle}>Competitive Rates</Text>
                                 <Text style={styles.featureDescription}>Get the best exchange rates in the market</Text>
@@ -70,7 +69,7 @@ export default function BuyRMBScreen() {
                         </View>
 
                         <View style={styles.featureItem}>
-                            <MaterialIcons name="check-circle" size={24} color={colors.primary} style={styles.featureIcon} />
+                            <Text style={styles.featureIcon}>✓</Text>
                             <View style={styles.featureContent}>
                                 <Text style={styles.featureTitle}>Fast Processing</Text>
                                 <Text style={styles.featureDescription}>Quick and secure transactions</Text>
@@ -78,7 +77,7 @@ export default function BuyRMBScreen() {
                         </View>
 
                         <View style={styles.featureItem}>
-                            <MaterialIcons name="check-circle" size={24} color={colors.primary} style={styles.featureIcon} />
+                            <Text style={styles.featureIcon}>✓</Text>
                             <View style={styles.featureContent}>
                                 <Text style={styles.featureTitle}>Trusted Service</Text>
                                 <Text style={styles.featureDescription}>Reliable currency exchange partner</Text>
@@ -89,7 +88,7 @@ export default function BuyRMBScreen() {
                     {/* Secondary Link */}
                     <TouchableOpacity style={styles.linkButton} onPress={handleOpenRMBDeals}>
                         <Text style={styles.linkText}>rmbdeals.com</Text>
-                        <MaterialIcons name="link" size={18} color={colors.primary} />
+                        <Text style={styles.linkIcon}>🔗</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </LinearGradient>
@@ -158,7 +157,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: spacing.xl,
-        boxShadow: `0 4px 8px ${colors.primary}4D`,
+        shadowColor: colors.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
         elevation: 8,
     },
     ctaButtonText: {

@@ -1,11 +1,10 @@
-import { useState } from 'react';
-
-
+import React, { useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     SafeAreaView,
+    Dimensions,
     TouchableOpacity,
     ScrollView,
     TextInput,
@@ -13,76 +12,20 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { colors, spacing, typography, borderRadius } from '@/theme';
-import { axios_instance } from 'app/_API/axios';
-import { saveTokens } from 'app/_auth/auth.storage';
-import useAuth from 'app/_hooks/useAuth';
+
+const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const { dispatch } = useAuth();
 
-    const validateEmail = (emailValue: string): boolean => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(emailValue);
-    };
+    const handleLogin = () => {
+        // TODO: Implement actual login logic with API
+        console.log('Login:', email, password);
 
-    const handleLogin = async () => {
-        // Reset error state
-        setError('');
-
-        // Validate inputs
-        if (!email.trim()) {
-            setError('Email is required');
-            return;
-        }
-
-        if (!validateEmail(email)) {
-            setError('Please enter a valid email address');
-            return;
-        }
-
-        if (!password.trim()) {
-            setError('Password is required');
-            return;
-        }
-
-        if (password.length < 6) {
-            setError('Password must be at least 6 characters');
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            const { data } = await axios_instance.post('/auth/signin/client', {
-                email,
-                password,
-            });
-
-            await saveTokens(data.backendTokens.accessToken, data.backendTokens.refreshToken);
-
-            dispatch({ type: 'ADD_AUTH', payload: data });
-
-            // Navigate to main app dashboard
-            router.replace('/(app)/dashboard');
-        } catch (err: any) {
-            let errorMessage = 'Login failed. Please try again.';
-
-            if (err.response?.data?.message) {
-                errorMessage = err.response.data.message;
-            } else if (err.message === 'Network Error') {
-                errorMessage = 'Network error. Please check your connection.';
-            }
-
-            setError(errorMessage);
-            console.error('Login error:', err);
-        } finally {
-            setLoading(false);
-        }
+        // Navigate to main app dashboard
+        router.replace('/(app)/dashboard');
     };
 
     return (
@@ -116,14 +59,6 @@ export default function LoginScreen() {
 
                     {/* Login Form */}
                     <View style={styles.form}>
-                        {/* Error Alert */}
-                        {error ? (
-                            <View style={styles.errorContainer}>
-                                <Text style={styles.errorIcon}>⚠️</Text>
-                                <Text style={styles.errorText}>{error}</Text>
-                            </View>
-                        ) : null}
-
                         {/* Email Input */}
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Email</Text>
@@ -138,7 +73,6 @@ export default function LoginScreen() {
                                     keyboardType="email-address"
                                     autoCapitalize="none"
                                     autoCorrect={false}
-                                    editable={!loading}
                                 />
                             </View>
                         </View>
@@ -156,39 +90,28 @@ export default function LoginScreen() {
                                     onChangeText={setPassword}
                                     secureTextEntry
                                     autoCapitalize="none"
-                                    editable={!loading}
                                 />
                             </View>
                         </View>
 
                         {/* Forgot Password */}
-                        <TouchableOpacity
-                            style={styles.forgotPassword}
-                            onPress={() => router.push('/(onboarding)/forgot-password')}
-                            disabled={loading}
-                        >
+                        <TouchableOpacity style={styles.forgotPassword}>
                             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
                         </TouchableOpacity>
 
                         {/* Login Button */}
                         <TouchableOpacity
-                            style={[styles.loginButton, loading && styles.disabledButton]}
+                            style={styles.loginButton}
                             activeOpacity={0.8}
                             onPress={handleLogin}
-                            disabled={loading}
                         >
-                            <Text style={styles.loginButtonText}>
-                                {loading ? 'Logging in...' : 'Login'}
-                            </Text>
+                            <Text style={styles.loginButtonText}>Login</Text>
                         </TouchableOpacity>
 
                         {/* Sign Up Link */}
                         <View style={styles.signupContainer}>
                             <Text style={styles.signupText}>Don't have an account? </Text>
-                            <TouchableOpacity
-                                onPress={() => router.push('/(onboarding)/signup')}
-                                disabled={loading}
-                            >
+                            <TouchableOpacity onPress={() => router.push('/(onboarding)/signup')}>
                                 <Text style={styles.signupLink}>Sign Up</Text>
                             </TouchableOpacity>
                         </View>
@@ -210,13 +133,11 @@ const styles = StyleSheet.create({
     content: {
         flexGrow: 1,
         paddingHorizontal: spacing.lg,
-        paddingTop: spacing.xl,
+        paddingTop: spacing.md,
         paddingBottom: spacing.xxl,
     },
     backButton: {
-        marginBottom: spacing.lg,
-        marginTop: spacing.md,
-        paddingVertical: spacing.sm,
+        marginBottom: spacing.xl,
     },
     backButtonText: {
         color: colors.textSecondary,
@@ -224,7 +145,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     header: {
-        marginBottom: spacing.lg,
+        marginBottom: spacing.xl,
     },
     title: {
         fontSize: typography.h1.fontSize,
@@ -237,28 +158,6 @@ const styles = StyleSheet.create({
         color: colors.textSecondary,
     },
     form: {
-        flex: 1,
-    },
-    errorContainer: {
-        backgroundColor: '#FEE2E2',
-        borderRadius: borderRadius.md,
-        borderLeftWidth: 4,
-        borderLeftColor: '#EF4444',
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.md,
-        marginBottom: spacing.lg,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-    },
-    errorIcon: {
-        fontSize: 18,
-        marginRight: spacing.sm,
-        marginTop: 2,
-    },
-    errorText: {
-        color: '#DC2626',
-        fontSize: 14,
-        fontWeight: '500',
         flex: 1,
     },
     inputGroup: {
@@ -305,9 +204,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: spacing.lg,
-    },
-    disabledButton: {
-        opacity: 0.6,
     },
     loginButtonText: {
         color: colors.white,

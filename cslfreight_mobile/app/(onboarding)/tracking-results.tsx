@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     View,
     Text,
@@ -9,12 +10,8 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { colors, spacing, typography, borderRadius } from '@/theme';
-import { axios_instance } from 'app/_API/axios';
-import { Package } from 'app/_lib/types';
-import { useQuery } from '@tanstack/react-query';
 
 export default function TrackingResultsScreen() {
-
     const router = useRouter();
     const params = useLocalSearchParams();
 
@@ -22,15 +19,8 @@ export default function TrackingResultsScreen() {
     const trackingNumbersParam = params.numbers as string || '';
     const trackingNumbers = trackingNumbersParam.split(',').filter(n => n.trim());
 
-    const { data: packages } = useQuery<Package[] | []>({
-        queryKey: ["packages", trackingNumbersParam],
-        queryFn: async () => await axios_instance.get(`/packages/search?filter=${trackingNumbersParam}`).then(res => {
-            console.log(res.data);
-
-            return res.data
-        })
-    })
-
+    // TODO: Fetch actual package data from API
+    const packages: any[] = []; // Empty for now - will show "no packages found"
 
     const renderNoPackagesFound = () => (
         <View style={styles.noPackagesContainer}>
@@ -119,11 +109,11 @@ export default function TrackingResultsScreen() {
                     </View>
 
                     {/* Results */}
-                    {packages?.length === 0 ? (
+                    {packages.length === 0 ? (
                         renderNoPackagesFound()
                     ) : (
                         <View style={styles.packagesContainer}>
-                            {packages?.map((pkg, index) => renderPackageDetails(pkg, index))}
+                            {packages.map((pkg, index) => renderPackageDetails(pkg, index))}
                         </View>
                     )}
 

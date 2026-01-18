@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -62,17 +61,14 @@ export default function WelcomeScreen() {
 
           {/* Container Illustration */}
           <View style={styles.illustrationContainer}>
-            <Image
-              source={require('../../src/assets/welcome2.png')}
-              style={styles.illustrationImage}
-              resizeMode="contain"
-            />
+            <ContainerIllustration />
           </View>
 
           {/* Main Heading */}
           <View style={styles.headingContainer}>
             <Text style={styles.headingLineOne}>Streamline your</Text>
-            <Text style={styles.headingLineTwo}>shipment process</Text>
+            <Text style={styles.headingLineTwo}>shipment</Text>
+            <Text style={styles.headingLineThree}>process</Text>
           </View>
 
           {/* Description */}
@@ -139,6 +135,44 @@ export default function WelcomeScreen() {
   );
 }
 
+// Container Illustration Component
+function ContainerIllustration() {
+  return (
+    <View style={styles.svgContainer}>
+      {/* Simplified container SVG-like illustration */}
+      <View style={styles.containerMain}>
+        {/* Container corners */}
+        <View style={styles.cornerTopLeft} />
+        <View style={styles.cornerTopRight} />
+
+        {/* Container sides */}
+        <View style={styles.containerSide} />
+        <View style={styles.containerBack} />
+
+        {/* Vertical lines on container */}
+        <View style={styles.verticalLine1} />
+        <View style={styles.verticalLine2} />
+        <View style={styles.verticalLine3} />
+        <View style={styles.verticalLine4} />
+
+        {/* Horizontal lines on container */}
+        <View style={styles.horizontalLine1} />
+        <View style={styles.horizontalLine2} />
+        <View style={styles.horizontalLine3} />
+
+        {/* CSL Logo - White curved lines */}
+        <View style={styles.logoContainer}>
+          <View style={styles.logoCurve1} />
+          <View style={styles.logoCurve2} />
+        </View>
+
+        {/* Crane hook */}
+        <View style={styles.craneHook} />
+      </View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -174,14 +208,170 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   illustrationContainer: {
-    height: height * 0.45,
+    height: height * 0.35,
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: spacing.lg,
   },
-  illustrationImage: {
+  svgContainer: {
     width: '100%',
     height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  containerMain: {
+    width: width * 0.6,
+    height: height * 0.3,
+    position: 'relative',
+  },
+  // Container main body (green container)
+  containerSide: {
+    position: 'absolute',
+    width: width * 0.55,
+    height: height * 0.22,
+    left: 0,
+    top: height * 0.08,
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    opacity: 0.95,
+  },
+  containerBack: {
+    position: 'absolute',
+    width: width * 0.5,
+    height: height * 0.18,
+    left: width * 0.04,
+    top: height * 0.12,
+    backgroundColor: 'rgba(29, 184, 84, 0.6)',
+    borderRadius: 6,
+  },
+  // Vertical lines (corrugated container effect)
+  verticalLine1: {
+    position: 'absolute',
+    width: 3,
+    height: height * 0.2,
+    left: width * 0.1,
+    top: height * 0.09,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  verticalLine2: {
+    position: 'absolute',
+    width: 3,
+    height: height * 0.2,
+    left: width * 0.18,
+    top: height * 0.09,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  verticalLine3: {
+    position: 'absolute',
+    width: 3,
+    height: height * 0.2,
+    left: width * 0.26,
+    top: height * 0.09,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  verticalLine4: {
+    position: 'absolute',
+    width: 3,
+    height: height * 0.2,
+    left: width * 0.34,
+    top: height * 0.09,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  // Horizontal lines (container details)
+  horizontalLine1: {
+    position: 'absolute',
+    width: width * 0.45,
+    height: 2,
+    left: width * 0.06,
+    top: height * 0.14,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  horizontalLine2: {
+    position: 'absolute',
+    width: width * 0.45,
+    height: 2,
+    left: width * 0.06,
+    top: height * 0.19,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  horizontalLine3: {
+    position: 'absolute',
+    width: width * 0.45,
+    height: 2,
+    left: width * 0.06,
+    top: height * 0.24,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  // CSL Logo (two white curves)
+  logoContainer: {
+    position: 'absolute',
+    left: width * 0.38,
+    top: height * 0.1,
+    width: width * 0.15,
+    height: height * 0.15,
+  },
+  logoCurve1: {
+    position: 'absolute',
+    width: 35,
+    height: 35,
+    borderRadius: 50,
+    borderWidth: 6,
+    borderColor: colors.white,
+    left: 0,
+    top: 0,
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+  },
+  logoCurve2: {
+    position: 'absolute',
+    width: 25,
+    height: 25,
+    borderRadius: 50,
+    borderWidth: 5,
+    borderColor: colors.white,
+    left: 20,
+    top: 20,
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+  },
+  // Crane hook at top
+  craneHook: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    left: width * 0.27,
+    top: -20,
+    borderLeftWidth: 3,
+    borderBottomWidth: 3,
+    borderLeftColor: colors.textSecondary,
+    borderBottomColor: colors.textSecondary,
+    borderRadius: 8,
+  },
+  cornerTopLeft: {
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderLeftWidth: 15,
+    borderTopWidth: 15,
+    borderLeftColor: 'transparent',
+    borderTopColor: colors.primary,
+    left: -2,
+    top: height * 0.07,
+    opacity: 0.8,
+  },
+  cornerTopRight: {
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderRightWidth: 15,
+    borderTopWidth: 15,
+    borderRightColor: 'transparent',
+    borderTopColor: colors.primary,
+    right: -2,
+    top: height * 0.07,
+    opacity: 0.8,
   },
   headingContainer: {
     marginBottom: spacing.md,

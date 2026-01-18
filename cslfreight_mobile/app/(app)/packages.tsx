@@ -1,63 +1,31 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
+    SafeAreaView,
     ScrollView,
     TouchableOpacity,
     TextInput,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { colors, spacing, typography, borderRadius } from '@/theme';
-import { useQuery } from '@tanstack/react-query';
-import { Package } from 'app/_lib/types';
-import useAxiosToken from 'app/_hooks/useAxiosToken';
 
 export default function PackagesScreen() {
-
-
-
-    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTab, setSelectedTab] = useState('all');
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
 
-    const axios_instance_token = useAxiosToken()
-    const status = selectedTab === 'all' ? '' : selectedTab;
-
-    const packages = useQuery<Package[]>({
-        queryKey: ["packages", status],
-        queryFn: async () => await axios_instance_token.get(`/packages/client?status=${status}`).then(res => res.data)
-    })
-
-    // Filter packages based on search query
-    const filteredPackages = packages.data?.filter(pkg => {
-        if (!searchQuery) return true;
-        return pkg.trackingNumber.toLowerCase().includes(searchQuery.toLowerCase());
-    }) || [];
-
-    // Calculate pagination
-    const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
-    const paginatedPackages = filteredPackages.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    // Reset page when filters change
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [searchQuery, selectedTab]);
+    const packages = [
+        { id: '1', trackingNumber: 'CSL001234', status: 'In Transit', origin: 'China', destination: 'Ghana', date: '2024-01-10' },
+        { id: '2', trackingNumber: 'CSL005678', status: 'Delivered', origin: 'China', destination: 'Ghana', date: '2024-01-09' },
+        { id: '3', trackingNumber: 'CSL009012', status: 'Pending', origin: 'China', destination: 'Ghana', date: '2024-01-08' },
+        { id: '4', trackingNumber: 'CSL003456', status: 'In Transit', origin: 'China', destination: 'Ghana', date: '2024-01-07' },
+    ];
 
     const tabs = [
-        { key: '', label: 'All' },
-        { key: 'YET_TO_LOAD', label: 'Yet To Load' },
-        { key: 'IN_TRANSIT', label: 'In Transit' },
-        { key: 'ARRIVED', label: 'Arrived' },
-        { key: 'DELIVERED', label: 'Delivered' },
+        { key: 'all', label: 'All' },
+        { key: 'active', label: 'Active' },
+        { key: 'delivered', label: 'Delivered' },
     ];
 
     return (
@@ -76,7 +44,7 @@ export default function PackagesScreen() {
 
                     {/* Search Bar */}
                     <View style={styles.searchContainer}>
-                        <MaterialIcons name="search" size={20} color={colors.textSecondary} />
+                        <Text style={styles.searchIcon}>🔍</Text>
                         <TextInput
                             style={styles.searchInput}
                             placeholder="Search by tracking number..."
@@ -87,32 +55,26 @@ export default function PackagesScreen() {
                     </View>
 
                     {/* Tabs */}
-                    <View>
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={styles.tabsContainer}
-                        >
-                            {tabs.map((tab) => (
-                                <TouchableOpacity
-                                    key={tab.key}
+                    <View style={styles.tabsContainer}>
+                        {tabs.map((tab) => (
+                            <TouchableOpacity
+                                key={tab.key}
+                                style={[
+                                    styles.tab,
+                                    selectedTab === tab.key && styles.tabActive,
+                                ]}
+                                onPress={() => setSelectedTab(tab.key)}
+                            >
+                                <Text
                                     style={[
-                                        styles.tab,
-                                        selectedTab === tab.key && styles.tabActive,
+                                        styles.tabText,
+                                        selectedTab === tab.key && styles.tabTextActive,
                                     ]}
-                                    onPress={() => setSelectedTab(tab.key)}
                                 >
-                                    <Text
-                                        style={[
-                                            styles.tabText,
-                                            selectedTab === tab.key && styles.tabTextActive,
-                                        ]}
-                                    >
-                                        {tab.label}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
+                                    {tab.label}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
                     </View>
 
                     {/* Packages List */}
@@ -120,72 +82,34 @@ export default function PackagesScreen() {
                         style={styles.packagesList}
                         showsVerticalScrollIndicator={false}
                     >
-                        {paginatedPackages.map((pkg) => (
+                        {packages.map((pkg) => (
                             <TouchableOpacity key={pkg.id} style={styles.packageCard}>
                                 <View style={styles.packageHeader}>
                                     <View style={styles.packageIcon}>
-                                        <MaterialIcons name="inventory-2" size={28} color={colors.primary} />
+                                        <Text style={styles.packageIconText}>📦</Text>
                                     </View>
                                     <View style={styles.packageInfo}>
                                         <Text style={styles.trackingNumber}>{pkg.trackingNumber}</Text>
-                                        {/* <Text style={styles.route}>{pkg.origin} → {pkg.destination}</Text> */}
+                                        <Text style={styles.route}>{pkg.origin} → {pkg.destination}</Text>
                                     </View>
                                     <View style={[styles.statusBadge, getStatusStyle(pkg.status)]}>
                                         <Text style={styles.statusText}>{pkg.status}</Text>
                                     </View>
                                 </View>
                                 <View style={styles.packageFooter}>
-                                    <View style={styles.dateContainer}>
-                                        <MaterialIcons name="event" size={16} color={colors.textSecondary} />
-                                        <Text style={styles.dateText}>{pkg.loaded}</Text>
-                                    </View>
-                                    <TouchableOpacity
-                                        style={styles.detailsButton}
-                                        onPress={() => router.push({
-                                            pathname: `/(app)/package-details/${pkg.id}`,
-                                            params: {
-                                                id: pkg.id,
-                                                trackingNumber: pkg.trackingNumber,
-                                                status: pkg.status,
-                                                // origin: pkg.origin,
-                                                // destination: pkg.destination
-                                            }
-                                        })}
-                                    >
-                                        <Text style={styles.detailsLink}>View Details</Text>
-                                        <MaterialIcons name="chevron-right" size={16} color={colors.primary} />
+                                    <Text style={styles.dateText}>📅 {pkg.date}</Text>
+                                    <TouchableOpacity>
+                                        <Text style={styles.detailsLink}>View Details →</Text>
                                     </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>
                         ))}
-
-                        {/* Pagination Controls */}
-                        {totalPages > 1 && (
-                            <View style={styles.paginationContainer}>
-                                <TouchableOpacity
-                                    style={[styles.pageButton, currentPage === 1 && styles.pageButtonDisabled]}
-                                    onPress={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                    disabled={currentPage === 1}
-                                >
-                                    <MaterialIcons name="chevron-left" size={24} color={currentPage === 1 ? colors.textSecondary : colors.primary} />
-                                    <Text style={[styles.pageButtonText, currentPage === 1 && styles.pageButtonTextDisabled]}>Prev</Text>
-                                </TouchableOpacity>
-
-                                <Text style={styles.pageInfo}>
-                                    Page {currentPage} of {totalPages}
-                                </Text>
-
-                                <TouchableOpacity
-                                    style={[styles.pageButton, currentPage === totalPages && styles.pageButtonDisabled]}
-                                    onPress={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                    disabled={currentPage === totalPages}
-                                >
-                                    <Text style={[styles.pageButtonText, currentPage === totalPages && styles.pageButtonTextDisabled]}>Next</Text>
-                                    <MaterialIcons name="chevron-right" size={24} color={currentPage === totalPages ? colors.textSecondary : colors.primary} />
-                                </TouchableOpacity>
-                            </View>
-                        )}
                     </ScrollView>
+
+                    {/* Add Package Button */}
+                    <TouchableOpacity style={styles.addButton}>
+                        <Text style={styles.addButtonText}>+ Track New Package</Text>
+                    </TouchableOpacity>
                 </View>
             </LinearGradient>
         </SafeAreaView>
@@ -254,7 +178,7 @@ const styles = StyleSheet.create({
         gap: spacing.sm,
     },
     tab: {
-        paddingHorizontal: spacing.md,
+        flex: 1,
         paddingVertical: spacing.sm,
         alignItems: 'center',
         borderRadius: borderRadius.md,
@@ -331,19 +255,9 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: colors.border,
     },
-    dateContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-    },
     dateText: {
         fontSize: 12,
         color: colors.textSecondary,
-    },
-    detailsButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
     },
     detailsLink: {
         fontSize: 12,
@@ -362,34 +276,5 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontSize: 16,
         fontWeight: '600',
-    },
-    paginationContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: spacing.md,
-        marginTop: spacing.sm,
-        borderTopWidth: 1,
-        borderTopColor: colors.border,
-    },
-    pageButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: spacing.sm,
-    },
-    pageButtonDisabled: {
-        opacity: 0.5,
-    },
-    pageButtonText: {
-        color: colors.primary,
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    pageButtonTextDisabled: {
-        color: colors.textSecondary,
-    },
-    pageInfo: {
-        fontSize: 14,
-        color: colors.textSecondary,
     },
 });
