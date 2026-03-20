@@ -1,5 +1,5 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { PackageEdit } from "./packageEdits.entity";
 import { Client } from "src/user/entities/client.entity";
 import { PackageType } from "./packageType.entity";
@@ -107,4 +107,21 @@ export class Package {
   @ManyToOne(() => PackageType, (packageType) => packageType.packages)
   @JoinColumn({ name: 'packageTypes' })
   packageType: PackageType;
+
+  // ✅ ENTITY HOOK
+  @BeforeInsert()
+  @BeforeUpdate()
+  normalizeDates() {
+    const normalize = (date?: Date) => {
+      if (!date) return date;
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    };
+
+    this.departure = normalize(this.departure);
+    this.loaded = normalize(this.loaded);
+    this.eta = normalize(this.eta);
+    this.received = normalize(this.received);
+  }
 }

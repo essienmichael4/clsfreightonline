@@ -9,9 +9,10 @@ import { JwtService } from '@nestjs/jwt';
 import { Bank } from './entities/bank.entity';
 import { Marque } from './entities/marque.entity';
 import { UserModule } from 'src/user/user.module';
+import { Rate } from './entities/rate.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InvoiceAddress, Warehouse, Helpline, Bank, Marque]), UserModule],
+  imports: [TypeOrmModule.forFeature([InvoiceAddress, Warehouse, Helpline, Bank, Marque, Rate]), UserModule],
   controllers: [SettingsController],
   providers: [SettingsService, JwtService],
 })

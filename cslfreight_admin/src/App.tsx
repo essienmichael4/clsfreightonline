@@ -7,6 +7,7 @@ import Packages from './pages/Package/Packages'
 import RequireAuth from './components/RequireAuth'
 import Users from './pages/User/Users'
 import Package from './pages/Package/Package'
+import PackageList from './pages/Package/PackagesList'
 import UserProfile from './pages/User/User'
 import UsersTable from './pages/User/UsersTable'
 import NotFound from './pages/NotFound/NotFound'
@@ -28,6 +29,8 @@ import VideoPlayer from './pages/Video/VideoPlayer'
 import VideoSearch from './pages/Video/VideoSearch'
 import EditVideo from './pages/Video/EditVideo'
 import Departments from './pages/User/Departments'
+import PackageDate from './pages/Package/PackageDate'
+import AddPackages from './pages/Package/_components/AddPackages'
 
 function App() {
 
@@ -38,7 +41,11 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route element={<Layout />}>
             <Route path='/dashboard' element={<Dashboard />} />
-            <Route path='/packages' element={<Packages />} />
+            <Route path='/packages' element={<Packages />} >
+              <Route index element={<PackageList />} />
+              <Route path='status/dates' element={<PackageDate />} />
+            </Route>
+            <Route path='/packages/upload/excel' element={<AddPackages />} />
             <Route path='/packages/:id' element={<Package />} />
             <Route path='/loadings' element={<Loading />} />
             <Route path='/loadings/:id' element={<Package />} />

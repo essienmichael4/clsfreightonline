@@ -32,13 +32,13 @@ const EditLoading = ({item, trigger}:Props) => {
         resolver:zodResolver(EditLoadingSchema),
         defaultValues:{
             vessel: item.vessel,
-            loaded: new Date(),
-            eta: new Date(),
+            loaded: new Date(item.loaded as string),
+            eta: new Date(item.eta as string),
             status: item.status,
         }
     })
 
-    const addAddress = async (data:EditLoadingSchemaType)=>{
+    const editLoading = async (data:EditLoadingSchemaType)=>{
         const response = await axios_instance_token.patch(`/loadings/${item.id}`, {
             ...data
         },)
@@ -47,7 +47,7 @@ const EditLoading = ({item, trigger}:Props) => {
     }
 
     const {mutate, isPending} = useMutation({
-        mutationFn: addAddress,
+        mutationFn: editLoading,
         onSuccess: ()=>{
             toast.success("Container loading edited successfully", {
                 id: "add-address"

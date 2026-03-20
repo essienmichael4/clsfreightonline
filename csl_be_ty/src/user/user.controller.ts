@@ -95,14 +95,14 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Get("clients/payments/export")
-  exportPayments(@Query("search") search?: string) {
-    return this.userService.exportPayments(search);
+  exportPayments(@Query("search") search?: string, @Query("month") month?: string, @Query("year") year?: string,) {
+    return this.userService.exportPayments(search, month, year);
   }
   
   @UseGuards(JwtGuard)
   @Get("clients/all")
-  exportClients() {
-    return this.userService.exportClients();
+  exportClients(@Query("location") location?: string,) {
+    return this.userService.exportClients(location);
   }
 
   @UseGuards(JwtGuard)
@@ -131,8 +131,8 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Get("clients")
-  findClients(@Query() pageOptionsDto:PageOptionsDto, @Query("search") search?: string) {
-    return this.userService.findClients(pageOptionsDto, search);
+  findClients(@Query() pageOptionsDto:PageOptionsDto, @Query("search") search?: string, @Query("location") location?: string) {
+    return this.userService.findClients(pageOptionsDto, search, location);
   }
 
   @UseGuards(JwtGuard)

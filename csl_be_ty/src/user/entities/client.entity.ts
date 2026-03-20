@@ -1,5 +1,5 @@
 import { Package } from "src/package/entities/package.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 import { Details } from "./details.entity";
 import { Attachment } from "./attachment.entity";
 import { MembershipTier } from "./membership.entity";
@@ -8,11 +8,6 @@ import { Invoice } from "src/invoice/entities/invoice.entity";
 import { VideoLike } from "src/video/entities/video-like.entity";
 import { VideoComment } from "src/video/entities/video-comment.entity";
 import { Delivery } from "src/delivery/entities/delivery.entity";
-
-export enum Deleted {
-    TRUE = 'TRUE',
-    FALSE = 'FALSE',
-}
 
 export enum ApprovalStatus {
     PENDING = 'PENDING',
@@ -54,8 +49,8 @@ export class Client {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 
-    @Column({ default: Deleted.FALSE })
-    isDeleted: Deleted;
+    @DeleteDateColumn({ type: "timestamp", nullable: true })
+    deletedAt: Date;
 
     @Column({ default: ApprovalStatus.PENDING })
     approvalStatus: ApprovalStatus;

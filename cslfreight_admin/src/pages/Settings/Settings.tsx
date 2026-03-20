@@ -1,21 +1,30 @@
-import { Loader2, Plus } from "lucide-react"
+import { Edit, Loader2, Plus, PlusCircle } from "lucide-react"
 import AddRate from "./AddRate"
 import ShippingRates from "./_components/ShippingRates"
 import AddAnnouncement from "./_components/AddAnnouncement"
 import AnnouncementParser from "@/components/AnnouncementParser"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import useAxiosToken from "@/hooks/useAxiosToken"
-import type { AnnouncementType } from "@/lib/types"
+import type { AnnouncementType, Rate } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import EditAnnouncement from "./_components/EditAnnouncement"
 import { toast } from "sonner"
 import axios from "axios"
 import InvoiceDetails from "./_components/InvoiceDetails"
 import MarqueAnnouncement from "./_components/MarqueAnnouncement"
+import AddShippingRate from "./AddShippingRate"
+import EditShippingRate from "./EditShippingRate"
 
 const Settings = () => {
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
+
+    const {data:rate} = useQuery<Rate>({
+            queryKey: ["rate"],
+            queryFn: async() => await axios_instance_token.get(`/packages/rate`).then(res => {
+                return res.data
+            })
+        })
 
     const announcement = useQuery<AnnouncementType>({
         queryKey: ["announcements", "clients"],
@@ -60,12 +69,25 @@ const Settings = () => {
     
     return (
         <div className="container px-4 mx-auto">
+            <div className="mt-4">
+                <h1 className="text-3xl font-bold">Settings</h1>
+                <p className="text-gray-600 text-xs">Manage your shipping rates and client announcements</p>
+            </div>
+            <div className="mt-4">
+                <h3 className="font-bold">USD - GHS Rate</h3>
+                <div className="flex gap-4">
+                    <p className="text-2xl">{rate?.rate || 0}</p> 
+                    {!rate?.rate ? 
+                        <AddShippingRate trigger={<button className="py-1 px-2 text-blue-700 rounded-md"><PlusCircle className="w-4 h-4" /></button>} /> : 
+                        <EditShippingRate rate={rate} trigger={<button className="py-1 px-2 text-emerald-700 rounded-md"><Edit className="w-4 h-4" /></button>} />}
+                </div>
+            </div>
             <div className="mt-6 flex items-center justify-between">
                 <h3 className="font-bold">Shipping Rates</h3>
                 <div>
                     <AddRate trigger={
                     <button className="py-2 px-2 md:px-4 flex items-center rounded-md bg-gradient-to-r from-blue-500 to-blue-800 text-white">
-                        <Plus className="w-4 h-4 mr-2 text-white"/> <span className="text-xs md:text-sm">Add Package</span>
+                        <Plus className="w-4 h-4 mr-2 text-white"/> <span className="text-xs md:text-sm">Add Shipping Rate</span>
                     </button>}
                     />
                 </div>

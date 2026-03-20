@@ -6,11 +6,13 @@ import { Package } from './entities/package.entity';
 import { PackageEdit } from './entities/packageEdits.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Client } from 'src/user/entities/client.entity';
+import { Rate } from 'src/settings/entities/rate.entity';
 import { PackageType } from './entities/packageType.entity';
 import { UserModule } from 'src/user/user.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Client, Package, PackageEdit, PackageType]), UserModule],
+  imports: [TypeOrmModule.forFeature([Client, Package, PackageEdit, PackageType, Rate]), UserModule, HttpModule],
   controllers: [PackageController],
   providers: [PackageService, JwtService],
 })

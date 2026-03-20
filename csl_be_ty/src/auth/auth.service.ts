@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { ForgottenPasswordDto, ResetPasswordDto } from './dto/register.dto';
 import { ClientAuthReponse } from './dto/response.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { StringValue } from "ms";
 
 interface SignupParams{
     email:string
@@ -82,7 +83,7 @@ export class AuthService {
 
     async signResetPasswordPayload(payload:PayloadParams, time: string){
         return await this.jwtService.sign(payload, {
-            expiresIn: time,
+            expiresIn: time as StringValue,
             secret: process.env.JWT_SECRET_KEY
         })
     }

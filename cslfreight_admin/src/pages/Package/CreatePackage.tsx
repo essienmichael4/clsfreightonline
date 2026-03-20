@@ -41,8 +41,6 @@ const CreatePackage = ({trigger}:Props) => {
             trackingNumber: "",
             vessel: "",
             customer: "",
-            loaded: new Date(),
-            eta: new Date(),
             received: new Date()
         }
     })
@@ -82,8 +80,6 @@ const CreatePackage = ({trigger}:Props) => {
                 trackingNumber: "",
                 vessel: "",
                 customer: "",
-                loaded: new Date(),
-                eta: new Date(),
                 received: new Date(),
                 description: ""
             })

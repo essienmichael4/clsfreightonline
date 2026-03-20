@@ -48,9 +48,9 @@ const DeleteAccount = () => {
           <SubSection title="Option 2: Email Request">
             <p className="mb-4">Send an email from your registered email address to:</p>
             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
-              <a href="mailto:support@cslfreightgh.com" className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2">
+              <a href="mailto:contact@cslfreightgh.com" className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2">
                 <Mail size={18} />
-                support@cslfreightgh.com
+                contact@cslfreightgh.com
               </a>
             </div>
             <p className="mb-4">Use the subject line:</p>
@@ -142,10 +142,10 @@ const DeleteAccount = () => {
           <div className="flex items-center gap-3">
             <span className="text-2xl">📧</span>
             <a
-              href="mailto:support@cslfreightgh.com"
+              href="mailto:contact@cslfreightgh.com"
               className="text-blue-600 hover:text-blue-800 font-semibold"
             >
-              support@cslfreightgh.com
+              contact@cslfreightgh.com
             </a>
           </div>
         </Section>

@@ -29,8 +29,9 @@ import { DepartmentModule } from './department/department.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        // timezone: 'Z',
+        timezone: 'Z',
         host: configService.get("DB_HOST"),
+        dateStrings: true,
         // port: +configService.get("DB_PORT"),
         username: configService.get("DB_USERNAME"),
         password: configService.get("DB_PASSWORD"),

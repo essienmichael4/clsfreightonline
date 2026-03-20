@@ -60,7 +60,7 @@ const ShippingReport = () => {
             // const formattedDate = FormattedDate(date)
             
             return <div className='text-muted-foreground text-nowrap'>
-                {new Date(row.original.loaded as string).toDateString()}
+                {row.original.loaded ? new Date(row.original.loaded as string).toDateString() : "-"}
             </div>
         }
     },{

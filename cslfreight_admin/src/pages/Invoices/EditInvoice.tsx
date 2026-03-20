@@ -753,8 +753,8 @@ const EditInvoice = () => {
                                         <p className="text-xs">- USD notes must not have oil, dust and any form of dents.</p>
                                     </div>
                                     <div className="mt-2">
-                                        <p className="text-xs mb-2 font-semibold text-blue-800">NB: Please confirm your payments with CSL Accounts Officer on Call/WhatsApp via 0244-699-122 only. You can also
-                                            send payment slips to the front desk of CSL Freight at Tabora Junction.
+                                        <p className="text-xs mb-2 font-semibold text-blue-800">NB: Please confirm your payments with CSL Accounts Officer on Call/WhatsApp via 0244-699-112 only. You can also
+                                            send payment slips to the front desk of CSL Freight at Achimota Mile 7.
                                         </p>
                                     </div>
                                 </div>

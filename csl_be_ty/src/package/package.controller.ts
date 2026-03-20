@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { PackageService } from './package.service';
-import { EditPackageRequest, PackageRateRequest, PackageRequest } from './dto/package.dto';
+import { EditPackageRequest, PackageRateRequest, PackageRequest, RateRequest } from './dto/package.dto';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { User, UserInfo } from 'src/decorators/user.decorator';
 import { Status } from './entities/package.entity';
 import { PageOptionsDto } from 'src/common/dto/pageOptions.dto';
 import { startOfDay, endOfDay } from 'date-fns';
+import { PackageStatusRequest, UpdatePackagesStatusDto } from './dto/update-package.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 interface StatusRequest{
   status:Status
@@ -23,6 +25,13 @@ interface EtaRequest{
 @Controller('packages')
 export class PackageController {
   constructor(private readonly packageService: PackageService) {}
+
+  @UseGuards(JwtGuard)
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPackages(@UploadedFile() file: Express.Multer.File, @User() user:UserInfo) {
+    return this.packageService.importPackages(file, user.sub.id);
+  }
 
   @UseGuards(JwtGuard)
   @Post()
@@ -59,9 +68,48 @@ export class PackageController {
   }
 
   @UseGuards(JwtGuard)
+  @Get("rate")
+  findRate() {
+    return this.packageService.findRate()
+  }
+
+  @UseGuards(JwtGuard)
+  @Post("rate")
+  addRate(@Body() body: RateRequest) {
+    return this.packageService.addRate(body)
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch("rate/:id")
+  editRate(@Param('id', ParseIntPipe) id: number, @Body() body: RateRequest) {
+    return this.packageService.editRate(body, id)
+  }
+
+  @UseGuards(JwtGuard)
   @Get()
-  findAll(@Query() pageOptionsDto:PageOptionsDto, @Query("search") search?: string,@Query("status") status?:Status) {
-    return this.packageService.findAll(pageOptionsDto, search, status);
+  findAll(@Query() pageOptionsDto:PageOptionsDto, @Query("search") search?: string,@Query("status") status?:Status,@Query("receivedFrom") receivedFrom?: string,
+    @Query("receivedTo") receivedTo?: string,
+    @Query("loadedFrom") loadedFrom?: string,
+    @Query("loadedTo") loadedTo?: string,
+  ) {
+    return this.packageService.findAll(
+      pageOptionsDto,
+      search,
+      status,
+      { receivedFrom, receivedTo, loadedFrom, loadedTo }
+    );
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("status")
+  findAllPackagesByLoadedDate(@Query() pageOptionsDto:PageOptionsDto, @Query("loaded") loaded?: string, @Query("received") received?: string) {
+    if (loaded) {
+      return this.packageService.findAllPackagesByLoadedDate(pageOptionsDto, loaded);
+    }else if (received) {
+      return this.packageService.findAllPackagesByReceivedDate(pageOptionsDto, received);
+    }else{
+      return this.packageService.findAllPackagesByLoadedDate(pageOptionsDto);
+    }
   }
 
   @UseGuards(JwtGuard)
@@ -128,9 +176,25 @@ export class PackageController {
   }
 
   @UseGuards(JwtGuard)
+  @Patch('status')
+  async updatePackagesStatus(@Body() body: PackageStatusRequest) {
+    if(body.loaded){
+      return await this.packageService.updateByLoadedDate(body.status, body.loaded);
+    }else if(body.received){
+      return await this.packageService.updateByRecievedDate(body.status, body.received, body.loadedDate, body.eta);
+    }
+  }
+
+  @UseGuards(JwtGuard)
   @Patch(':id')
   async updatePackage(@Param('id', ParseIntPipe) id: number, @Body() editPackageRequest: EditPackageRequest) {
     return await this.packageService.update(id, editPackageRequest.trackingNumber, editPackageRequest.customer, editPackageRequest.email, editPackageRequest.phone, editPackageRequest.vessel, editPackageRequest.package, editPackageRequest.cbm,editPackageRequest.quantity, editPackageRequest.description, editPackageRequest.shippingMark, editPackageRequest.packageType, editPackageRequest.weight);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('batch/statuses')
+  updateBatchPackagesStatus(@Body() updatePackagesStatusDto: UpdatePackagesStatusDto,) {
+    return this.packageService.updateBatchStatuses(updatePackagesStatusDto);
   }
 
   @UseGuards(JwtGuard)

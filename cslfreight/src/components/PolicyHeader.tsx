@@ -44,7 +44,7 @@ export default function LegalCenter() {
       {/* 🔹 Header */}
       <div className="flex flex-col items-center text-center">
         <h2 className="text-4xl md:text-6xl font-semibold tracking-tight">
-          CSL Freight Legal Center
+          Clixma Supply Chain Limited (CSL) Legal Center
         </h2>
 
         <p className="mt-4 max-w-xl text-xs md:text-sm text-gray-600">

@@ -17,16 +17,14 @@ const DeleteLoading = ({id, trigger}:Props) => {
     const axios_instance_token = useAxiosToken()
     const queryClient = useQueryClient()
 
-    
-
-    const addPackage = async ()=>{
+    const deleteLoading = async ()=>{
         const response = await axios_instance_token.delete(`/loadings/${id}`)
 
         return response.data
     }
 
     const {mutate, isPending} = useMutation({
-        mutationFn: addPackage,
+        mutationFn: deleteLoading,
         onSuccess: ()=>{
             toast.success("Container loading deleted successfully", {
                 id: "edit-package"

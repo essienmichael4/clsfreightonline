@@ -52,7 +52,7 @@ const ShippingReport = () => {
         header:({column})=>(<DataTableColumnHeader column={column} title='Loaded' />),
         cell:({row}) => {
             return <div className='text-muted-foreground text-nowrap'>
-                {new Date(row.original.loaded as string).toDateString()}
+                {row.original.loaded ? new Date(row.original.loaded as string).toDateString() : "-"}
             </div>
         }
     },{
