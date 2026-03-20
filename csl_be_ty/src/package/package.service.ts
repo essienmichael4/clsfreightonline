@@ -841,7 +841,7 @@ export class PackageService {
 
     const payload = {
       recipient: recipients,
-      sender: 'CSL Portal',
+      sender: 'CSL Freight',
       message,
       is_schedule: false,
       schedule_date: '',
