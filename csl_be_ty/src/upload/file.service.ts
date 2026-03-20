@@ -6,6 +6,8 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 } from 'uuid';
 import { Request, Response } from 'express';
 
+const DEFAULT_CHUNK_SIZE = 1 * 1024 * 1024; // 1MB
+
 @Injectable()
 export class FileService {
     private readonly s3Client = new S3Client({
@@ -169,45 +171,57 @@ export class FileService {
 
     async streamVideoFromS3(key: string, req: Request, res: Response) {
         const range = req.headers.range;
-        if (!range) {
-            throw new NotFoundException('Range header required');
-        }
 
-        // Get metadata about the video (like file size and type)
         const head = await this.s3Client.send(
             new HeadObjectCommand({
-                Bucket: this.configService.getOrThrow('BUCKET_NAME'),
-                Key: `videos/${key}`,
+            Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+            Key: `videos/${key}`,
             }),
         );
 
         const fileSize = head.ContentLength!;
-        const contentType = head.ContentType || 'video/mp4';
+        const contentType =
+            head.ContentType?.includes('video') ? head.ContentType : 'video/mp4';
 
-        // Parse the range header
-        const parts = range.replace(/bytes=/, '').split('-');
-        const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        let start = 0;
+        let end = fileSize - 1;
+
+        // 🔹 If Range exists → respect it
+        if (range) {
+            const parts = range.replace(/bytes=/, '').split('-');
+            start = Number(parts[0]);
+            end = parts[1] ? Number(parts[1]) : Math.min(start + DEFAULT_CHUNK_SIZE - 1, fileSize - 1);
+        } else {
+            // 🔹 No Range → send ONLY first chunk
+            end = Math.min(DEFAULT_CHUNK_SIZE - 1, fileSize - 1);
+        }
+
+        if (start >= fileSize) {
+            res.status(416).end();
+            return;
+        }
+
         const chunkSize = end - start + 1;
 
-        // Set headers for partial content
         res.writeHead(206, {
             'Content-Range': `bytes ${start}-${end}/${fileSize}`,
             'Accept-Ranges': 'bytes',
             'Content-Length': chunkSize,
             'Content-Type': contentType,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Range',
+            'Access-Control-Expose-Headers': 'Content-Range, Content-Length',
         });
 
-        // Stream video chunk directly from S3
-        const getObjectCommand = new GetObjectCommand({
+        const data = await this.s3Client.send(
+            new GetObjectCommand({
             Bucket: this.configService.getOrThrow('BUCKET_NAME'),
             Key: `videos/${key}`,
             Range: `bytes=${start}-${end}`,
-        });
+            }),
+        );
 
-        const data = await this.s3Client.send(getObjectCommand);
-        const stream = data.Body as NodeJS.ReadableStream;
-
-        stream.pipe(res);
+        (data.Body as NodeJS.ReadableStream).pipe(res);
     }
+
 }

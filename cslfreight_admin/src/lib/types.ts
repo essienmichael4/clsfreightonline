@@ -226,6 +226,13 @@ export type PackageTypeAndRate = {
     updatedAt:string,
 }
 
+export type Rate = {
+    id: number,
+    rate:string,
+    createdAt:string,
+    updatedAt:string,
+}
+
 export type User = {
     id: number | null,
     name: string,

@@ -9,80 +9,121 @@ import { useState } from "react"
 import EditPayment from "./EditPayment"
 import DeletePayment from "./DeletePayment"
 
-const emptyData: any[]= []
+const emptyData: any[] = []
+
 interface PaymentsProps {
-    search: string, 
-    page: number,
-    setPage: (value: number) => void
+  search: string
+  page: number
+  setPage: (value: number) => void
+  month: string
+  year: string
 }
 
-const AllPayments = ({search, page, setPage}: PaymentsProps) => {
-    const [limit, setLimit] = useState(20)
-    const paymentQuery = usePayments(page, limit, search)
+const AllPayments = ({ search, page, setPage, month, year }: PaymentsProps) => {
+  const [limit, setLimit] = useState(20)
+  const paymentQuery = usePayments(page, limit, search, month, year)
 
-    const columns:ColumnDef<Payment>[] =[{
-        accessorKey: "id",
-        header:({column})=>(<DataTableColumnHeader column={column} title='ID' />),
-        cell:({row}) => <div className="text-xs">
-            {/* <Link to={`./${row.original.id}`}> */}
-                <span className='text-gray-400'>#</span>{row.original.id}
-            {/* </Link> */}
+  const columns: ColumnDef<Payment>[] = [
+    {
+      accessorKey: "id",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
+      cell: ({ row }) => (
+        <div className="text-xs">
+          <span className="text-gray-400">#</span>
+          {row.original.id}
         </div>
-        },{
-            accessorKey: "name",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Shipping Mark' />),
-            cell:({row}) => <div className="flex flex-col gap-2 text-xs">
-                <span>{row.original.client?.shippingMark}</span>
-            </div>
-        },{
-            accessorKey: "paidShippingRate",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Paid Shipping' />),
-            cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500'>{row.original.paidShippingRate}</span>
-            </div>
-        },{
-            accessorKey: "paymentMethod",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Payment Method' />),
-            cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500'>{row.original.paymentMethod}</span>
-            </div>
-        },{
-            accessorKey: "reference",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Payment Reference' />),
-            cell:({row}) => <div className="text-xs text-ellipsis max-w-[300px] overflow-hidden">
-                <span className='text-gray-500 '>{row.original.reference}</span>
-            </div>
-        },{
-            accessorKey: "addedBy",
-            header:({column})=>(<DataTableColumnHeader column={column} title='Added By' />),
-            cell:({row}) => <div className="text-xs">
-                <span className='text-gray-500'>{row.original.user?.name}</span>
-            </div>
-        },{
-        accessorKey: "ids",
-        header:({column})=>(<DataTableColumnHeader column={column} title='Actions' />),
-        cell:({row}) => <div>
-            <span className="flex gap-2 items-center"  >
-                <EditPayment page={page} limit={limit} payment={row.original}  trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
-                <DeletePayment page={page} limit={limit} payment={row.original}  trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} /> 
-            </span> 
+      ),
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Shipping Mark" />,
+      cell: ({ row }) => (
+        <div className="flex flex-col gap-2 text-xs">
+          <span>{row.original.client?.shippingMark}</span>
         </div>
-        }
-    ]
+      ),
+    },
+    {
+      accessorKey: "paidShippingRate",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Paid Shipping" />,
+      cell: ({ row }) => (
+        <div className="text-xs">
+          <span className="text-gray-500">{row.original.paidShippingRate}</span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "paymentMethod",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Payment Method" />,
+      cell: ({ row }) => (
+        <div className="text-xs">
+          <span className="text-gray-500">{row.original.paymentMethod}</span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "reference",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Payment Reference" />,
+      cell: ({ row }) => (
+        <div className="text-xs text-ellipsis max-w-[300px] overflow-hidden">
+          <span className="text-gray-500">{row.original.reference}</span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "addedBy",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Added By" />,
+      cell: ({ row }) => (
+        <div className="text-xs">
+          <span className="text-gray-500">{row.original.user?.name}</span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "ids",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
+      cell: ({ row }) => (
+        <div>
+          <span className="flex gap-2 items-center">
+            <EditPayment
+              page={page}
+              limit={limit}
+              payment={row.original}
+              trigger={
+                <button>
+                  <Edit className="w-4 h-4 text-emerald-400" />
+                </button>
+              }
+            />
+            <DeletePayment
+              page={page}
+              limit={limit}
+              payment={row.original}
+              trigger={
+                <button>
+                  <Trash2 className="w-4 h-4 text-rose-400" />
+                </button>
+              }
+            />
+          </span>
+        </div>
+      ),
+    },
+  ]
 
-    const table = useReactTable({
-        data: paymentQuery.data?.data || emptyData,
-        columns,
-        manualPagination: true,
-        getCoreRowModel: getCoreRowModel(), 
-        state:{
-            pagination: {
-                pageIndex: page - 1,
-                pageSize: limit,
-            }
-        },
-        pageCount: paymentQuery.data?.meta?.pageCount,
-    })
+  const table = useReactTable({
+    data: paymentQuery.data?.data || emptyData,
+    columns,
+    manualPagination: true,
+    getCoreRowModel: getCoreRowModel(),
+    state: {
+      pagination: {
+        pageIndex: page - 1,
+        pageSize: limit,
+      },
+    },
+    pageCount: paymentQuery.data?.meta?.pageCount,
+  })
 
     const content = paymentQuery.isLoading ? <Skeleton>
       <div className="sm:h-72 md:h-80 lg:h-96 w-full">

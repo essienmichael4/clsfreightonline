@@ -4,7 +4,7 @@ import { DateRangePicker } from "@/components/ui/date-range-picker"
 import { SelectSeparator } from "@/components/ui/select"
 // import useAuth from "@/hooks/useAuth"
 import useAxiosToken from "@/hooks/useAxiosToken"
-import { PackageTypeAndRate } from "@/lib/types"
+import { PackageTypeAndRate, Rate } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
 import { startOfMonth, subMonths } from "date-fns"
 import { useState } from "react"
@@ -25,6 +25,13 @@ const Dashboard = () => {
       setState("GHS")
     }
   }
+
+  const {data: rate} = useQuery<Rate>({
+      queryKey: ["package-rate"],
+      queryFn: async() => await axios_instance_token.get(`/packages/rate`).then(res => {
+          return res.data
+      })
+  })
 
   const rates = useQuery<PackageTypeAndRate[]>({
       queryKey: ["package-rates"],
@@ -58,11 +65,16 @@ const Dashboard = () => {
           <p className="text-xs md:w-full text-muted-foreground">Shipping rates show the highest rates per category for CHINA to ACCRA. Rates for other areas like Sunyani, Techiman & Kumasi will be edited on your invoices. Also, discounted shipping rates will reflect on your invoices as not all persons have 1CBM or more. Please note that actual fees may be higher or lower at the time of payment due to changes in USD-GHC rates. Kindly use these estimated shipping fees on your dashboard as a guide.</p>
         </div>
         <div className="flex w-full md:w-[520px] flex-col p-3 rounded-2xl border bg-gradient-to-r from-orange-50 to-orange-500">
-          <div className="flex gap-8 justify-between items-center">
-            <h4 className=" font-bold">Shipping Rate</h4>
+          <div>
+            <p className="text-xs font-bold">USD - GHS Rate</p>
+            <p className="text-2xl font-semibold mt-1">¢{rate?.rate || 0}</p>
+          </div>
+          <hr/>
+          <div className="flex mt-2 gap-8 justify-between items-center">
+            <h4 className=" font-bold">Shipping Rates</h4>
             <button onClick={()=>handleCurrencyChange(state)} className="text-nowrap border border-white bg-white hover:bg-black hover:text-white hover:border-black py-2 px-4 rounded-full text-black text-xs">To {state === "GHS" ? "USD" : "GHS"}</button>
           </div>
-          <div className="flex gap-8 flex-wrap">
+          <div className="flex gap-4 flex-wrap">
             {rates.data?.map(rate=>{
               return (<div>
                 <p className="text-2xl mt-2">{state === "GHS" ? "¢" : "$"} {state === "GHS" ? rate.cedisRate || 0 : rate.rate || 0}</p>

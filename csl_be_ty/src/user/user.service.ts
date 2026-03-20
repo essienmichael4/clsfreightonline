@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Brackets, EntityManager, In, Like, Repository } from 'typeorm';
-import { Client, Deleted } from './entities/client.entity';
+import { Client } from './entities/client.entity';
 import { hash } from 'bcryptjs';
 import { ClientApprovalUpdateRequest, ClientInfoUpdateRequest, ClientPaymentRequest } from './dto/updateUser.dto';
 import { Details } from './entities/details.entity';
@@ -97,24 +97,32 @@ export class UserService {
     return this.paymentRepo.save(saveEntity)
   }
 
-  exportClients(){
-    return this.clientRepo.find({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        shippingMark: true,
-        phone: true,
-        createdAt: true
-      }
-    })
+  async exportClients(location?: string) {
+    const query = this.clientRepo
+      .createQueryBuilder("client")
+      .leftJoinAndSelect("client.clientDetails", "details")
+      .select([
+        "client.id",
+        "client.name",
+        "client.email",
+        "client.shippingMark",
+        "client.phone",
+        "client.createdAt",
+        "details.location",
+      ]);
+
+    if (location) {
+      query.where("details.location LIKE :location", { location: `%${location}%` });
+    }
+
+    return await query.getMany();
   }
 
-  async findClients(pageOptionsDto: PageOptionsDto, search?: string) {
+  async findClients(pageOptionsDto: PageOptionsDto, search?: string, location?: string) {
     const query = this.clientRepo
       .createQueryBuilder("client")
       .leftJoinAndSelect("client.clientDetails", "details");
-      
+
     if (search) {
       query.where(
         "client.shippingMark LIKE :search OR client.email LIKE :search",
@@ -122,9 +130,10 @@ export class UserService {
       );
     }
 
-    query.andWhere("client.isDeleted = :deleted", {
-      deleted: Deleted.FALSE,
-    });
+    if (location) {
+      // andWhere so it stacks correctly whether search is present or not
+      query.andWhere("details.location LIKE :location", { location: `%${location}%` });
+    }
 
     if (
       pageOptionsDto.skip !== undefined &&
@@ -133,9 +142,7 @@ export class UserService {
       query.skip(pageOptionsDto.skip).take(pageOptionsDto.take);
     }
 
-    // IMPORTANT: count must respect filters
     const clientsCount = await query.getCount();
-
     const clients = await query.getMany();
 
     const pageMetaDto = new PageMetaDto({
@@ -150,7 +157,6 @@ export class UserService {
     const query = this.clientRepo
       .createQueryBuilder('client')
       .leftJoinAndSelect('client.membershipTier', 'membershipTier')
-      .where('client.isDeleted = :deleted', { deleted: Deleted.FALSE });
 
     if (name) {
       query.andWhere('membershipTier.name = :name', { name });
@@ -212,7 +218,7 @@ export class UserService {
     return new PageDto(data, pageMetaDto);
   }
 
-  async exportPayments(search?: string) {
+  async exportPayments(search?: string, month?: string, year?: string) {
     const query = this.paymentRepo
       .createQueryBuilder("payment")
       .leftJoinAndSelect("payment.client", "client")
@@ -231,6 +237,24 @@ export class UserService {
             .orWhere("LOWER(client.email) LIKE :search", { search: searchTerm });
         }),
       );
+    }
+
+    if (month && year) {
+      // Exact month in exact year
+      const start = new Date(Number(year), Number(month) - 1, 1);
+      const end = new Date(Number(year), Number(month), 1);
+      query.andWhere("payment.createdAt >= :start AND payment.createdAt < :end", { start, end });
+    } else if (month) {
+      // Month only — fallback to current year
+      const currentYear = new Date().getFullYear();
+      const start = new Date(currentYear, Number(month) - 1, 1);
+      const end = new Date(currentYear, Number(month), 1);
+      query.andWhere("payment.createdAt >= :start AND payment.createdAt < :end", { start, end });
+    } else if (year) {
+      // Year only — entire year
+      const start = new Date(Number(year), 0, 1);
+      const end = new Date(Number(year) + 1, 0, 1);
+      query.andWhere("payment.createdAt >= :start AND payment.createdAt < :end", { start, end });
     }
 
     const data = await query.getMany();
@@ -318,9 +342,6 @@ export class UserService {
       .addSelect("client.password")
       .leftJoinAndSelect("client.membershipTier", "tier")
       .where("client.email = :email", { email })
-      .andWhere("client.isDeleted = :deleted", {
-        deleted: Deleted.FALSE,
-      })
       .getOne();
   }
 
@@ -507,7 +528,7 @@ export class UserService {
 
   async removeClient(id: number) {
     try{
-      return await this.clientRepo.delete(id )
+      return await this.clientRepo.softDelete(id)
     }catch(err){
       throw err
     }
@@ -582,10 +603,7 @@ export class UserService {
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { name: 'daily-client-membership-evaluation' }) // every midnight
   async evaluteClientMembership() {
     const clients = await this.clientRepo.find({
-      relations:{membershipTier: true},
-      where: {
-        isDeleted: Deleted.FALSE,
-      },
+      relations:{membershipTier: true}
     });
 
     await Promise.all(

@@ -52,7 +52,7 @@ const About = () => {
                 <h3 className="text-2xl mb-2">Establishment and Growth</h3>
                 <div className="text-neutral-500">
                   <p className="mb-3">
-                  CSL FREIGHT FORWARDING was founded in 2005 logistics company in China. Over the years, we have expanded our operations and built a strong reputation for excellence in freight forwarding services to Rwanda, Liberia, Nigeria, Sierre Leone and now Ghana in 2020.
+                  CLIXMA SUPPLY CHAIN LTD (CSL) was founded in 2005 logistics company in China. Over the years, we have expanded our operations and built a strong reputation for excellence in freight forwarding services to Rwanda, Liberia, Nigeria, Sierre Leone and now Ghana in 2020.
                   </p>
                 </div>
               </div>
@@ -63,7 +63,7 @@ const About = () => {
                 <h3 className="text-2xl mb-2">Commitment to Quality</h3>
                 <div className="text-neutral-500">
                   <p className="mb-3">
-                  We are committed to providing efficient and cost-effective shipping solutions while maintaining the highest standards of quality and reliability. Our dedication to customer satisfaction sets us apart in the industry.
+                    We are committed to providing efficient and cost-effective shipping solutions while maintaining the highest standards of quality and reliability. Our dedication to customer satisfaction sets us apart in the industry.
                   </p>
                 </div>
               </div>
@@ -74,7 +74,7 @@ const About = () => {
                 <h3 className="text-2xl mb-2">Global Reach</h3>
                 <div className="text-neutral-500">
                   <p className="mb-3">
-                  With a global network of partners and agents, we have the capability to handle shipments of any size and complexity, ensuring seamless transportation from China to Ghana and beyond.
+                    With a global network of partners and agents, we have the capability to handle shipments of any size and complexity, ensuring seamless transportation from China to Ghana and beyond.
                   </p>
                 </div>
               </div>

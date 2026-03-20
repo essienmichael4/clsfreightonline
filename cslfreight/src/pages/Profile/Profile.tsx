@@ -1,7 +1,7 @@
 import useAxiosToken from "@/hooks/useAxiosToken"
 import { Client } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowLeft, Badge, Download, Edit, File } from "lucide-react"
+import { ArrowLeft, Badge, Download, Edit, File, Trash2 } from "lucide-react"
 import { useNavigate, useParams } from "react-router-dom"
 import ChangePassword from "./ChangePassword"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,7 @@ import EditProfile from "./EditProfile"
 import EditInfoDialog from "./EditInfo"
 import { DownloadFile, GetTierBadgeClass } from "@/lib/helper"
 import { Skeleton } from "@/components/ui/skeleton"
+import DeleteClientDialog from "./_components/DeleteClientDialog"
 
 const Profile = () => {
   const navigate = useNavigate()
@@ -30,6 +31,9 @@ const Profile = () => {
               <h4 className=" font-semibold">User Profile</h4>
           </div>
           <div className=" flex items-center justify-end gap-2 flex-wrap">
+              {user.data && <DeleteClientDialog client={user.data} trigger={
+                <Button className="p-2 border border-rose-700 text-rose-700 hover:bg-rose-700 hover:text-white bg-transparent"><Trash2 /> Delete Account</Button>
+              } />}
               <ChangePassword id={Number(id)} trigger={
                 <Button className="border border-emerald-700 text-emerald-700 hover:bg-emerald-700 hover:text-white bg-transparent">Change Password</Button>
               } />
@@ -42,6 +46,7 @@ const Profile = () => {
           {user.data && <EditProfile client={user.data} trigger={
             <Button className="p-2 absolute right-4 border border-emerald-700 text-emerald-700 hover:bg-emerald-700 hover:text-white bg-transparent"><Edit /></Button>
           } />}
+          
           <div className="absolute top-16 left-4 flex items-end">
             <div className=' w-36 h-36 rounded-full bg-white border-4 border-gray-200 '></div>
             <div className="mb-2">

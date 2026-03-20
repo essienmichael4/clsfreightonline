@@ -4,7 +4,7 @@ import type { Client } from "@/lib/types"
 import { type ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Link } from "react-router-dom"
 import EditClientDialog from "./_components/EditClient"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Edit, Search } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Edit, Search, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { useClients } from "@/hooks/useClients"
 import { useDebounce } from "use-debounce"
@@ -13,10 +13,12 @@ import useAxiosToken from "@/hooks/useAxiosToken"
 import * as XLSX from "xlsx"
 import ApprovalDialog from "./_components/ApprovalDialog"
 import { FcApprove } from "react-icons/fc";
+import DeleteClientDialog from "./_components/DeleteClientDialog"
 
 const emptyData: any[]= []
 
 const Clients = () => {
+  const [location, setLocation] = useState("")
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
   const [search, setSearch] = useState("")
@@ -24,9 +26,9 @@ const Clients = () => {
   const axios_instance_token = useAxiosToken()
 
   const { data: clients, isLoading } = useQuery<Client[]>({
-    queryKey: ["clients", "all"],
+    queryKey: ["clients", "all", location],
     queryFn: async () => {
-      const res = await axios_instance_token.get(`/users/clients/all`);
+      const res = await axios_instance_token.get(`/users/clients/all`, { params: { location: location || undefined } });
       return res.data;
     },
   });
@@ -41,7 +43,7 @@ const Clients = () => {
     XLSX.writeFile(wb, "clients.xlsx");
   };
   
-  const clientsQuery = useClients(page, limit, debouncedValue)
+  const clientsQuery = useClients(page, limit, debouncedValue, location)
 
   const columns:ColumnDef<Client>[] =[{
       accessorKey: "id",
@@ -88,7 +90,7 @@ const Clients = () => {
       <span className="flex gap-2 items-center">
           <EditClientDialog page={page} limit={limit} search={debouncedValue} client={row.original} trigger={<button><Edit className="w-4 h-4 text-emerald-400"/></button>} />
           <ApprovalDialog page={page} limit={limit} search={debouncedValue} client={row.original} trigger={<button className="cursor-pointer"><FcApprove  className="w-5 h-5"/></button>} />
-          {/* <DeleteUser user={row.original} trigger={<button><Trash2 className="w-4 h-4 text-rose-400" /></button>} /> */}
+          <DeleteClientDialog client={row.original} trigger={<button><Trash2 className="w-4 h-4 text-rose-400 hover:text-rose-700" /></button>} />
       </span>
     </div>
   }]
@@ -113,11 +115,24 @@ const Clients = () => {
       <div className="container px-4 mx-auto">
           <div className="mt-4 flex items-center justify-between">
             <h3 className="font-bold">All Clients</h3>
-            <div className="w-full flex items-center gap-2 sm:w-[400px]">
+            <div className="w-full flex items-center gap-2 sm:w-[500px]">
               <button
                 onClick={onClick}
                 disabled={isLoading}
                 className="flex gap-2 text-gray-500 py-2 px-4 rounded-md border hover:border-gray-600 hover:text-gray-800"><Download className="w-4 h-4"/> <span className="text-nowrap text-sm">Export CSV</span></button>
+                 <select
+                  value={location}
+                  onChange={e => {
+                    setLocation(e.target.value)
+                    setPage(1)
+                  }}
+                  className="border h-full py-2 px-2 rounded-md text-sm text-gray-500 focus:outline-none focus:border-gray-500"
+                >
+                  <option value="">All Locations</option>
+                  {["Accra", "Kumasi", "Tamale", "Sunyani", "Techiman"].map(loc => (
+                    <option key={loc} value={loc}>{loc}</option>
+                  ))}
+                </select>
               <div className="flex w-full border h-full items-center px-2 py-2 gap-2 rounded-md focus-within:border-gray-500">
                 <Search className="h-5 w-5 text-gray-400 pointer-events-none" />
                 <input type="text" placeholder="Plur 890987645368" 

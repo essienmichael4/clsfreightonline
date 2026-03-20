@@ -9,11 +9,11 @@ const Footer = () => {
             <div className='flex flex-col md:flex-row md:justify-between items-start'>
                 <div >
                     <div className='flex'>
-                        <h2 className='text-2xl md:text-4xl pr-2 md:pr-4 '>CSL Freight Forwarding</h2>
+                        <h2 className='text-2xl md:text-4xl pr-2 md:pr-4 '>Clixma Supply Chain LTD (CSL)</h2>
                     </div>
                     <div className="mt-8 space-y-2">
                         <p>contact@cslfreightgh.com</p>
-                        <p>(+233) 503 333 889</p>
+                        <p>(+233) 244 699 112/(+233) 503 333 889</p>
                     </div>
                     <div className="mt-8 italic flex flex-col gap-2">
                         <p>Achimota Mile 7</p>

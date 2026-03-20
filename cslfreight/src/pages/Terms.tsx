@@ -54,10 +54,10 @@ const Terms = () => {
 
             <div ref={termsRef} className="mt-4 text-justify leading-relaxed">
               <h1 className="text-center font-bold text-2xl mb-4">
-                CSL Freight Forwarding Ltd.
+                Clixma Supply Chain Limited (CSL)
               </h1>
               <p className="text-center text-gray-500 mb-4">
-                Terms & Conditions — Last updated: 15 September 2025
+                Terms & Conditions — Last updated: 01 January 2026
               </p>
 
               {[
@@ -66,7 +66,7 @@ const Terms = () => {
                 "We (CSL) reserve the right to reject hazardous, prohibited or improperly packaged cargo at our warehouse.",
                 "Clients are responsible for insurance of their packages from port of origin to the country of destination but CSL is responsible only for packages within our warehouses.",
                 "Provisional invoices are issued after loading in China, we will re-issue new invoices once packages arrive and are rechecked in Ghana for confirmation.",
-                "Our minimum CBM is pegged at 0.01cbm and you are billed per consolidated LCL invoice. For FCL, please reach out to our admin for arrangements.",
+                "Our minimum CBM is pegged at 0.10CBM and you will be billed per consolidated invoice. Hence, remeasurements begin at 0.10CBM and above. For FCL, reach out to our customer support team for assistance.",
                 "Please note that your shipping fees do not include delivery to your destination - office or home but is offered on optional basis subjected to our terms and conditions.",
                 "You are liable to pay GH¢ 100.00 per day/package as warehousing fees after 7 days of cargo arrival for pickup or delivery or pay at a declared flat rate as a consideration to customers.",
                 "You shall pay at least 50% deposit of your total invoice 7 days after loading and full payment on container/vessel arrival at Tema port before customs clearance is completed.",
@@ -87,6 +87,9 @@ const Terms = () => {
                 "Due to storage and security costs, we shall totally auction all unpaid packages in our warehouse by proper legal proceedings after 60 days.",
                 "We do not do business with third parties apart from the registered persons and/or designated next of kin assigned from the day of registration as our client.",
                 "Higher customs duty packages, all forklift related packages and/or packages over 400kg will be charged or billed at a different rate to cover for all such fees irrespective of whether they fall under NORMAL or SENSITIVE goods.",
+                "We do not give 100% Refund, as shipping fees do not include insurance of your packages for LCL loadings. We entreat all clients to insure their goods at 10% extra of the value(using your invoice) of their goods with CSL or a chosen third party.",
+                "Packages which attracts extra charges as a result of regulatory authorities such as Ghana Standard Authority(GSA), Food & Drug Authority(FDA), Bureau of National Investigations(BNI), ETC, will be billed to the respective client.",
+                "AIR SHIPPING: As of January 2026, all types of gadgets such as phones, laptops/PC, drones, cameras and their accessories will be automatically shipped as AIR PACKAGES without your prior notice once they are received in our warehouse."
               ].map((term, i) => (
                 <div
                   key={i}

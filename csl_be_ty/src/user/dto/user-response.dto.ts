@@ -51,7 +51,6 @@ export class ClientResponseDto {
     public createdAt:Date 
     public updatedAt:Date 
     public phone?:string 
-    public isDeleted: string;
     public approvalStatus?:string
 
     @Exclude()

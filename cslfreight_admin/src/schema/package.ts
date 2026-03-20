@@ -50,9 +50,9 @@ export const PackageSchema = z.object({
     cbm: z.coerce.number().positive().min(0.001),
     weight: optionalNumber(z.number().nonnegative()),
     quantity: z.coerce.number().positive().min(0),
-    loaded: z.coerce.date(),
     received: z.coerce.date(),
-    eta: z.coerce.date(),
+    loaded: z.coerce.date().optional(),
+    eta: z.coerce.date().optional(),
     status:z.union([
         z.literal("YET_TO_LOAD"),
         z.literal("IN_TRANSIT"),
@@ -129,6 +129,15 @@ export const PackageRate = z.object({
     cedisRate: z.coerce.number().positive().min(0),
 })
 
+
+export const RateSchema = z.object({
+    rate: z.coerce.number().positive().min(0),
+})
+
+export const EditRate = z.object({
+    rate: z.coerce.number().positive().min(0),
+})
+
 export const EditPackageRate = z.object({
     description: z.string({
         message: "Must be a valid description."
@@ -145,3 +154,5 @@ export type EditEtaSchemaType = z.infer<typeof EditPackageEtaSchema>
 export type EditDepartureSchemaType = z.infer<typeof EditPackageDepartureSchema>
 export type PackageRateType = z.infer<typeof PackageRate>
 export type EditPackageRateType = z.infer<typeof EditPackageRate>
+export type RateType = z.infer<typeof RateSchema>
+export type EditRateType = z.infer<typeof EditRate>

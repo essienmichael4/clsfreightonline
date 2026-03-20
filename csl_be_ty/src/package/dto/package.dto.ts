@@ -123,3 +123,8 @@ export class PackageRateRequest {
     @IsNumber()
     cedisRate:number
 }
+
+export class RateRequest {
+    @IsNumber()
+    rate:number
+}

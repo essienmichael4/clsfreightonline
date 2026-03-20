@@ -36,7 +36,7 @@ const AddLoading = ({trigger}:Props) => {
         }
     })
 
-    const addAddress = async (data:AddLoadingSchemaType)=>{
+    const addLoading = async (data:AddLoadingSchemaType)=>{
         const response = await axios_instance_token.post(`/loadings`, {
             ...data
         },)
@@ -45,7 +45,7 @@ const AddLoading = ({trigger}:Props) => {
     }
 
     const {mutate, isPending} = useMutation({
-        mutationFn: addAddress,
+        mutationFn: addLoading,
         onSuccess: ()=>{
             toast.success("Container loading added successfully", {
                 id: "add-address"

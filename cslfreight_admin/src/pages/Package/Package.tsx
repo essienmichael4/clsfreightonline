@@ -91,7 +91,7 @@ const PackageDetails = () => {
                         {packageDetail.data && <EditPackage item={packageDetail.data}  trigger={<Button variant={"outline"}><Edit className="w-4 h-4"/>Package</Button>} /> }
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        {packageDetail.data?.status !== "YET_TO_LOAD" && <Button className="border bg-gray-700 hover:bg-gray-500" onClick={()=>{onPackageUpdate("ON_HOLD")}} disabled={isPending}>Yet to Load</Button>}
+                        {packageDetail.data?.status !== "YET_TO_LOAD" && <Button className="border bg-gray-700 hover:bg-gray-500" onClick={()=>{onPackageUpdate("YET_TO_LOAD")}} disabled={isPending}>Yet to Load</Button>}
                         {packageDetail.data?.status !== "IN_TRANSIT" && <Button className="border bg-yellow-700 hover:bg-yellow-500" onClick={()=>{onPackageUpdate("IN_TRANSIT")}} disabled={isPending}>In transit</Button>}
                         {packageDetail.data?.status !== "ARRIVED" && <Button className="border bg-emerald-700 hover:bg-emerald-500" onClick={()=>{onPackageUpdate("ARRIVED")}} disabled={isPending}>Arrived</Button>}
                         {packageDetail.data?.status !== "DELIVERED" && <Button className="border bg-blue-700 hover:bg-blue-500" onClick={()=>{onPackageUpdate("DELIVERED")}} disabled={isPending}>Delivered</Button>}

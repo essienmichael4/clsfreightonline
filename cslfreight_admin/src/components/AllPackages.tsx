@@ -1,4 +1,7 @@
 import { Link } from 'react-router-dom'
+import { useState } from "react"
+import { type RowSelectionState } from "@tanstack/react-table"
+import { Checkbox } from "@/components/ui/checkbox"
 import type { Package } from '@/lib/types'
 import { DataTableColumnHeader } from './DataTable/ColumnHeader'
 import { type ColumnDef, getCoreRowModel, flexRender, useReactTable, getPaginationRowModel } from '@tanstack/react-table'
@@ -7,23 +10,114 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Trash2 } 
 import EditPackage from '@/pages/Package/EditPackage'
 import DeletePackage from '@/pages/Package/DeletePackage'
 import { usePackages } from '@/hooks/usePackages'
+import { toast } from 'sonner'
+import axios from 'axios'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import useAxiosToken from '@/hooks/useAxiosToken'
+import type { DateFilter } from '@/pages/Package/_components/PackageFilters'
+import InTransitModal from '@/pages/Package/_components/InTransitModal'
 
 interface FilterProps{
     search:string,
     status:string,
     limit: number,
     page: number,
+    filters: DateFilter,  
     setLimit: (value:number)=>void,
     setPage: (value:number)=>void
 }
 
 const emptyData: any[]= []
 
-const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProps) => {
-    
-    const packagesQuery = usePackages(page, limit, search, status)
+const AllPackages = ({page, limit, status, setLimit, setPage, search, filters}:FilterProps) => {
+    const [inTransitModalOpen, setInTransitModalOpen] = useState(false)
+    const packagesQuery = usePackages(page, limit, search, status, filters)
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+    const queryClient = useQueryClient()
+    const axios_instance_token = useAxiosToken()
+
+    const updatePackages = async ({ status, ids, loaded, eta, vessel }: { status: string; ids: (number)[], loaded?: string, eta?: string, vessel?: string }) => {
+        console.log(ids);
+        
+        const response = await axios_instance_token.patch("/packages/batch/statuses", {
+            status,
+            ids,
+            ...(loaded && { loaded }),
+            ...(eta && { eta }),
+            ...(vessel && { vessel }),
+        });
+        return response.data;
+    };
+
+    const {mutate, isPending} = useMutation({
+        mutationFn: updatePackages,
+        onSuccess: ()=>{
+            toast.success("Packages updated successfully", {
+                id: "packages-update"
+            })
+
+            // queryClient.invalidateQueries({queryKey: ["packages", loadingDate]})
+            queryClient.invalidateQueries({queryKey: ["packages"]})
+            
+        },onError: (err:any) => {
+            if (axios.isAxiosError(err)){
+                toast.error(err?.response?.data?.message, {
+                    id: "packages-update"
+                })
+            }else{
+                toast.error(`Something went wrong`, {
+                    id: "packages-update"
+                })
+            }
+        }
+    })
+
+    const onPackagesUpdate = (status: string) => {
+        if (status === "IN_TRANSIT") {
+            setInTransitModalOpen(true)   // open modal instead of mutating directly
+            return
+        }
+        const ids = table.getSelectedRowModel().rows.map((row) => Number(row.original.id))
+        toast.loading("Updating Packages ...", { id: "packages-update" })
+        mutate({ status, ids })
+    }
+
+    const onInTransitConfirm = (loaded: string, eta: string, vessel: string) => {
+        const ids = table.getSelectedRowModel().rows.map((row) => Number(row.original.id))
+        toast.loading("Updating Packages ...", { id: "packages-update" })
+        mutate(
+            { status: "IN_TRANSIT", ids, loaded, eta, vessel },
+            {
+            onSuccess: () => setInTransitModalOpen(false),
+            onError: () => setInTransitModalOpen(false),
+            }
+        )
+    }
 
     const columns:ColumnDef<Package>[] =[{
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox className="mx-4 accent-blue-700"
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <div className="mx-4">
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            </div>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },{
         accessorKey: "id",
         header:({column})=>(<DataTableColumnHeader column={column} title='No.' />),
         cell:({row}) => <div>
@@ -56,7 +150,7 @@ const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProp
         header:({column})=>(<DataTableColumnHeader column={column} title='Loaded' />),
         cell:({row}) => {
             return <div className='text-muted-foreground text-nowrap'>
-                {new Date(row.original.loaded as string).toDateString()}
+                {row.original.loaded ? new Date(row.original.loaded as string).toDateString() : "-"}
             </div>
         }
     },{
@@ -64,6 +158,12 @@ const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProp
         header:({column})=>(<DataTableColumnHeader column={column} title='Package' />),
         cell:({row}) => <div className='max-w-[300px] text-ellipsis overflow-hidden'>
             {row.original.package}
+        </div>
+    },{
+        accessorKey: "packageType.description",
+        header:({column})=>(<DataTableColumnHeader column={column} title='Package Type' />),
+        cell:({row}) => <div className='max-w-[300px] text-ellipsis overflow-hidden'>
+            {row.original.packageType?.description}
         </div>
     },{
         accessorKey: "quantity",
@@ -115,21 +215,41 @@ const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProp
         columns,
         manualPagination: true,
         getCoreRowModel: getCoreRowModel(),
+        onRowSelectionChange: setRowSelection,
         state:{
             pagination: {
                 pageIndex: page - 1,
                 pageSize: limit,
-            }
+            },
+            rowSelection
         },
         getPaginationRowModel: getPaginationRowModel(),
         pageCount: packagesQuery.data?.meta?.pageCount,
     })
 
     return (
-        <div className="my-8 p-2 md:px-0 rounded-2xl">
+        <div className="my-2 p-2 md:px-0 rounded-2xl">
+            <div className="flex items-center justify-between mb-2">
+                <div>
+                    {Object.keys(rowSelection).length > 0 && (
+                        <div className="mb-2 text-sm text-muted-foreground">
+                            {table.getSelectedRowModel().rows.length} of{" "}
+                            {table.getRowCount()} row(s) selected.
+                        </div>
+                    )}
+                </div>
+                {Object.keys(rowSelection).length > 0 && (
+                    <div>
+                        <button  onClick={()=>{onPackagesUpdate("YET_TO_LOAD")}} disabled={isPending} className={`border bg-gray-700 hover:bg-gray-500 text-white text-xs py-2 px-4 rounded-md`}>Yet to load</button>
+                        <button  onClick={()=>{onPackagesUpdate("IN_TRANSIT")}} disabled={isPending} className={`border bg-yellow-700 hover:bg-yellow-500 text-white text-xs py-2 px-4 rounded-md`}>In transit</button>
+                        <button  onClick={()=>{onPackagesUpdate("ARRIVED")}} disabled={isPending} className={`border bg-emerald-700 hover:bg-emerald-500 text-white text-xs py-2 px-4 rounded-md`}>Arrived</button>
+                        <button  onClick={()=>{onPackagesUpdate("DELIVERED")}} disabled={isPending} className={`border bg-blue-700 hover:bg-blue-500 text-white text-xs py-2 px-4 rounded-md`}>Delivered</button>
+                    </div>
+                )}
+            </div>
             <div className="w-full rounded-md  bg-white/75">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-gray-500 text-white">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => {
@@ -230,6 +350,12 @@ const AllPackages = ({page, limit, status, setLimit, setPage, search}:FilterProp
                       </button>
                   </div>
             </div>
+            <InTransitModal
+                open={inTransitModalOpen}
+                onClose={() => setInTransitModalOpen(false)}
+                onConfirm={onInTransitConfirm}
+                isPending={isPending}
+            />
         </div>
     )
 }

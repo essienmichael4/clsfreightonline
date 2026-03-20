@@ -132,6 +132,13 @@ export type Payment = {
     paymentMethod: string
 }
 
+export type Rate = {
+    id: number,
+    rate:number,
+    createdAt:string,
+    updatedAt:string,
+}
+
 export type AnnouncementType = {
     title?:number,
     body:string,

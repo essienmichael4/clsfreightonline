@@ -7,6 +7,7 @@ csl_be_ty/.env
 
 # Logs
 csl_be_ty/logs
+csl_be_ty/node_modules.zip
 csl_be_ty/*.log
 csl_be_ty/npm-debug.log*
 csl_be_ty/pnpm-debug.log*

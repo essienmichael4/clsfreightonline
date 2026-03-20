@@ -1,9 +1,9 @@
 import { Address } from "src/address/entities/address.entity";
 import { Announcement } from "src/announcement/entities/announcement.entity";
 import { ClientAnnouncement } from "src/announcement/entities/clientAnnouncement.entity";
-import { Deleted, Package } from "src/package/entities/package.entity";
+import { Package } from "src/package/entities/package.entity";
 import { PackageEdit } from "src/package/entities/packageEdits.entity";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Payment } from "./payment.entity";
 import { Marque } from "src/settings/entities/marque.entity";
 import { Video } from "src/video/entities/video.entity";
@@ -37,8 +37,8 @@ export class User {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 
-    @Column({ default: Deleted.FALSE })
-    isDeleted: Deleted;
+    @DeleteDateColumn({ type: "timestamp", nullable: true })
+    deletedAt: Date;
 
     @Column({ default: Role.USER })
     role: Role;

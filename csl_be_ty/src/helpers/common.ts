@@ -44,3 +44,13 @@ export function DateToUTCDate(date:Date){
 export function calcPercentageDifference(prevNum:number, currNum:number){
     return ((prevNum - currNum) / ((prevNum - currNum) / 2)) * 100
 }
+
+export function removeChinese(text: unknown): string {
+  if (text === null || text === undefined) return '';
+
+  const value = String(text);
+
+  return value
+    .replace(/\p{Script=Han}/gu, '')
+    .trim();
+}
