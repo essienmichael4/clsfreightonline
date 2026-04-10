@@ -234,7 +234,7 @@ export class PackageService {
     return await this.rateRepo.findOne({where: {id: 1}})
   }
 
-  async findAll(pageOptionsDto:PageOptionsDto, search?:string, status?:Status, dateFilter?: DateFilterDto) {
+  async findAll(pageOptionsDto: PageOptionsDto, search?: string, status?: Status, dateFilter?: DateFilterDto) {
     const query = this.packageRepo
       .createQueryBuilder("package")
       .leftJoinAndSelect("package.client", "client")
@@ -243,26 +243,28 @@ export class PackageService {
 
     if (dateFilter) {
       if (dateFilter.receivedFrom) {
-        const parsedDate = parseISO(dateFilter.receivedFrom);
-        const parsedDateEnd = parseISO(dateFilter.receivedTo || dateFilter.receivedFrom); 
-        const from = startOfDay(parsedDate).toISOString();
-        const to = endOfDay(parsedDateEnd).toISOString();
-        query.andWhere("package.received BETWEEN :from AND :to", { from, to });
+        const from = dateFilter.receivedFrom.split('T')[0];
+        const to = (dateFilter.receivedTo || dateFilter.receivedFrom).split('T')[0];
+        query.andWhere("DATE(package.received) BETWEEN :receivedFrom AND :receivedTo", {
+          receivedFrom: from,
+          receivedTo: to,
+        });
       }
 
       if (dateFilter.loadedFrom) {
-        const parsedDate = parseISO(dateFilter.loadedFrom);
-        const parsedDateEnd = parseISO(dateFilter.loadedTo || dateFilter.loadedFrom);
-      
-        const from = startOfDay(parsedDate).toISOString();
-        const to = endOfDay(parsedDateEnd).toISOString();
-        query.andWhere("package.loaded BETWEEN :from AND :to", { from, to });
+        const from = dateFilter.loadedFrom.split('T')[0];
+        const to = (dateFilter.loadedTo || dateFilter.loadedFrom).split('T')[0];
+        query.andWhere("DATE(package.loaded) BETWEEN :loadedFrom AND :loadedTo", {
+          loadedFrom: from,
+          loadedTo: to,
+        });
       }
     }
 
     if (status) {
       query.andWhere("package.status = :status", { status });
     }
+
     if (search) {
       query.andWhere(
         new Brackets(qb => {
@@ -274,15 +276,15 @@ export class PackageService {
         })
       );
     }
-    
-    const [data, total] = await query
-    .orderBy("package.id", "DESC")
-    .skip(pageOptionsDto.skip)
-    .take(pageOptionsDto.take)
-    .getManyAndCount();
 
-    const pageMetaDto = new PageMetaDto({itemCount: total, pageOptionsDto})
-    return new PageDto(data, pageMetaDto)
+    const [data, total] = await query
+      .orderBy("package.id", "DESC")
+      .skip(pageOptionsDto.skip)
+      .take(pageOptionsDto.take)
+      .getManyAndCount();
+
+    const pageMetaDto = new PageMetaDto({ itemCount: total, pageOptionsDto });
+    return new PageDto(data, pageMetaDto);
   }
 
   async findAllPackagesByLoadedDate(pageOptionsDto: PageOptionsDto, loaded?: string) {
@@ -293,13 +295,10 @@ export class PackageService {
       .where("package.isDeleted != :deleted", { deleted: "TRUE" });
 
     if (loaded) {
-      const parsedDate = parseISO(loaded);
-      
-      const from = startOfDay(parsedDate).toISOString();
-      const to = endOfDay(parsedDate).toISOString();
+      const date = loaded.split('T')[0]; // extract YYYY-MM-DD regardless of input format
       query.andWhere(
-        "package.loaded BETWEEN :from AND :to",
-        { from, to },
+        "DATE(package.loaded) = :date",
+        { date },
       );
     }
 
@@ -325,16 +324,8 @@ export class PackageService {
       .where("package.isDeleted != :deleted", { deleted: "TRUE" });
 
     if (received) {
-      // parseISO treats "2025-03-07" as local time, not UTC midnight
-      const parsedDate = parseISO(received);
-      
-      const from = startOfDay(parsedDate).toISOString();
-      const to = endOfDay(parsedDate).toISOString();
-
-      query.andWhere(
-        "package.received BETWEEN :from AND :to",
-        { from, to },
-      );
+      const date = received.split('T')[0];
+      query.andWhere("DATE(package.received) = :date", { date });
     }
 
     const [data, total] = await query
@@ -381,12 +372,8 @@ export class PackageService {
     }
 
     if (loadedDate) {
-      const parsedDate = parseISO(loadedDate);
-      
-      const from = startOfDay(parsedDate).toISOString();
-      const to = endOfDay(parsedDate).toISOString();
-
-      query.andWhere("package.loaded BETWEEN :from AND :to", { from, to });
+      const date = loadedDate.split('T')[0];
+      query.andWhere("DATE(package.loaded) = :date", { date });
     }
 
     const data = await query
@@ -582,6 +569,7 @@ export class PackageService {
     if (!ids?.length) {
       throw new BadRequestException('At least one package ID must be provided');
     }
+    let date: string | undefined = loaded ? format(new Date(loaded), 'yyyy-MM-dd') : undefined;
 
     const result = await this.runInTransaction(async (queryRunner) => {
       if (status === Status.DELIVERED) {
@@ -595,6 +583,17 @@ export class PackageService {
         }
 
         await this.applyDeliveredLogic(packages, queryRunner);
+      }
+
+      if (!date) {
+        const pack = await queryRunner.manager.findOne(Package, {
+          where: { id: In(ids) },
+          select: { loaded: true },
+        });
+
+        if (pack?.loaded) {
+          date = format(new Date(pack.loaded), 'yyyy-MM-dd');
+        }
       }
 
       const result = await queryRunner.manager.update(
@@ -615,7 +614,7 @@ export class PackageService {
       return result;
     });
 
-    this.sendStatusSms(ids, status).catch(err =>
+    this.sendStatusSms(ids, status, date).catch(err =>
       this.logger.error('SMS notification failed', err),
     );
 
@@ -626,13 +625,16 @@ export class PackageService {
   }
 
   async updateByLoadedDate(status: Status, loaded: string) {
-    const { start, end } = this.getDayRange(loaded);
+    const date = loaded.split('T')[0];
+    let smsDate: string | undefined = date;
 
     const { result, ids } = await this.runInTransaction(async (queryRunner) => {
-      const packages = await queryRunner.manager.find(Package, {
-        where: { loaded: Between(start, end) },
-        relations: { packageType: true, client: true },
-      });
+      const packages = await queryRunner.manager
+        .createQueryBuilder(Package, "package")
+        .leftJoinAndSelect("package.packageType", "packageType")
+        .leftJoinAndSelect("package.client", "client")
+        .where("DATE(package.loaded) = :date", { date })
+        .getMany();
 
       if (!packages.length) {
         throw new NotFoundException('No packages found for the provided loaded date');
@@ -642,16 +644,17 @@ export class PackageService {
         await this.applyDeliveredLogic(packages, queryRunner);
       }
 
-      const result = await queryRunner.manager.update(
-        Package,
-        { loaded: Between(start, end) },
-        { status },
-      );
+      const result = await queryRunner.manager
+        .createQueryBuilder()
+        .update(Package)
+        .set({ status })
+        .where("DATE(loaded) = :date", { date })
+        .execute();
 
       return { result, ids: packages.map(p => p.id) };
     });
 
-    this.sendStatusSms(ids, status).catch(err =>
+    this.sendStatusSms(ids, status, smsDate).catch(err =>
       this.logger.error('SMS notification failed', err),
     );
 
@@ -659,13 +662,16 @@ export class PackageService {
   }
 
   async updateByRecievedDate(status: Status, received: string, loaded?: string, eta?: string) {
-    const { start, end } = this.getDayRange(received);
+    const date = received.split('T')[0];
+    const smsDate: string | undefined = loaded ? loaded.split('T')[0] : undefined;
 
     const { result, ids } = await this.runInTransaction(async (queryRunner) => {
-      const packages = await queryRunner.manager.find(Package, {
-        where: { received: Between(start, end) },
-        relations: { packageType: true, client: true },
-      });
+      const packages = await queryRunner.manager
+        .createQueryBuilder(Package, "package")
+        .leftJoinAndSelect("package.packageType", "packageType")
+        .leftJoinAndSelect("package.client", "client")
+        .where("DATE(package.received) = :date", { date })
+        .getMany();
 
       if (!packages.length) {
         throw new NotFoundException('No packages found for the provided received date');
@@ -675,20 +681,21 @@ export class PackageService {
         await this.applyDeliveredLogic(packages, queryRunner);
       }
 
-      const result = await queryRunner.manager.update(
-        Package,
-        { received: Between(start, end) },
-        {
+      const result = await queryRunner.manager
+        .createQueryBuilder()
+        .update(Package)
+        .set({
           status,
-          ...(loaded && { loaded: new Date(loaded) }),
-          ...(eta    && { eta:    new Date(eta)    }),
-        },
-      );
+          ...(loaded && { loaded: `${loaded.split('T')[0]} 00:00:00` }),
+          ...(eta    && { eta:    `${eta.split('T')[0]} 00:00:00`    }),
+        })
+        .where("DATE(received) = :date", { date })
+        .execute();
 
       return { result, ids: packages.map(p => p.id) };
     });
 
-    this.sendStatusSms(ids, status).catch(err =>
+    this.sendStatusSms(ids, status, smsDate).catch(err =>
       this.logger.error('SMS notification failed', err),
     );
 
@@ -696,6 +703,7 @@ export class PackageService {
   }
 
   async updateStatus(id: number, status: Status) {
+    let date: string | undefined = undefined;
     await this.runInTransaction(async (queryRunner) => {
       if (status === Status.DELIVERED) {
         const pack = await queryRunner.manager.findOne(Package, {
@@ -704,14 +712,14 @@ export class PackageService {
         });
 
         if (!pack) throw new NotFoundException('Package not found');
-
+        date = format(pack.loaded, 'yyyy-MM-dd');
         await this.applyDeliveredLogic([pack], queryRunner);
       }
 
       await queryRunner.manager.update(Package, id, { status });
     });
 
-    await this.sendStatusSms([id], status).catch(err =>
+    await this.sendStatusSms([id], status, date).catch(err =>
       this.logger.error('SMS notification failed', err),
     );
 
@@ -823,8 +831,8 @@ export class PackageService {
     }
   }
 
-  private async sendStatusSms(ids: number[], status: Status): Promise<void> {
-    const message = this.resolveStatusMessage(status);
+  private async sendStatusSms(ids: number[], status: Status, date?:string): Promise<void> {
+    const message = this.resolveStatusMessage(status, date);
     if (!message) return; // No SMS defined for this status — skip silently
 
     const packages = await this.packageRepo.find({
@@ -860,11 +868,11 @@ export class PackageService {
     }
   }
 
-  private resolveStatusMessage(status: Status): string | null {
+  private resolveStatusMessage(status: Status, date?:string): string | null {
     const messages: Partial<Record<Status, string>> = {
-      [Status.IN_TRANSIT]: 'Your shipment is currently in transit to Ghana. Track progress anytime via your CSL dashboard. Thank you for choosing CSL Freight.',
-      [Status.ARRIVED]:    'Your shipment has arrived at Tema Port and is undergoing clearance. You will be notified once it is ready for collection or delivery.',
-      [Status.DELIVERED]:  'Your shipment has been delivered to our warehouse. Please take time to fill a pickup or delivery form so as to get your packages ready for timely delivery. Thank you for choosing CSL Freight. We look forward to serving you again.',
+      [Status.IN_TRANSIT]: `Dear client, your package(s) has been loaded on ${date} in our China warehouse. Your invoice will be ready in a few days. Track progress on your CSL dashboard. Thank you for choosing CSL.`,
+      [Status.ARRIVED]:    `Dear client, your shipment in ${date} has arrived at Tema Port and is undergoing clearance. Please begin payment for your shipping fees and you will be notified once it is ready for collection at our local warehouse.`,
+      [Status.DELIVERED]:  `Dear client, your shipment has been delivered to our warehouse. Please take time to fill a pickup or delivery form so as to get your packages ready for timely delivery. Thank you for choosing CSL. We look forward to serving you again.`,
     };
     return messages[status] ?? null;
   }

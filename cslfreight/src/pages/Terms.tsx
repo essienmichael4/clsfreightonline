@@ -71,25 +71,27 @@ const Terms = () => {
                 "You are liable to pay GH¢ 100.00 per day/package as warehousing fees after 7 days of cargo arrival for pickup or delivery or pay at a declared flat rate as a consideration to customers.",
                 "You shall pay at least 50% deposit of your total invoice 7 days after loading and full payment on container/vessel arrival at Tema port before customs clearance is completed.",
                 "All fragile items must be covered and protected in styrofoam, wooden pallets and frame or get damaged at your own risk.",
-                "Small packages have higher risks of getting lost. We cannot replace or refund for all such packages below 0.05cbm.",
-                "For packages above 0.05cbm, we will refund the full cost of item but not exceeding 2 times the shipping costs.",
+                "Small packages are more susceptible to loss or damage due to handling processes. Clients are strongly advised to consolidate or repackage their goods to a minimum volume of 0.10 CBM before delivery to our warehouse. CSL shall not be liable for replacement or compensation of packages below 0.10 CBM.",
+                "For packages with a minimum volume of 0.10 CBM, CSL may, at its discretion, provide partial compensation in the event of loss or damage. However, such compensation shall not exceed three (3) times the applicable shipping cost.",
+                "CSL does not provide 100% refunds, as standard shipping fees for LCL consignments do not include insurance coverage. Clients are strongly advised to insure their goods at an additional cost of 10% of the declared value (based on the invoice), either through CSL or a preferred third-party insurer.",
                 "Our departure timelines are subject to cargo /ship or airplane availability.",
                 "Vessel lines or Ship transit times may change without prior notice.",
                 "Cargo may require inspection by customs and other regulatory bodies at their instance and time.",
                 "We are committed to ensuring that your packages get to you safely and timely.",
                 "Measurements will be re-taken at the warehouse in Ghana to confirm CBM before payments are made.",
-                "Full payment of actual shipping fees with corresponding CBM is done in Ghana before pickup.",
+                "Measurements may be re-taken at the warehouse in Ghana to confirm CBM before payments are made.",
                 "Shipping rates for contraband or dangerous cargo and packages without MSDS are different from normal goods and are shipped in separate container loadings.",
                 "Your goods will be security checked and if narcotics, ammunition, or banned substances are detected, persons will both be reported to relevant authorities without prior notice.",
-                "You can only make payment into the assigned accounts attached to your invoice.",
+                "You should only make payment into the assigned accounts attached to your invoice.",
                 "Please note that all payments are in US Dollar rate with Ghana Cedi equivalent at the time of payment.",
                 "We shall only keep your packages for a maximum of 30 days and after all means are exhausted, we will re-sell them at a fair price to retrieve our customs clearance and freight charges.",
                 "Due to storage and security costs, we shall totally auction all unpaid packages in our warehouse by proper legal proceedings after 60 days.",
                 "We do not do business with third parties apart from the registered persons and/or designated next of kin assigned from the day of registration as our client.",
                 "Higher customs duty packages, all forklift related packages and/or packages over 400kg will be charged or billed at a different rate to cover for all such fees irrespective of whether they fall under NORMAL or SENSITIVE goods.",
-                "We do not give 100% Refund, as shipping fees do not include insurance of your packages for LCL loadings. We entreat all clients to insure their goods at 10% extra of the value(using your invoice) of their goods with CSL or a chosen third party.",
                 "Packages which attracts extra charges as a result of regulatory authorities such as Ghana Standard Authority(GSA), Food & Drug Authority(FDA), Bureau of National Investigations(BNI), ETC, will be billed to the respective client.",
-                "AIR SHIPPING: As of January 2026, all types of gadgets such as phones, laptops/PC, drones, cameras and their accessories will be automatically shipped as AIR PACKAGES without your prior notice once they are received in our warehouse."
+                "AIR SHIPPING: As of January 2026, all types of gadgets such as phones, laptops/PC, drones, cameras and their accessories will be automatically shipped as AIR PACKAGES without your prior notice once they are received in our warehouse.",
+                "Refund Policy: CSL does not issue cash refunds. All approved refunds will be credited to the client’s account due to internal auditing requirements and administrative processes. Clients are required to apply these credits toward future shipping or related service fees.",
+                "Dispute Resolution Policy: All policy matters are governed by a spirit of mutual understanding and cooperation between CSL and the client. In the event of any dispute, both parties agree to prioritize amicable resolution through alternative dispute resolution methods rather than resorting to legal proceedings."
               ].map((term, i) => (
                 <div
                   key={i}
