@@ -26,6 +26,10 @@ import DeliveryDetails from './pages/Deliveries/DeliveryDetails'
 import VideoPlayer from './pages/Video/VideoPlayer'
 import VideoSearch from './pages/Video/VideoSearch'
 import EditVideo from './pages/Video/EditVideo'
+import ShopDashboard from './pages/ShopDashboard/shopDashboard'
+import ShopLayout from './pages/ShopDashboard/ShopLayout'
+import ShopProducts from './pages/ShopDashboard/ShopProducts'
+import ShopAnalytics from './pages/ShopDashboard/ShopAnalytics'
 
 function App() {
 
@@ -34,6 +38,11 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route element={<RequireAuth />}>
+         <Route path='/shop-dashboard' element={<ShopLayout />}>
+            <Route index element={<ShopDashboard />} />
+            <Route path='products' element={<ShopProducts />} />
+            <Route path='analytics' element={<ShopAnalytics />} />
+          </Route>
           <Route element={<Layout />}>
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/packages' element={<Packages />} />
