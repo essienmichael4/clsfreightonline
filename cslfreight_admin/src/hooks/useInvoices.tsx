@@ -9,6 +9,8 @@ export const useInvoices = (page: number, limit: number, search: string, status?
         queryFn: async() => await axios_instance_token.get(`/invoices/admin`, {
             params: { page, take: limit, search, status}
         }).then(res => {
+            console.log(res.data);
+            
             return res.data
         })
     })
