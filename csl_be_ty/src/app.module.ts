@@ -19,6 +19,7 @@ import { InvoiceModule } from './invoice/invoice.module';
 import { VideoModule } from './video/video.module';
 import { DeliveryModule } from './delivery/delivery.module';
 import { DepartmentModule } from './department/department.module';
+import { StoresModule } from './stores/stores.module';
 
 @Module({
   imports: [
@@ -54,7 +55,8 @@ import { DepartmentModule } from './department/department.module';
     InvoiceModule,
     VideoModule,
     DeliveryModule,
-    DepartmentModule
+    DepartmentModule,
+    StoresModule
   ],
   controllers: [AppController],
   providers: [AppService],
