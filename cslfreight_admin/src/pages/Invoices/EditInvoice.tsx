@@ -12,7 +12,7 @@ import {useReactToPrint} from 'react-to-print'
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { format } from "date-fns"
+import { format, isValid } from "date-fns"
 import { Calendar } from "@/components/ui/calendar"
 import PackagesSelector from "./_components/PackagesSelector"
 import InvoiceTable from "./_components/InvoiceTable"
@@ -88,20 +88,29 @@ const EditInvoice = () => {
 
     useEffect(() => {
         if (invoice.data) {
+            const issued = invoice.data.issuedDate
+            ? new Date(invoice.data.issuedDate)
+            : null;
+
+            const eta = invoice.data.eta
+            ? new Date(invoice.data.eta)
+            : null;
+
+            setcreatedDate(issued && isValid(issued) ? issued : undefined);
+            setDueDate(eta && isValid(eta) ? eta : undefined);
+
             setName(invoice.data.companyName ?? "");
             setClientName(invoice.data.clientName ?? "");
             setClientEmail(invoice.data.client?.email ?? "");
             setClientPhone(invoice.data.client?.phone ?? "");
             setClientLocation(invoice.data.client?.clientDetails?.location ?? "");
-            setcreatedDate(invoice.data.issuedDate ? new Date(invoice.data.issuedDate) : undefined);
-            setDueDate(invoice.data.eta ? new Date(invoice.data.eta) : undefined);
-            setRate(Number(invoice.data.rate) ?? 0)
+            setRate(Number(invoice.data.rate) ?? 0);
 
             if (invoice.data.packages) {
-                setSelectedRows(invoice.data.packages);
+            setSelectedRows(invoice.data.packages);
             }
         }
-    }, [invoice.data]);
+        }, [invoice.data]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -439,9 +448,9 @@ const EditInvoice = () => {
                                                                         "w-[186px] pl-3 text-xs text-left font-normal",
                                                                         !createDate && "text-muted-foreground"
                                                                     )}>
-                                                                    {createDate ? (
+                                                                    {createDate && isValid(createDate) ? (
                                                                         format(createDate, "PPP")
-                                                                    ) : (
+                                                                        ) : (
                                                                         <span>Pick a date</span>
                                                                     )}
                                                                     <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
@@ -469,7 +478,8 @@ const EditInvoice = () => {
                                                                         "w-[186px] pl-3 text-xs text-left font-normal",
                                                                         !dueDate && "text-muted-foreground"
                                                                     )}>
-                                                                    {dueDate ? (
+                                                                    {dueDate && isValid(dueDate) ? (
+                                                                        
                                                                         format(dueDate, "PPP")
                                                                     ) : (
                                                                         <span>Pick a date</span>

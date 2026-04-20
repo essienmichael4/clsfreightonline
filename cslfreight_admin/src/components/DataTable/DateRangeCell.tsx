@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 
 interface Props {
   startDate: Date | string;
@@ -6,10 +6,14 @@ interface Props {
 }
 
 const DateRangeCell: React.FC<Props> = ({ startDate, endDate }) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+  const start = startDate ? new Date(startDate) : null;
+  const end = endDate ? new Date(endDate) : null;
 
-  // Format like: Feb 05 - Feb 10, 2025
+  // Handle missing or invalid dates
+  if (!start || !end || !isValid(start) || !isValid(end)) {
+    return <span>-</span>;
+  }
+
   const formatted = `${format(start, "MMM dd")} - ${format(end, "MMM dd, yyyy")}`;
 
   return <span>{formatted}</span>;
