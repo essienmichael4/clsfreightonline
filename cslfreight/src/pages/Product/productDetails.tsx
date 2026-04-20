@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   MessageCircle,
@@ -6,7 +6,6 @@ import {
   ShoppingBag,
   User,
   Menu,
-  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
@@ -24,7 +23,6 @@ interface RelatedProduct {
 const ProductDetails = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const [selectedTexture, setSelectedTexture] = useState(0);
 
   // Scroll to top on component mount or when productId changes
   useEffect(() => {
@@ -82,12 +80,6 @@ const ProductDetails = () => {
       image:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuAp2TC8KLuvzvXGvtX9p9aUHq-miUe5nI4yAqp4Kw-qejxERHi1IEsrsTIrFHfgzKLJy8FyFbbGxz5qR7ZwTB24vWdWTjsexxqq7tQjjR51d5PdVdGauNNJztUvlcLM9ROHwf8nbIJRbeZAWEohDdZ93SFQNFqMkiIRFUz6hgBriiUwomst5g7NMNr-gviGu7bNX6Q3RL161fGn3vHTbIpGVQPNVfBFZioLeV8YGapxUI3lGNcut9XXZHez29OyoqTzXcdDESaHHdE5',
       layout: 'small',
-    },
-    {
-      id: 5,
-      title: 'Bespoke Curation',
-      description: 'Request a personalized collection guide.',
-      layout: 'cta',
     },
   ];
 
@@ -179,32 +171,6 @@ const ProductDetails = () => {
 
             {/* Interactive Elements */}
             <div className="pt-6 space-y-6">
-              {/* Texture Selection */}
-              <div className="flex flex-col gap-3">
-                <label className="text-sm font-bold text-foreground uppercase tracking-widest">
-                  Select Texture
-                </label>
-                <div className="flex gap-4">
-                  {product.textures.map((texture, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedTexture(index)}
-                      className={`w-12 h-12 rounded-full p-0.5 border-2 transition-all ${
-                        selectedTexture === index
-                          ? 'border-primary-container'
-                          : 'border-transparent hover:border-outline-variant'
-                      }`}
-                      title={texture.name}
-                    >
-                      <div
-                        className="w-full h-full rounded-full"
-                        style={{ backgroundColor: texture.color }}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Action Buttons */}
               <div className="flex flex-col gap-4">
                 <Button
@@ -217,21 +183,6 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            {/* Product Specifications */}
-            <div className="mt-8 border-t border-border pt-8 grid grid-cols-2 gap-8">
-              <div>
-                <h4 className="text-xs font-bold text-foreground mb-2 uppercase tracking-widest">
-                  Dimensions
-                </h4>
-                <p className="text-sm text-muted-foreground">{product.dimensions}</p>
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-foreground mb-2 uppercase tracking-widest">
-                  Materials
-                </h4>
-                <p className="text-sm text-muted-foreground">{product.materials}</p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -338,23 +289,6 @@ const ProductDetails = () => {
                 );
               }
 
-              if (item.layout === 'cta') {
-                return (
-                  <div
-                    key={item.id}
-                    className="md:col-span-1 md:row-span-1 bg-muted rounded-lg overflow-hidden group relative p-6 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
-                  >
-                    <Sparkles size={40} className="text-primary mb-4" />
-                    <h3 className="text-foreground font-bold">{item.title}</h3>
-                    {item.description && (
-                      <p className="text-muted-foreground text-xs mt-2">{item.description}</p>
-                    )}
-                    <button className="mt-4 text-xs font-bold border-b border-primary text-primary hover:opacity-80 transition-opacity">
-                      Learn More
-                    </button>
-                  </div>
-                );
-              }
             })}
           </div>
         </section>

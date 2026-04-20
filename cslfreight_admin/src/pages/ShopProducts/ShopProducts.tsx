@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Search, Plus, Pencil, Trash2, X, CloudUpload } from "lucide-react"
 
 type Product = {
@@ -50,26 +50,33 @@ const initialProducts: Product[] = [
   },
 ]
 
-const categories = ["All", "Art", "Furniture", "Lighting", "Decor"]
 
-const emptyForm = { name: "", category: "Furniture", price: "", description: "" }
+const emptyForm = { name: "", category: "Furniture", price: "", description: "", imagePreviews: [] as string[] }
 
 const ShopProducts = () => {
   const [products, setProducts] = useState<Product[]>(initialProducts)
   const [search, setSearch] = useState("")
-  const [activeCategory, setActiveCategory] = useState("All")
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState(emptyForm)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const filtered = products.filter((p) => {
-    const matchesSearch =
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.sku.toLowerCase().includes(search.toLowerCase())
-    const matchesCategory = activeCategory === "All" || p.category === activeCategory
-    return matchesSearch && matchesCategory
-  })
+  const handleImageFiles = (files: FileList | File[]) => {
+    Array.from(files).forEach((file) => {
+      if (!file.type.startsWith("image/")) return
+      const reader = new FileReader()
+      reader.onload = (e) =>
+        setForm((prev) => ({ ...prev, imagePreviews: [...prev.imagePreviews, e.target?.result as string] }))
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const filtered = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.sku.toLowerCase().includes(search.toLowerCase())
+  )
 
   const openAddModal = () => {
     setEditingProduct(null)
@@ -79,7 +86,7 @@ const ShopProducts = () => {
 
   const openEditModal = (product: Product) => {
     setEditingProduct(product)
-    setForm({ name: product.name, category: product.category, price: product.price, description: "" })
+    setForm({ name: product.name, category: product.category, price: product.price, description: "", imagePreviews: product.img ? [product.img] : [] })
     setShowModal(true)
   }
 
@@ -107,7 +114,7 @@ const ShopProducts = () => {
         category: form.category,
         price: `$${parseFloat(form.price || "0").toFixed(2)}`,
         stock: 0,
-        img: "",
+        img: form.imagePreviews[0] ?? "",
       }
       setProducts((prev) => [...prev, newProduct])
     }
@@ -122,19 +129,6 @@ const ShopProducts = () => {
   return (
     <div className="p-10 space-y-8">
       {/* Header */}
-      <div className="flex items-baseline gap-4">
-        <h2 className="text-4xl font-extrabold tracking-tighter text-[#171c20] font-['Manrope',sans-serif]">Products</h2>
-        <div className="h-px flex-1 bg-gradient-to-r from-[#bdc8d0]/30 to-transparent" />
-        <button
-          onClick={openAddModal}
-          className="flex items-center gap-2 bg-gradient-to-r from-[#00668a] to-[#34b7f1] text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity"
-        >
-          <Plus size={16} />
-          Add Product
-        </button>
-      </div>
-
-      {/* Filters */}
       <div className="flex flex-wrap items-center gap-4">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -145,21 +139,13 @@ const ShopProducts = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div className="flex gap-2 flex-wrap">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
-                activeCategory === cat
-                  ? "bg-[#00668a] text-white"
-                  : "bg-white border border-[#bdc8d0]/30 text-slate-500 hover:border-[#00668a] hover:text-[#00668a]"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        <button
+          onClick={openAddModal}
+          className="flex items-center gap-2 bg-gradient-to-r from-[#00668a] to-[#34b7f1] text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity"
+        >
+          <Plus size={16} />
+          Add Product
+        </button>
       </div>
 
       {/* Products Table */}
@@ -315,15 +301,45 @@ const ShopProducts = () => {
                 />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Product Imagery</label>
-                <div className="border-2 border-dashed border-[#bdc8d0]/30 rounded-xl p-8 flex flex-col items-center justify-center bg-[#f0f4f9] hover:bg-[#eaeef3] transition-colors cursor-pointer group">
-                  <CloudUpload size={40} className="text-[#34b7f1] mb-2 group-hover:scale-110 transition-transform" />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => { if (e.target.files) handleImageFiles(e.target.files); e.target.value = "" }}
+                />
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={(e) => { e.preventDefault(); setIsDragging(false); handleImageFiles(e.dataTransfer.files) }}
+                  className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center transition-colors cursor-pointer group ${isDragging ? "border-[#34b7f1] bg-[#e6f7ff]" : "border-[#bdc8d0]/30 bg-[#f0f4f9] hover:bg-[#eaeef3]"}`}
+                >
+                  <CloudUpload size={32} className="text-[#34b7f1] mb-2 group-hover:scale-110 transition-transform" />
                   <p className="text-xs font-medium text-slate-500">
-                    Drop your file here or <span className="text-[#00668a] font-bold">browse</span>
+                    Drop files here or <span className="text-[#00668a] font-bold">browse</span>
                   </p>
-                  <p className="text-[10px] text-slate-400 mt-1">High-res PNG or JPG (max 10MB)</p>
+                  <p className="text-[10px] text-slate-400 mt-1">PNG or JPG — you can add multiple</p>
                 </div>
+                {form.imagePreviews.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {form.imagePreviews.map((src, i) => (
+                      <div key={i} className="relative group rounded-lg overflow-hidden bg-[#f0f4f9] aspect-square">
+                        <img src={src} alt={`preview-${i}`} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => setForm((prev) => ({ ...prev, imagePreviews: prev.imagePreviews.filter((_, idx) => idx !== i) }))}
+                          className="absolute top-1 right-1 bg-black/50 hover:bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <button
