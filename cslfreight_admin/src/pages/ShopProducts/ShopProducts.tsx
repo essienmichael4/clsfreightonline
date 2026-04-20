@@ -1,92 +1,98 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { Search, Plus, Pencil, Trash2, X, CloudUpload } from "lucide-react"
+import useAxiosToken from "@/hooks/useAxiosToken"
 
 type Product = {
   id: number
   name: string
-  sku: string
   category: string
-  price: string
-  stock: number
-  img: string
+  price: number
+  description?: string
+  attachments?: { id: number; imageUrl: string }[]
 }
 
-const initialProducts: Product[] = [
-  {
-    id: 1,
-    name: "The Lunar Vessel",
-    sku: "LV-2024-001",
-    category: "Art",
-    price: "$420.00",
-    stock: 12,
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDIcmeiEyD87Ar56iHQP2sdtSkCVgEf5HuxfwMUTDlTLk2CZtzaNA3h5Ek_XtQAHtvegXobwwKsCZ7tJ9T8koA1Dh4wvI7jwT8R-MblBaODNZdC78IM8ravhO4kdUB39R7t2q9Uev9NBgawAiZz0ZQc4ZgkvSdHahR9Hy4GGeGU3wdqsn101LyhiafA7C5fJjaqhENjvleFdSOyt-_WLNGftnA0dW8hzTZAtWfBcWQim7gTZu0gsW7-9haaM9oCSQUB89LfZOwIfpQY",
-  },
-  {
-    id: 2,
-    name: "Nebula Desk Lamp",
-    sku: "NL-449-B",
-    category: "Lighting",
-    price: "$185.00",
-    stock: 34,
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD4L4nrn-Mwdu7Wita5fGbkEqbZkRVTx8-ZeY5jtijzuRBHf1Nz5ynWOTRe00aCyrD-tKIyCFMTGvPoWpkTtQUOFlivoJjKhd0gh-irrTEVrODYjUBTNEBIklEnBLXrn_b48MK4Qs6TWdmuObymof5osS3gcmWNp5g2T3cTvT-l-wc-4atZE6vU9DuflV4ZbXJzPP0yIz12h3aVgosfhQpq3ayBdF9a_21CG5F7GdP0fPuyDCMUjwoQww596DiUrYLY2rsggDRdTjKG",
-  },
-  {
-    id: 3,
-    name: "Ethereal Silk Chair",
-    sku: "EC-012-S",
-    category: "Furniture",
-    price: "$1,290.00",
-    stock: 7,
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZEeeZjYt5YCMLUjF2bM-7wjr9YOGeUWZ5qOqhVfa6--B_INPsjprD0DKhZ4HPLS4Ca3cp9JAo8p3On41gfkwo8_XgV8waY_RxAETuGiDpwVKiQl1Na9NFHKDchBK-vWv9hE__CZGzA91VXhoKx1seGtD4g8t2foU1KLuYAbHWsKNP9euMiaP8K1uLKpnmUGcsCxu3WOx-N7sR9Q3x_2jlED1zdzac7pYD3lve770EOsME-lMRJ2_P_27F9jDlFXVDw23crrWjDR2M",
-  },
-  {
-    id: 4,
-    name: "Obsidian Coffee Table",
-    sku: "OT-990-BLK",
-    category: "Furniture",
-    price: "$2,100.00",
-    stock: 3,
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEvHKpgycuA2gjY-pL-LjupkthjzfLdVH40I_NmGhoGM8ZqjU88EXDzHi-_HU-Kw33gl_DsKmJaMoI5KxdLic8CNfCMbgWGJ2n4pF12DrnZNasL13G4urdUBo4w2Csq2Cx3hP41SONbwB_bEwO8M2zz546SmC_cCDdEQ0SaL7SyPdHfR5OYkMqjTzzUmS4r5U64lp8ibM2uQeBif3Zo_taxcMjCXapD6TZvXtR9J-ayh5xivc3Evh2-oMyn6fb9lgXKzFtmqnPM2-Q",
-  },
-]
-
-
-const emptyForm = { name: "", category: "Furniture", price: "", description: "", imagePreviews: [] as string[] }
+const emptyForm = {
+  name: "",
+  category: "",
+  price: "",
+  description: "",
+  imageFiles: [] as File[],
+  imagePreviews: [] as string[],
+}
 
 const ShopProducts = () => {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
+  const axiosToken = useAxiosToken()
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState(emptyForm)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await axiosToken.get("/stores/products", {
+        params: { page: 1, limit: 50 }
+      })
+      console.log("GET /stores/products raw response:", res.data)
+      const data = res.data?.data ?? res.data
+      console.log("Extracted data array:", data)
+      setProducts(Array.isArray(data) ? data : [])
+    } catch (err: any) {
+      // silently fail — table shows empty
+      setProducts([])
+    } finally {
+      setLoading(false)
+    }
+  }, [axiosToken])
+
+  useEffect(() => {
+    fetchProducts()
+  }, [fetchProducts])
 
   const handleImageFiles = (files: FileList | File[]) => {
     Array.from(files).forEach((file) => {
       if (!file.type.startsWith("image/")) return
       const reader = new FileReader()
       reader.onload = (e) =>
-        setForm((prev) => ({ ...prev, imagePreviews: [...prev.imagePreviews, e.target?.result as string] }))
+        setForm((prev) => ({
+          ...prev,
+          imageFiles: [...prev.imageFiles, file],
+          imagePreviews: [...prev.imagePreviews, e.target?.result as string],
+        }))
       reader.readAsDataURL(file)
     })
   }
 
   const filtered = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.sku.toLowerCase().includes(search.toLowerCase())
+    (p.category ?? "").toLowerCase().includes(search.toLowerCase())
   )
 
   const openAddModal = () => {
     setEditingProduct(null)
     setForm(emptyForm)
+    setError(null)
     setShowModal(true)
   }
 
   const openEditModal = (product: Product) => {
     setEditingProduct(product)
-    setForm({ name: product.name, category: product.category, price: product.price, description: "", imagePreviews: product.img ? [product.img] : [] })
+    setForm({
+      name: product.name,
+      category: product.category ?? "",
+      price: String(product.price),
+      description: product.description ?? "",
+      imageFiles: [],
+      imagePreviews: product.attachments?.map(a => a.imageUrl) ?? [],
+    })
+    setError(null)
     setShowModal(true)
   }
 
@@ -94,35 +100,87 @@ const ShopProducts = () => {
     setShowModal(false)
     setEditingProduct(null)
     setForm(emptyForm)
+    setError(null)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const uploadImages = async (productId: number | string, files: File[]) => {
+    if (files.length === 0) return
+    const formData = new FormData()
+    files.forEach(file => formData.append("files", file))
+    await axiosToken.post(`/stores/products/${productId}/uploads`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+  }
+
+  const extractError = (err: any): string => {
+    const msg = err?.response?.data?.message
+    if (!msg) return "Something went wrong. Please try again."
+    if (Array.isArray(msg)) return msg.join(", ")
+    return String(msg)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (editingProduct) {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === editingProduct.id
-            ? { ...p, name: form.name, category: form.category, price: form.price }
-            : p
-        )
-      )
-    } else {
-      const newProduct: Product = {
-        id: Date.now(),
-        name: form.name,
-        sku: `SKU-${Date.now()}`,
-        category: form.category,
-        price: `$${parseFloat(form.price || "0").toFixed(2)}`,
-        stock: 0,
-        img: form.imagePreviews[0] ?? "",
-      }
-      setProducts((prev) => [...prev, newProduct])
+    setError(null)
+
+    const price = parseFloat(form.price)
+    if (isNaN(price) || price < 0) {
+      setError("Please enter a valid price.")
+      return
     }
-    closeModal()
+
+    setSubmitting(true)
+    try {
+      if (editingProduct) {
+        await axiosToken.patch(`/stores/products/${editingProduct.id}`, {
+          name: form.name,
+          category: form.category || undefined,
+          price,
+          description: form.description || undefined,
+        })
+        if (form.imageFiles.length > 0) {
+          await uploadImages(editingProduct.id, form.imageFiles)
+        }
+      } else {
+        console.log("Creating product with:", { name: form.name, category: form.category, price, description: form.description })
+        const res = await axiosToken.post("/stores/products", {
+          name: form.name,
+          category: form.category || undefined,
+          price,
+          description: form.description || undefined,
+        })
+        console.log("Create response:", res.data)
+        const newProductId = res.data?.productId ?? res.data?.data?.productId
+        const newId = res.data?.id ?? res.data?.data?.id
+        const patchId = newProductId ?? newId
+        console.log("Using patchId (UUID preferred):", patchId)
+        if (patchId) {
+          const publishRes = await axiosToken.patch(`/stores/products/${patchId}`, { status: "published" })
+          console.log("Publish response:", publishRes.data)
+          if (form.imageFiles.length > 0) {
+            console.log("Uploading", form.imageFiles.length, "image(s)...")
+            await uploadImages(patchId, form.imageFiles)
+            console.log("Images uploaded successfully")
+          }
+        }
+      }
+      await fetchProducts()
+      closeModal()
+    } catch (err: any) {
+      console.error("Submit error:", err?.response?.data ?? err.message)
+      setError(extractError(err))
+    } finally {
+      setSubmitting(false)
+    }
   }
 
-  const handleDelete = (id: number) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id))
+  const handleDelete = async (id: number) => {
+    try {
+      await axiosToken.delete(`/stores/products/${id}`)
+      setProducts(prev => prev.filter(p => p.id !== id))
+    } catch {
+      // silently fail — table stays unchanged
+    }
     setDeleteConfirmId(null)
   }
 
@@ -134,7 +192,7 @@ const ShopProducts = () => {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             className="w-full bg-white border border-[#bdc8d0]/30 rounded-full py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#34b7f1] transition-all"
-            placeholder="Search by name or SKU..."
+            placeholder="Search by name or category..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -155,17 +213,29 @@ const ShopProducts = () => {
             <thead className="bg-[#f0f4f9]">
               <tr>
                 <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">Product</th>
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">SKU</th>
                 <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">Category</th>
                 <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">Price</th>
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">Stock</th>
                 <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#bdc8d0]/10">
-              {filtered.length === 0 ? (
+              {loading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-[#f0f4f9]" />
+                        <div className="h-3 bg-[#f0f4f9] rounded w-32" />
+                      </div>
+                    </td>
+                    <td className="px-8 py-5"><div className="h-3 bg-[#f0f4f9] rounded w-20" /></td>
+                    <td className="px-8 py-5"><div className="h-3 bg-[#f0f4f9] rounded w-16" /></td>
+                    <td className="px-8 py-5" />
+                  </tr>
+                ))
+              ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-8 py-12 text-center text-sm text-slate-400">
+                  <td colSpan={4} className="px-8 py-12 text-center text-sm text-slate-400">
                     No products found.
                   </td>
                 </tr>
@@ -175,22 +245,26 @@ const ShopProducts = () => {
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#d6dadf] flex-shrink-0">
-                          {product.img && <img alt={product.name} className="w-full h-full object-cover" src={product.img} />}
+                          {product.attachments?.[0]?.imageUrl && (
+                            <img
+                              alt={product.name}
+                              className="w-full h-full object-cover"
+                              src={product.attachments[0].imageUrl}
+                            />
+                          )}
                         </div>
                         <span className="text-sm font-bold text-[#171c20]">{product.name}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-5 text-xs text-slate-500 font-medium">{product.sku}</td>
                     <td className="px-8 py-5">
-                      <span className="px-3 py-1 bg-[#bde5ff] text-[#40677d] rounded-full text-[10px] font-bold uppercase tracking-tighter">
-                        {product.category}
-                      </span>
+                      {product.category && (
+                        <span className="px-3 py-1 bg-[#bde5ff] text-[#40677d] rounded-full text-[10px] font-bold uppercase tracking-tighter">
+                          {product.category}
+                        </span>
+                      )}
                     </td>
-                    <td className="px-8 py-5 text-sm font-semibold text-[#171c20]">{product.price}</td>
-                    <td className="px-8 py-5">
-                      <span className={`text-sm font-semibold ${product.stock <= 5 ? "text-red-500" : "text-[#171c20]"}`}>
-                        {product.stock}
-                      </span>
+                    <td className="px-8 py-5 text-sm font-semibold text-[#171c20]">
+                      ${Number(product.price).toFixed(2)}
                     </td>
                     <td className="px-8 py-5 text-right">
                       {deleteConfirmId === product.id ? (
@@ -237,19 +311,22 @@ const ShopProducts = () => {
       {/* Add / Edit Product Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={closeModal}
-          />
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={closeModal} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-8 z-10 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-extrabold tracking-tight text-[#171c20] font-['Manrope',sans-serif]">
+              <h2 className="text-2xl font-extrabold tracking-tight text-[#171c20]">
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
               <button onClick={closeModal} className="text-slate-400 hover:text-[#171c20] transition-colors">
                 <X size={20} />
               </button>
             </div>
+
+            {error && (
+              <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+                {error}
+              </div>
+            )}
 
             <form className="space-y-5" onSubmit={handleSubmit}>
               <div className="space-y-1.5">
@@ -267,16 +344,12 @@ const ShopProducts = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Category</label>
-                  <select
+                  <input
                     className="w-full bg-[#f0f4f9] border-none rounded-lg py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#34b7f1] transition-all"
+                    placeholder="e.g. Furniture"
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  >
-                    <option>Furniture</option>
-                    <option>Decor</option>
-                    <option>Lighting</option>
-                    <option>Art</option>
-                  </select>
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Price ($)</label>
@@ -284,6 +357,9 @@ const ShopProducts = () => {
                     className="w-full bg-[#f0f4f9] border-none rounded-lg py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#34b7f1] transition-all"
                     placeholder="0.00"
                     type="number"
+                    min="0"
+                    step="0.01"
+                    required
                     value={form.price}
                     onChange={(e) => setForm({ ...form, price: e.target.value })}
                   />
@@ -294,7 +370,7 @@ const ShopProducts = () => {
                 <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Description</label>
                 <textarea
                   className="w-full bg-[#f0f4f9] border-none rounded-lg py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#34b7f1] transition-all"
-                  placeholder="Describe the editorial value..."
+                  placeholder="Describe the product..."
                   rows={3}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -302,7 +378,7 @@ const ShopProducts = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Product Imagery</label>
+                <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Product Images</label>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -331,7 +407,11 @@ const ShopProducts = () => {
                         <img src={src} alt={`preview-${i}`} className="w-full h-full object-cover" />
                         <button
                           type="button"
-                          onClick={() => setForm((prev) => ({ ...prev, imagePreviews: prev.imagePreviews.filter((_, idx) => idx !== i) }))}
+                          onClick={() => setForm((prev) => ({
+                            ...prev,
+                            imageFiles: prev.imageFiles.filter((_, idx) => idx !== i),
+                            imagePreviews: prev.imagePreviews.filter((_, idx) => idx !== i),
+                          }))}
                           className="absolute top-1 right-1 bg-black/50 hover:bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <X size={12} />
@@ -344,9 +424,10 @@ const ShopProducts = () => {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#00668a] to-[#34b7f1] text-white py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity"
+                disabled={submitting}
+                className="w-full bg-gradient-to-r from-[#00668a] to-[#34b7f1] text-white py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity disabled:opacity-60"
               >
-                {editingProduct ? "Save Changes" : "Publish to CslFreight"}
+                {submitting ? "Saving..." : editingProduct ? "Save Changes" : "Publish Product"}
               </button>
             </form>
           </div>

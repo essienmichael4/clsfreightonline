@@ -179,6 +179,16 @@ export type Stats = {
     }
 }
 
+export type StoreProduct = {
+    id: number;
+    name: string;
+    description?: string;
+    price: number;
+    category?: string;
+    badge?: string;
+    attachments?: Attachment[];
+}
+
 export type Video = {
     id: number,
     title?: string,
