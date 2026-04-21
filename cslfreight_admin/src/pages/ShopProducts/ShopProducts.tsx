@@ -173,7 +173,7 @@ const ShopProducts = () => {
           await uploadImages(patchId, form.imageFiles)
         }
       } else {
-        console.log("Creating product with:", { name: form.name, category: form.category, price, description: form.description, status: form.status })
+        console.log("Creating product with:", { name: form.name, price, description: form.description, status: form.status })
         const res = await axiosToken.post("/stores/products", {
           name: form.name,
           price,
@@ -307,7 +307,7 @@ const ShopProducts = () => {
                       </div>
                     </td>
                     <td className="px-8 py-5 text-sm font-semibold text-[#171c20]">
-                      ${Number(product.price).toFixed(2)}
+                      GHS {Number(product.price).toFixed(2)}
                     </td>
                     <td className="px-8 py-5">
                       {product.status && (
@@ -392,7 +392,7 @@ const ShopProducts = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Price ($)</label>
+                <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Price (GHS)</label>
                 <input
                   className="w-full bg-[#f0f4f9] border-none rounded-lg py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#34b7f1] transition-all"
                   placeholder="0.00"

@@ -63,8 +63,8 @@ const ProductDetails = () => {
 
 
   const handleWhatsApp = () => {
-    const message = `I'm interested in ${product.name} (${product.series})`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    const message = `Hi! I'm interested in the following product:\n\nProduct: ${product.name}\nPrice: GHS ${Number(product.price).toFixed(2)}\n\nCould you provide more details?`;
+    window.open(`https://api.whatsapp.com/send/?phone=233503333889&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0`, '_blank');
   };
 
   if (loading) {
@@ -130,7 +130,7 @@ const ProductDetails = () => {
               <h1 className="text-4xl md:text-5xl font-extrabold text-foreground -tracking-tight leading-tight mb-2">
                 {product.name}
               </h1>
-              <p className="text-2xl font-light text-muted-foreground">${Number(product.price).toFixed(2)}</p>
+              <p className="text-2xl font-light text-muted-foreground">GHS {Number(product.price).toFixed(2)}</p>
             </div>
 
             {/* Description */}
@@ -207,7 +207,7 @@ const ProductDetails = () => {
                   <h3 className="text-sm font-bold group-hover:text-primary transition-colors">
                     {item.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1">${Number(item.price).toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground mt-1">GHS {Number(item.price).toFixed(2)}</p>
                 </div>
               ))}
             </div>
