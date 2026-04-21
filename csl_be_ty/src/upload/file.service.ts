@@ -123,6 +123,15 @@ export class FileService {
         }))
     }
 
+    async uploadProduct(imageBuffer: Buffer, filename:string){
+        return await this.s3Client.send(
+            new PutObjectCommand({
+            Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+            Body: imageBuffer,
+            Key: `thumbnails/${filename}`
+        }))
+    }
+
     async startMultipartUpload(filename:string, contentType: string){
         const key = `videos/${v4()}-${filename.replace(/\s+/g, '_')}`
 

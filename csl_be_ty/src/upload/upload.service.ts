@@ -14,6 +14,10 @@ export class UploadService {
         return await this.fileService.uploadThumbnail(imageBuffer, filename)
     }
 
+    async addProductImage(imageBuffer: Buffer, filename:string){
+        return await this.fileService.uploadProduct(imageBuffer, filename)
+    }
+
     async addVideo(imageBuffer: Buffer, filename:string){
         return await this.fileService.uploadVideo(imageBuffer, filename)
     }
@@ -35,6 +39,10 @@ export class UploadService {
     }
 
     async getThumbnailSignedUrl(filename:string){
+        return await this.fileService.getThumbnailPresignedUrl(filename)
+    }
+
+    async getProductSignedUrl(filename:string){
         return await this.fileService.getThumbnailPresignedUrl(filename)
     }
 
