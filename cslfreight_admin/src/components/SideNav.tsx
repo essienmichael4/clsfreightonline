@@ -1,5 +1,5 @@
 import logo from '../assets/csl DONE.png'
-import {LayoutDashboard, Package, Truck, Ship, User, Users, Badge, PiggyBank, ReceiptText, Settings, Video} from 'lucide-react'
+import {LayoutDashboard, Package, Truck, Ship, User, Users, Badge, PiggyBank, ReceiptText, Settings, Video, ShoppingBag} from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 import { Separator } from '@/components/ui/separator'
 
@@ -43,6 +43,10 @@ const SideNav = ({ isToggled }: SideNavProps) => {
         { name: 'Users', icon: Users, path: '/users' },
         { name: 'Settings', icon: Settings, path: '/settings' },
       ],
+    },
+    {
+      label: 'Commerce',
+      items: [{ name: 'Products', icon: ShoppingBag, path: '/products' }],
     },
     {
       label: 'Media',

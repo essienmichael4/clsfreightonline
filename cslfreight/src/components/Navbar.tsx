@@ -65,6 +65,9 @@ const Navbar = () => {
               <Link to={"/"} className='text-neutral-500'>Home</Link>
             </li>
             <li>
+              <Link to={"/shop"} className='text-neutral-500'>Shop</Link>
+            </li>
+            <li>
               <Link to={"/about"} className='text-neutral-500'>About</Link>
             </li>
             <li>
@@ -97,7 +100,9 @@ const Navbar = () => {
               <li className='py-4'>
                 <Link to={"/"} onClick={toggleNavbar} className='text-neutral-500'>Home</Link>
               </li>
-              
+              <li className='py-4'>
+                <Link to={"/shop"} onClick={toggleNavbar} className='text-neutral-500'>Shop</Link>
+              </li>
               <li className='py-4'>
                 <Link to={"/about"} onClick={toggleNavbar} className='text-neutral-500'>About</Link>
               </li>
