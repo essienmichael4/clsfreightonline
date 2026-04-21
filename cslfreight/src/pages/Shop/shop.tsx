@@ -14,6 +14,7 @@ import { StoreProduct } from '@/lib/types';
 
 interface Product {
   id: number;
+  productId?: string;
   name: string;
   category: string;
   price: number;
@@ -39,35 +40,33 @@ const Shop = () => {
   const [loadingProducts, setLoadingProducts] = useState(true);
 
   useEffect(() => {
-    axios_instance.get('/stores/products')
+    axios_instance.get('/stores/products', { params: { status: 'active' } })
       .then(res => {
         const data = res.data?.data ?? res.data;
-        setApiProducts(Array.isArray(data) ? data : []);
+        const arr = Array.isArray(data) ? data : [];
+        console.log("Shop products:", arr.map((p: any) => ({ id: p.id, name: p.name, status: p.status })));
+        setApiProducts(arr);
       })
       .catch(() => setApiProducts([]))
       .finally(() => setLoadingProducts(false));
   }, []);
 
-  // Sample featured collections for the bento grid
   const featuredCollections: FeaturedCollection[] = [
     {
       id: 1,
       title: 'Premium Shipping Solutions',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuBZrVbnZTesi23vMZCNUw8OyyLftcmfv6TbXBXK1CwmmWHQjMXrgltInxtCNwd7XxFbTFyMA-PQZ070B75bTvdI7Ny77ngL5og23MzQMq3k8EZ4ZCMSMtHEFQeLramVGcNSj3H0jEtoKl8hscRWzHPcqX4CUy8jAJC6a33Xt3Tk_NbVr7U-FA4sannHxQLALDmrp34R5ltZGvxwhTNkjD1HyQ7zOem2_vhuN4D7h9V02zR_Lejz3wUOlx-PbLqDjH5FSgwmYHOsAAOU',
+      image: '/banner-main.jpg',
       featured: true,
     },
     {
       id: 2,
       title: 'Sculptural Form',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuB4Ki6e_24_m9Bk_nP0Ev-MOEB95jSGTlLSwnpvRp0MZQlrJDd-rUJU6gOfYoeNP6w31ua44wqNpWJMiSvRDTBjXneIEaA04ctVkgPul6Yn16G23pIg8-K8B_zJ1jvwD-ioVXeO5679vzXq7su_clbImJjXklW2x-JC0GIv6O-yMFgTdj9DpWlFzSck1NjYm8MM79js-zY6vbdB4Ql8agoHfMfFc-KygiBF3UjPAB1C63T8YeQ7vUw4dJGkeCfCCXU_Ew40_VA-a09u',
+      image: '/banner-2.jpg',
     },
     {
       id: 3,
       title: 'Deep Archive',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuC7WmBz9eie9Vx32vZXEl8gWAj341o3drcFQU5pgDpvOZ3f1-Bv5TN_Jq4101H5AC85TsEIQY39uC4rJ8fR7tMz99idqNfn3mYxw-_qY6bOSoT1Xs-13XCFQ0dNOJUgM4tMsgW0arIlAL3yFYqEjd6G33wzR1fHTHi9EcT9fwN0twd06Yg3MBVLCvx5buH-h3cmSYt7363xTHoJJ-s5bL5qJu4GJu-xdJX61Rfo9KIL0nZLtI1C8PvIDPEWL68RYotF7VqVVVN6UeeW',
+      image: '/banner-3.jpg',
     },
   ];
 
@@ -75,15 +74,16 @@ const Shop = () => {
 
   const products: Product[] = apiProducts.map(p => ({
     id: p.id,
+    productId: p.productId,
     name: p.name,
     category: p.category ?? 'GENERAL',
     price: p.price,
     badge: p.badge,
-    image: p.attachments?.[0]?.imageUrl ?? PLACEHOLDER_IMAGE,
+    image: p.imageUrls?.[0] ?? PLACEHOLDER_IMAGE,
   }));
 
-  const handleProductClick = (productId: number) => {
-    navigate(`/product/${productId}`);
+  const handleProductClick = (product: Product) => {
+    navigate(`/product/${product.productId ?? product.id}`);
   };
 
   const handleAddToCart = (e: React.MouseEvent, productId: number) => {
@@ -204,17 +204,17 @@ const Shop = () => {
                     <div
                       key={item.id}
                       className="flex-1 bg-white rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-                      onClick={() => handleProductClick(item.id)}
+                      onClick={() => navigate(`/product/${item.productId ?? item.id}`)}
                     >
                       <div className="aspect-[3/4] overflow-hidden">
                         <img
-                          src={item.attachments?.[0]?.imageUrl ?? PLACEHOLDER_IMAGE}
+                          src={item.imageUrls?.[0] ?? PLACEHOLDER_IMAGE}
                           alt={item.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="p-2">
-                        <p className="text-xs font-bold">${item.price.toFixed(2)}</p>
+                        <p className="text-xs font-bold">${Number(item.price).toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
@@ -222,21 +222,21 @@ const Shop = () => {
               </div>
 
               {/* Right: Category Grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 auto-rows-[140px]">
                 {categories.slice(0, 6).map((cat) => {
                   const firstProduct = apiProducts.find(p => p.category === cat);
-                  const img = firstProduct?.attachments?.[0]?.imageUrl ?? PLACEHOLDER_IMAGE;
+                  const img = firstProduct?.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
                   return (
                     <div
                       key={cat}
-                      className="bg-muted rounded-xl flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-muted/70 transition-colors overflow-hidden relative group"
+                      className="bg-muted rounded-xl flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-muted/70 transition-colors overflow-hidden relative group h-full"
                       onClick={() => handleCategoryToggle(cat)}
                     >
                       <p className="text-sm font-bold text-foreground z-10 relative max-w-[55%] leading-snug">{cat}</p>
                       <img
                         src={img}
                         alt={cat}
-                        className="h-24 w-24 object-cover object-top rounded-md group-hover:scale-105 transition-transform duration-500"
+                        className="h-20 w-20 object-cover rounded-md group-hover:scale-105 transition-transform duration-500 flex-shrink-0"
                       />
                     </div>
                   );
@@ -384,7 +384,7 @@ const Shop = () => {
                   <div
                     key={product.id}
                     className="group cursor-pointer"
-                    onClick={() => handleProductClick(product.id)}
+                    onClick={() => handleProductClick(product)}
                   >
                     <div className="w-full h-72 overflow-hidden rounded-lg bg-muted mb-4 relative">
                       <img
@@ -458,7 +458,7 @@ const Shop = () => {
             <div className="md:w-1/2 relative">
               <div className="aspect-square bg-card rounded-lg p-4 rotate-3 hover:rotate-0 transition-transform duration-500 shadow-lg">
                 <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGTw4Yvcf253gEjKkqLUuoEti-zt6ncPp5yr4YwthhTitJpe1ejsWcTkgOMuL5CMNcypvwjmcORFf3MWZ9L6Q0TzqoMIVxkOU0a3zGXjdnedekj9FgQ9WkYXmadRkjE5Y8-HNWw7iAGaIPyw1WDQP0UxunGi3v9Qmahr4gLBdJzQtW8C7oNba2Z15Y2PV6o9mMRn_iZzW2vuQqwlloO2ouLnlaVmb-RoL4np97Ws3WFT4Xwz1A349vtEORBC8wy2yLGLtZaMYWnX-V"
+                  src="/consultation.jpg"
                   alt="Logistics Center"
                   className="w-full h-full object-cover rounded-lg"
                 />
@@ -490,7 +490,7 @@ const Shop = () => {
               >
                 <div className="relative w-full h-44 overflow-hidden bg-muted">
                   <img
-                    src={item.attachments?.[0]?.imageUrl ?? PLACEHOLDER_IMAGE}
+                    src={item.imageUrls?.[0] ?? PLACEHOLDER_IMAGE}
                     alt={item.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -503,7 +503,7 @@ const Shop = () => {
                 </div>
                 <div className="p-3 space-y-1">
                   <p className="text-xs text-foreground font-medium leading-snug line-clamp-2">{item.name}</p>
-                  <span className="text-sm font-bold text-red-500">${item.price.toFixed(2)}</span>
+                  <span className="text-sm font-bold text-red-500">${Number(item.price).toFixed(2)}</span>
                 </div>
               </div>
             ))

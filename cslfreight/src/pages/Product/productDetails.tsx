@@ -27,8 +27,15 @@ const ProductDetails = () => {
     if (!productId) return;
     setLoading(true);
     axios_instance.get(`/stores/${productId}`)
-      .then(res => setApiProduct(res.data))
-      .catch(() => setApiProduct(null))
+      .then(res => {
+        console.log("Product detail response:", res.data);
+        const data = res.data?.data ?? res.data;
+        setApiProduct(data);
+      })
+      .catch(err => {
+        console.error("Product detail error:", err?.response?.status, err?.response?.data ?? err.message);
+        setApiProduct(null);
+      })
       .finally(() => setLoading(false));
   }, [productId]);
 
@@ -37,7 +44,7 @@ const ProductDetails = () => {
       .then(res => {
         const data = res.data?.data ?? res.data;
         const all: StoreProduct[] = Array.isArray(data) ? data : [];
-        setRelatedProducts(all.filter(p => p.id !== Number(productId)));
+        setRelatedProducts(all.filter(p => p.productId !== productId && String(p.id) !== productId));
       })
       .catch(() => setRelatedProducts([]));
   }, [productId]);
@@ -47,9 +54,9 @@ const ProductDetails = () => {
     series: apiProduct?.category ?? 'Collection',
     name: apiProduct?.name ?? 'Loading...',
     price: apiProduct?.price ?? 0,
-    image: apiProduct?.attachments?.[0]?.imageUrl ?? PLACEHOLDER,
-    detailImage1: apiProduct?.attachments?.[1]?.imageUrl ?? PLACEHOLDER,
-    detailImage2: apiProduct?.attachments?.[2]?.imageUrl ?? PLACEHOLDER,
+    image: apiProduct?.imageUrls?.[0] ?? PLACEHOLDER,
+    detailImage1: apiProduct?.imageUrls?.[1] ?? PLACEHOLDER,
+    detailImage2: apiProduct?.imageUrls?.[2] ?? PLACEHOLDER,
     description: apiProduct?.description ?? '',
     tags: [] as string[],
   };
@@ -123,7 +130,7 @@ const ProductDetails = () => {
               <h1 className="text-4xl md:text-5xl font-extrabold text-foreground -tracking-tight leading-tight mb-2">
                 {product.name}
               </h1>
-              <p className="text-2xl font-light text-muted-foreground">${product.price.toFixed(2)}</p>
+              <p className="text-2xl font-light text-muted-foreground">${Number(product.price).toFixed(2)}</p>
             </div>
 
             {/* Description */}
@@ -183,11 +190,11 @@ const ProductDetails = () => {
                 <div
                   key={item.id}
                   className="group cursor-pointer"
-                  onClick={() => navigate(`/product/${item.id}`)}
+                  onClick={() => navigate(`/product/${item.productId ?? item.id}`)}
                 >
                   <div className="w-full h-64 overflow-hidden rounded-lg bg-muted mb-4 relative">
                     <img
-                      src={item.attachments?.[0]?.imageUrl ?? PLACEHOLDER}
+                      src={item.imageUrls?.[0] ?? PLACEHOLDER}
                       alt={item.name}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
@@ -200,7 +207,7 @@ const ProductDetails = () => {
                   <h3 className="text-sm font-bold group-hover:text-primary transition-colors">
                     {item.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1">${item.price.toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground mt-1">${Number(item.price).toFixed(2)}</p>
                 </div>
               ))}
             </div>

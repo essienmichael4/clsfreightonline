@@ -2,22 +2,37 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { Search, Plus, Pencil, Trash2, X, CloudUpload } from "lucide-react"
 import useAxiosToken from "@/hooks/useAxiosToken"
 
+type ProductStatus = "draft" | "active" | "archived"
+
 type Product = {
   id: number
+  productId?: string
   name: string
-  category: string
   price: number
   description?: string
-  attachments?: { id: number; imageUrl: string }[]
+  status?: ProductStatus
+  imageUrls?: string[]
 }
 
 const emptyForm = {
   name: "",
-  category: "",
   price: "",
   description: "",
+  status: "active" as ProductStatus,
   imageFiles: [] as File[],
   imagePreviews: [] as string[],
+}
+
+const STATUS_LABELS: Record<ProductStatus, string> = {
+  draft: "draft",
+  active: "active",
+  archived: "archived",
+}
+
+const STATUS_STYLES: Record<ProductStatus, string> = {
+  draft: "bg-yellow-100 text-yellow-700",
+  active: "bg-green-100 text-green-700",
+  archived: "bg-slate-100 text-slate-500",
 }
 
 const ShopProducts = () => {
@@ -25,6 +40,7 @@ const ShopProducts = () => {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState<ProductStatus | "all">("active")
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState(emptyForm)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
@@ -37,20 +53,31 @@ const ShopProducts = () => {
   const fetchProducts = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await axiosToken.get("/stores/products", {
-        params: { page: 1, limit: 50 }
-      })
-      console.log("GET /stores/products raw response:", res.data)
-      const data = res.data?.data ?? res.data
-      console.log("Extracted data array:", data)
-      setProducts(Array.isArray(data) ? data : [])
-    } catch (err: any) {
-      // silently fail — table shows empty
+      if (statusFilter === "all") {
+        const [draftRes, activeRes, archivedRes] = await Promise.all([
+          axiosToken.get("/stores/products", { params: { page: 1, limit: 50, status: "draft" } }),
+          axiosToken.get("/stores/products", { params: { page: 1, limit: 50, status: "active" } }),
+          axiosToken.get("/stores/products", { params: { page: 1, limit: 50, status: "archived" } }),
+        ])
+        const extract = (res: any) => { const d = res.data?.data ?? res.data; return Array.isArray(d) ? d : [] }
+        setProducts([...extract(draftRes), ...extract(activeRes), ...extract(archivedRes)])
+      } else {
+        const apiStatus = statusFilter
+        console.log("Fetching with status:", apiStatus)
+        const res = await axiosToken.get("/stores/products", {
+          params: { page: 1, limit: 50, status: apiStatus },
+        })
+        console.log("GET response:", res.data)
+        const data = res.data?.data ?? res.data
+        if (Array.isArray(data) && data.length > 0) console.log("First product sample:", data[0])
+        setProducts(Array.isArray(data) ? data : [])
+      }
+    } catch {
       setProducts([])
     } finally {
       setLoading(false)
     }
-  }, [axiosToken])
+  }, [axiosToken, statusFilter])
 
   useEffect(() => {
     fetchProducts()
@@ -71,8 +98,7 @@ const ShopProducts = () => {
   }
 
   const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    (p.category ?? "").toLowerCase().includes(search.toLowerCase())
+    p.name.toLowerCase().includes(search.toLowerCase())
   )
 
   const openAddModal = () => {
@@ -86,11 +112,11 @@ const ShopProducts = () => {
     setEditingProduct(product)
     setForm({
       name: product.name,
-      category: product.category ?? "",
       price: String(product.price),
       description: product.description ?? "",
+      status: (product.status as ProductStatus) ?? "active",
       imageFiles: [],
-      imagePreviews: product.attachments?.map(a => a.imageUrl) ?? [],
+      imagePreviews: product.imageUrls ?? [],
     })
     setError(null)
     setShowModal(true)
@@ -107,9 +133,11 @@ const ShopProducts = () => {
     if (files.length === 0) return
     const formData = new FormData()
     files.forEach(file => formData.append("files", file))
-    await axiosToken.post(`/stores/products/${productId}/uploads`, formData, {
+    console.log("Uploading to:", `/stores/products/${productId}/uploads`)
+    const uploadRes = await axiosToken.post(`/stores/products/${productId}/uploads`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
+    console.log("Upload response:", uploadRes.data)
   }
 
   const extractError = (err: any): string => {
@@ -132,20 +160,22 @@ const ShopProducts = () => {
     setSubmitting(true)
     try {
       if (editingProduct) {
-        await axiosToken.patch(`/stores/products/${editingProduct.id}`, {
+        const patchId = editingProduct.productId ?? editingProduct.id
+        console.log("Editing product, patchId:", patchId, "new status:", form.status)
+        const editRes = await axiosToken.patch(`/stores/products/${patchId}`, {
           name: form.name,
-          category: form.category || undefined,
           price,
           description: form.description || undefined,
+          status: form.status,
         })
+        console.log("Edit PATCH response:", editRes.data)
         if (form.imageFiles.length > 0) {
-          await uploadImages(editingProduct.id, form.imageFiles)
+          await uploadImages(patchId, form.imageFiles)
         }
       } else {
-        console.log("Creating product with:", { name: form.name, category: form.category, price, description: form.description })
+        console.log("Creating product with:", { name: form.name, category: form.category, price, description: form.description, status: form.status })
         const res = await axiosToken.post("/stores/products", {
           name: form.name,
-          category: form.category || undefined,
           price,
           description: form.description || undefined,
         })
@@ -153,10 +183,10 @@ const ShopProducts = () => {
         const newProductId = res.data?.productId ?? res.data?.data?.productId
         const newId = res.data?.id ?? res.data?.data?.id
         const patchId = newProductId ?? newId
-        console.log("Using patchId (UUID preferred):", patchId)
+        console.log("Using patchId (UUID preferred):", patchId, "status:", form.status)
         if (patchId) {
-          const publishRes = await axiosToken.patch(`/stores/products/${patchId}`, { status: "published" })
-          console.log("Publish response:", publishRes.data)
+          const patchRes = await axiosToken.patch(`/stores/products/${patchId}`, { status: form.status })
+          console.log("Status patch response:", patchRes.data)
           if (form.imageFiles.length > 0) {
             console.log("Uploading", form.imageFiles.length, "image(s)...")
             await uploadImages(patchId, form.imageFiles)
@@ -174,18 +204,38 @@ const ShopProducts = () => {
     }
   }
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (product: Product) => {
+    const deleteId = product.productId ?? product.id
     try {
-      await axiosToken.delete(`/stores/products/${id}`)
-      setProducts(prev => prev.filter(p => p.id !== id))
-    } catch {
-      // silently fail — table stays unchanged
+      console.log("Deleting product:", deleteId)
+      await axiosToken.delete(`/stores/products/${deleteId}`)
+      console.log("Deleted successfully")
+      setProducts(prev => prev.filter(p => p.id !== product.id))
+    } catch (err: any) {
+      console.error("Delete failed:", err?.response?.data ?? err.message)
     }
     setDeleteConfirmId(null)
   }
 
   return (
     <div className="p-10 space-y-8">
+      {/* Status Filter Tabs */}
+      <div className="flex gap-2">
+        {(["all", "draft", "active", "archived"] as const).map((s) => (
+          <button
+            key={s}
+            onClick={() => setStatusFilter(s)}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold capitalize transition-all border ${
+              statusFilter === s
+                ? "bg-[#00668a] text-white border-[#00668a]"
+                : "bg-white text-slate-500 border-[#bdc8d0]/40 hover:border-[#00668a]/40"
+            }`}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+
       {/* Header */}
       <div className="flex flex-wrap items-center gap-4">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
@@ -213,8 +263,8 @@ const ShopProducts = () => {
             <thead className="bg-[#f0f4f9]">
               <tr>
                 <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">Product</th>
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">Category</th>
                 <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">Price</th>
+                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379]">Status</th>
                 <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-[#3c6379] text-right">Actions</th>
               </tr>
             </thead>
@@ -228,7 +278,7 @@ const ShopProducts = () => {
                         <div className="h-3 bg-[#f0f4f9] rounded w-32" />
                       </div>
                     </td>
-                    <td className="px-8 py-5"><div className="h-3 bg-[#f0f4f9] rounded w-20" /></td>
+                    <td className="px-8 py-5"><div className="h-3 bg-[#f0f4f9] rounded w-16" /></td>
                     <td className="px-8 py-5"><div className="h-3 bg-[#f0f4f9] rounded w-16" /></td>
                     <td className="px-8 py-5" />
                   </tr>
@@ -245,33 +295,33 @@ const ShopProducts = () => {
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#d6dadf] flex-shrink-0">
-                          {product.attachments?.[0]?.imageUrl && (
+                          {product.imageUrls?.[0] && (
                             <img
                               alt={product.name}
                               className="w-full h-full object-cover"
-                              src={product.attachments[0].imageUrl}
+                              src={product.imageUrls[0]}
                             />
                           )}
                         </div>
                         <span className="text-sm font-bold text-[#171c20]">{product.name}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-5">
-                      {product.category && (
-                        <span className="px-3 py-1 bg-[#bde5ff] text-[#40677d] rounded-full text-[10px] font-bold uppercase tracking-tighter">
-                          {product.category}
-                        </span>
-                      )}
-                    </td>
                     <td className="px-8 py-5 text-sm font-semibold text-[#171c20]">
                       ${Number(product.price).toFixed(2)}
+                    </td>
+                    <td className="px-8 py-5">
+                      {product.status && (
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${STATUS_STYLES[product.status as ProductStatus] ?? "bg-slate-100 text-slate-500"}`}>
+                          {STATUS_LABELS[product.status as ProductStatus] ?? product.status}
+                        </span>
+                      )}
                     </td>
                     <td className="px-8 py-5 text-right">
                       {deleteConfirmId === product.id ? (
                         <div className="flex items-center justify-end gap-2">
                           <span className="text-xs text-slate-500">Delete?</span>
                           <button
-                            onClick={() => handleDelete(product.id)}
+                            onClick={() => handleDelete(product)}
                             className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors"
                           >
                             Yes
@@ -341,29 +391,18 @@ const ShopProducts = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Category</label>
-                  <input
-                    className="w-full bg-[#f0f4f9] border-none rounded-lg py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#34b7f1] transition-all"
-                    placeholder="e.g. Furniture"
-                    value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Price ($)</label>
-                  <input
-                    className="w-full bg-[#f0f4f9] border-none rounded-lg py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#34b7f1] transition-all"
-                    placeholder="0.00"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    required
-                    value={form.price}
-                    onChange={(e) => setForm({ ...form, price: e.target.value })}
-                  />
-                </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Price ($)</label>
+                <input
+                  className="w-full bg-[#f0f4f9] border-none rounded-lg py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#34b7f1] transition-all"
+                  placeholder="0.00"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  required
+                  value={form.price}
+                  onChange={(e) => setForm({ ...form, price: e.target.value })}
+                />
               </div>
 
               <div className="space-y-1.5">
@@ -375,6 +414,30 @@ const ShopProducts = () => {
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                 />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-widest text-[#00668a]">Status</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(["draft", "active", "archived"] as ProductStatus[]).map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setForm({ ...form, status: s })}
+                      className={`py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide border-2 transition-all ${
+                        form.status === s
+                          ? s === "active"
+                            ? "border-green-500 bg-green-50 text-green-700"
+                            : s === "draft"
+                            ? "border-yellow-400 bg-yellow-50 text-yellow-700"
+                            : "border-slate-400 bg-slate-100 text-slate-600"
+                          : "border-transparent bg-[#f0f4f9] text-slate-400 hover:border-[#bdc8d0]"
+                      }`}
+                    >
+                      {STATUS_LABELS[s]}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -427,7 +490,7 @@ const ShopProducts = () => {
                 disabled={submitting}
                 className="w-full bg-gradient-to-r from-[#00668a] to-[#34b7f1] text-white py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity disabled:opacity-60"
               >
-                {submitting ? "Saving..." : editingProduct ? "Save Changes" : "Publish Product"}
+                {submitting ? "Saving..." : editingProduct ? "Save Changes" : `Save as ${STATUS_LABELS[form.status]}`}
               </button>
             </form>
           </div>
