@@ -2,9 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   MessageCircle,
-  Package,
   ShoppingBag,
-  ChevronDown,
   X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,7 +31,6 @@ interface FeaturedCollection {
 
 const Shop = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState(0);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 3000]);
   const [apiProducts, setApiProducts] = useState<StoreProduct[]>([]);
@@ -86,9 +83,8 @@ const Shop = () => {
     navigate(`/product/${product.productId ?? product.id}`);
   };
 
-  const handleAddToCart = (e: React.MouseEvent, productId: number) => {
+  const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCartItems(prev => prev + 1);
     // Add toast notification here if needed
   };
 
@@ -400,7 +396,7 @@ const Shop = () => {
                         </div>
                       )}
                       <button
-                        onClick={e => handleAddToCart(e, product.id)}
+                        onClick={e => handleAddToCart(e)}
                         className="absolute bottom-4 right-4 bg-primary text-primary-foreground p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:scale-100 scale-75"
                       >
                         <ShoppingBag size={20} />
@@ -486,7 +482,7 @@ const Shop = () => {
               <div
                 key={item.id}
                 className="group cursor-pointer bg-background border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow"
-                onClick={() => handleProductClick(item.id)}
+                onClick={() => navigate(`/product/${item.productId ?? item.id}`)}
               >
                 <div className="relative w-full h-44 overflow-hidden bg-muted">
                   <img
@@ -495,7 +491,7 @@ const Shop = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <button
-                    onClick={(e) => { e.stopPropagation(); setCartItems(prev => prev + 1); }}
+                    onClick={(e) => { e.stopPropagation(); }}
                     className="absolute bottom-2 right-2 bg-white text-foreground p-1.5 rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <ShoppingBag size={16} />
