@@ -45,8 +45,8 @@ const Shop = () => {
       <main className="pb-20">
         {/* More to Love Section */}
         <section className="mt-20 px-8 md:px-16">
-          {/* <h2 className="text-2xl font-bold text-center mb-8">More to love</h2> */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <h2 className="text-2xl font-bold text-center mb-8">Daily Deals</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {loadingProducts ? (
               Array.from({ length: 12 }).map((_, i) => (
                 <div key={i} className="animate-pulse rounded-xl overflow-hidden border border-border">
