@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   MessageCircle,
   ChevronRight,
+  ImageOff,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
@@ -55,8 +56,8 @@ const ProductDetails = () => {
     name: apiProduct?.name ?? 'Loading...',
     price: apiProduct?.price ?? 0,
     image: apiProduct?.imageUrls?.[0] ?? PLACEHOLDER,
-    detailImage1: apiProduct?.imageUrls?.[1] ?? PLACEHOLDER,
-    detailImage2: apiProduct?.imageUrls?.[2] ?? PLACEHOLDER,
+    detailImage1: apiProduct?.imageUrls?.[1] ?? undefined,
+    detailImage2: apiProduct?.imageUrls?.[2] ?? undefined,
     description: apiProduct?.description ?? '',
     tags: [] as string[],
   };
@@ -95,28 +96,42 @@ const ProductDetails = () => {
           {/* Product Image Gallery */}
           <div className="lg:col-span-7 grid grid-cols-6 gap-4">
             {/* Main Image */}
-            <div className="col-span-6 rounded-xl overflow-hidden aspect-[4/5] bg-muted">
+            <div className="col-span-6 rounded-xl overflow-hidden aspect-[4/3] bg-muted">
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
 
             {/* Detail Images */}
             <div className="col-span-3 rounded-lg overflow-hidden aspect-square bg-muted">
-              <img
-                src={product.detailImage1}
-                alt="Product detail 1"
-                className="w-full h-full object-cover"
-              />
+              {product.detailImage1 ? (
+                <img
+                  src={product.detailImage1}
+                  alt="Product detail 1"
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/40">
+                  <ImageOff size={32} strokeWidth={1.5} />
+                  <span className="text-xs mt-2">No image</span>
+                </div>
+              )}
             </div>
-            <div className="col-span-3 rounded-lg overflow-hidden aspect-square bg-muted translate-y-8">
-              <img
-                src={product.detailImage2}
-                alt="Product detail 2"
-                className="w-full h-full object-cover"
-              />
+            <div className="col-span-3 rounded-lg overflow-hidden aspect-square bg-muted">
+              {product.detailImage2 ? (
+                <img
+                  src={product.detailImage2}
+                  alt="Product detail 2"
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/40">
+                  <ImageOff size={32} strokeWidth={1.5} />
+                  <span className="text-xs mt-2">No image</span>
+                </div>
+              )}
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ShoppingBag,
+  ImageOff,
 } from 'lucide-react';
 import Footer from '@/components/Footer';
 import { axios_instance } from '@/api/axios';
@@ -31,7 +32,7 @@ const Shop = () => {
 
 
 
-  const PLACEHOLDER_IMAGE = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCdIAwGRcj9eqo5DrNYL_A72Mz5OD82R64obWjXZg9UfO7gUTM3aMNQsuml6flJ6KBL2w_fUDjs_VUzKHc_eaGqrpsi9MQB3e75no3xdom2lXXivvmr5hWqa5Ua3PCRBLEZMfQ-zhpmwrrZGtEHR0awqcQ8GO1O_p7bbI2AlXbVrBhn5wSPFA7_6hz5LUh-JX_zL_HojnhDi8Iubmmo-8xlQxxXWo1IaevznC3INqc5IHoRilNKVUd0uwB6W-AY2Ma0DKxK4A4PJtWo';
+
 
 
 
@@ -44,13 +45,27 @@ const Shop = () => {
     <div className="bg-background text-foreground font-body min-h-screen">
       <main className="pb-20">
         {/* More to Love Section */}
-        <section className="mt-20 px-8 md:px-16">
-          <h2 className="text-2xl font-bold text-center mb-8">Daily Deals</h2>
+        <section className="mt-8 px-8 md:px-16">
+          {/* Section Header */}
+          <div className="flex flex-col items-center text-center mb-10">
+            <span className="text-xs font-semibold tracking-[0.3em] uppercase text-muted-foreground mb-3">CLS Freight Online</span>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground uppercase mb-3">
+              Pre-Order Marketplace
+            </h2>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="block h-px w-12 bg-red-500 opacity-60" />
+              <span className="block h-1.5 w-1.5 rounded-full bg-red-500" />
+              <span className="block h-px w-12 bg-red-500 opacity-60" />
+            </div>
+            <h5 className="text-sm md:text-base font-medium text-muted-foreground max-w-md leading-relaxed">
+              All-Inclusive Deals &mdash; <span className="text-foreground font-semibold">Costs + Shipping + Customs Duties</span>
+            </h5>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {loadingProducts ? (
               Array.from({ length: 12 }).map((_, i) => (
                 <div key={i} className="animate-pulse rounded-xl overflow-hidden border border-border">
-                  <div className="w-full h-44 bg-muted" />
+                  <div className="w-full aspect-square bg-muted" />
                   <div className="p-3 space-y-2">
                     <div className="h-3 bg-muted rounded w-full" />
                     <div className="h-3 bg-muted rounded w-2/3" />
@@ -64,12 +79,18 @@ const Shop = () => {
                 className="group cursor-pointer bg-background border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow"
                 onClick={() => navigate(`/product/${item.productId ?? item.id}`)}
               >
-                <div className="relative w-full h-44 overflow-hidden bg-muted">
-                  <img
-                    src={item.imageUrls?.[0] ?? PLACEHOLDER_IMAGE}
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                <div className="relative w-full aspect-square overflow-hidden bg-muted">
+                  {item.imageUrls?.[0] ? (
+                    <img
+                      src={item.imageUrls[0]}
+                      alt={item.name}
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 p-2"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground/30">
+                      <ImageOff size={32} strokeWidth={1.5} />
+                    </div>
+                  )}
                   <button
                     onClick={(e) => { e.stopPropagation(); }}
                     className="absolute bottom-2 right-2 bg-white text-foreground p-1.5 rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity"
