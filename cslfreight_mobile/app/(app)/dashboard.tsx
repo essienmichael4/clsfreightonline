@@ -3,61 +3,26 @@ import {
     View,
     Text,
     StyleSheet,
+    SafeAreaView,
     ScrollView,
     TouchableOpacity,
-    Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { colors, spacing, typography, borderRadius } from '@/theme';
-import useAuth from 'app/_hooks/useAuth';
-import useAxiosToken from 'app/_hooks/useAxiosToken';
-import { useQuery } from '@tanstack/react-query';
-import { Package, PackageTypeAndRate, Stats } from 'app/_lib/types';
-import { startOfMonth, subMonths } from 'date-fns';
 
 export default function DashboardScreen() {
-    const axios_instance_token = useAxiosToken()
-    const { auth } = useAuth()
     const router = useRouter();
-    const [fromDate, setFromDate] = useState<Date | null>(startOfMonth(subMonths(new Date(), 5)));
-    const [toDate, setToDate] = useState<Date | null>(new Date());
-    const [showFromPicker, setShowFromPicker] = useState(false);
-    const [showToPicker, setShowToPicker] = useState(false);
+    const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    const [state, setState] = useState<"USD" | "GHS">("USD")
-
-    const handleCurrencyChange = (value: "USD" | "GHS") => {
-        setState(value)
-    }
-
-    const rates = useQuery<PackageTypeAndRate[]>({
-        queryKey: ["package-rates"],
-        queryFn: async () => await axios_instance_token.get("/packages/shipping-rates").then(res => {
-            return res.data
-        })
-    })
-
-    const stats = useQuery<Stats>({
-        queryKey: ["summary", fromDate, toDate, state],
-        queryFn: async () => await axios_instance_token.get(`/statistics/client-dashboard?state=${state}&to=${toDate?.toISOString()}&from=${fromDate?.toISOString()}`).then(res => {
-            console.log(res.data)
-            return res.data
-        })
-    })
-
-    const orders = useQuery<Package[]>({
-        queryKey: ["summary", "packages"],
-        queryFn: async () => await axios_instance_token.get("/packages/summary/client").then(res => res.data)
-    })
+    const packageData: any[] = [
+        // Empty for now - will show "No results"
+    ];
 
     // Pagination logic
-    const packageData = orders.data || [];
     const totalPages = Math.ceil(packageData.length / itemsPerPage) || 1;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -75,25 +40,6 @@ export default function DashboardScreen() {
         }
     };
 
-    const handleFromDateChange = (_: any, selectedDate?: Date) => {
-        setShowFromPicker(Platform.OS === 'ios');
-        if (selectedDate) {
-            setFromDate(selectedDate);
-        }
-    };
-
-    const handleToDateChange = (_: any, selectedDate?: Date) => {
-        setShowToPicker(Platform.OS === 'ios');
-        if (selectedDate) {
-            setToDate(selectedDate);
-        }
-    };
-
-    const formatDate = (date: Date | null) => {
-        if (!date) return 'Select date';
-        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-    };
-
     return (
         <SafeAreaView style={styles.container}>
             <LinearGradient
@@ -106,6 +52,15 @@ export default function DashboardScreen() {
                     contentContainerStyle={styles.content}
                     showsVerticalScrollIndicator={false}
                 >
+                    {/* Welcome Christmas Card */}
+                    <View style={styles.welcomeCard}>
+                        <Text style={styles.welcomeTitle}>Welcome, essienmichael4@gmail.com</Text>
+                        <Text style={styles.christmasMessage}>
+                            🎄 Wishing you a joyful Christmas filled with peace, good vibes, and blessings! ✨
+                        </Text>
+                        <Text style={styles.fromTeam}>- from CSL Team.</Text>
+                    </View>
+
                     {/* Dashboard Title */}
                     <Text style={styles.dashboardTitle}>Dashboard</Text>
 
@@ -120,30 +75,27 @@ export default function DashboardScreen() {
                     <View style={styles.shippingRateCard}>
                         <View style={styles.rateHeader}>
                             <Text style={styles.rateTitle}>Shipping Rate</Text>
-                            <TouchableOpacity
-                                style={styles.currencyBadge}
-                                onPress={() => handleCurrencyChange(state === "USD" ? "GHS" : "USD")}
-                            >
-                                <Text style={styles.currencyText}>
-                                    {state === "USD" ? "To GHS" : "To USD"}
-                                </Text>
-                            </TouchableOpacity>
+                            <View style={styles.currencyBadge}>
+                                <Text style={styles.currencyText}>To GHS</Text>
+                            </View>
                         </View>
 
                         <View style={styles.rateRow}>
-                            {rates.data?.map((rate, index) => {
-                                const currentRate = state === "USD" ? rate.rate : rate.cedisRate;
-                                const parts = currentRate.toFixed(2).split('.');
-                                return (
-                                    <View key={index} style={[styles.rateItem, index === 2 && styles.rateItemFull]}>
-                                        <View style={styles.priceContainer}>
-                                            <Text style={styles.currencySymbol}>{state === "USD" ? "$" : "₵"}</Text>
-                                            <Text style={styles.ratePrice}>{currentRate.toFixed(2)}</Text>
-                                        </View>
-                                        <Text style={styles.rateDescription}>{rate.description}</Text>
-                                    </View>
-                                );
-                            })}
+                            <View style={styles.rateItem}>
+                                <Text style={styles.ratePrice}>$ 240</Text>
+                                <Text style={styles.rateDescription}>Normal Goods per CBM</Text>
+                            </View>
+                            <View style={styles.rateItem}>
+                                <Text style={styles.ratePrice}>$ 260</Text>
+                                <Text style={styles.rateDescription}>Special / Sensitive Goods per CBM</Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.heavyDutySection}>
+                            <Text style={styles.heavyDutyPrice}>$ 350</Text>
+                            <Text style={styles.heavyDutyDescription}>
+                                Heavy Duty {'>'}/= 400kg / Tiles / Equipment / Machinery, Forklift related goods / Electric Bikes, ETC.
+                            </Text>
                         </View>
                     </View>
 
@@ -151,160 +103,60 @@ export default function DashboardScreen() {
                     <View style={styles.datePickerSection}>
                         <View style={styles.datePickerWrapper}>
                             <Text style={styles.dateLabel}>From</Text>
-                            <TouchableOpacity
-                                style={styles.datePicker}
-                                onPress={() => {
-                                    if (showFromPicker) {
-                                        setShowFromPicker(false);
-                                    } else {
-                                        setShowFromPicker(true);
-                                        setShowToPicker(false);
-                                    }
-                                }}
-                            >
-                                <MaterialIcons name="event" size={20} color={colors.textSecondary} style={styles.datePickerIcon} />
-                                <Text style={[styles.datePickerText, fromDate && styles.datePickerTextSelected]}>
-                                    {formatDate(fromDate)}
-                                </Text>
+                            <TouchableOpacity style={styles.datePicker}>
+                                <Text style={styles.datePickerIcon}>📅</Text>
+                                <Text style={styles.datePickerText}>Select date</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.datePickerWrapper}>
                             <Text style={styles.dateLabel}>To</Text>
-                            <TouchableOpacity
-                                style={styles.datePicker}
-                                onPress={() => {
-                                    if (showToPicker) {
-                                        setShowToPicker(false);
-                                    } else {
-                                        setShowToPicker(true);
-                                        setShowFromPicker(false);
-                                    }
-                                }}
-                            >
-                                <MaterialIcons name="event" size={20} color={colors.textSecondary} style={styles.datePickerIcon} />
-                                <Text style={[styles.datePickerText, toDate && styles.datePickerTextSelected]}>
-                                    {formatDate(toDate)}
-                                </Text>
+                            <TouchableOpacity style={styles.datePicker}>
+                                <Text style={styles.datePickerIcon}>📅</Text>
+                                <Text style={styles.datePickerText}>Select date</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
 
-
-                    {/* DateTimePicker - Platform Specific */}
-                    {Platform.OS === 'web' ? (
-                        <>
-                            {showFromPicker && (
-                                <input
-                                    type="date"
-                                    value={fromDate?.toISOString().split('T')[0] || ''}
-                                    onChange={(e) => {
-                                        const newDate = new Date(e.target.value);
-                                        handleFromDateChange(null, newDate);
-                                    }}
-                                    style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
-                                        opacity: 0,
-                                        pointerEvents: 'auto',
-                                        width: 1,
-                                        height: 1
-                                    }}
-                                    autoFocus
-                                    onBlur={() => setShowFromPicker(false)}
-                                />
-                            )}
-                            {showToPicker && (
-                                <input
-                                    type="date"
-                                    value={toDate?.toISOString().split('T')[0] || ''}
-                                    onChange={(e) => {
-                                        const newDate = new Date(e.target.value);
-                                        handleToDateChange(null, newDate);
-                                    }}
-                                    style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
-                                        opacity: 0,
-                                        pointerEvents: 'auto',
-                                        width: 1,
-                                        height: 1
-                                    }}
-                                    autoFocus
-                                    onBlur={() => setShowToPicker(false)}
-                                />
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            {showFromPicker && (
-                                <DateTimePicker
-                                    value={fromDate || new Date()}
-                                    mode="date"
-                                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                    onChange={handleFromDateChange}
-                                    textColor="#000000"
-                                    themeVariant="light"
-                                />
-                            )}
-                            {showToPicker && (
-                                <DateTimePicker
-                                    value={toDate || new Date()}
-                                    mode="date"
-                                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                    onChange={handleToDateChange}
-                                    textColor="#000000"
-                                    themeVariant="light"
-                                />
-                            )}
-                        </>
-                    )}
-
-
                     {/* Stats Cards */}
                     <View style={styles.statsGrid}>
-
                         <View style={[styles.statCard, styles.statCardOrange]}>
                             <View style={styles.statHeader}>
                                 <Text style={styles.statTitle}>Total Est. Shipping Fees</Text>
                                 <View style={styles.statIconContainer}>
-                                    <MaterialIcons name="trending-up" size={18} color="#059669" />
+                                    <Text style={styles.statIcon}>↗</Text>
                                 </View>
                             </View>
-                            <Text style={styles.statValue}>$ {Number(stats.data?.estimated.stat || 0).toFixed(2)}</Text>
+                            <Text style={styles.statValue}>$ 0.00</Text>
                         </View>
-
-
 
                         <View style={[styles.statCard, styles.statCardGray]}>
                             <View style={styles.statHeader}>
                                 <Text style={styles.statTitle}>Total Packages</Text>
                                 <View style={styles.statIconContainer}>
-                                    <MaterialIcons name="trending-up" size={18} color="#059669" />
+                                    <Text style={styles.statIcon}>↗</Text>
                                 </View>
                             </View>
-                            <Text style={styles.statValue}>{stats.data?.packages.stat}</Text>
+                            <Text style={styles.statValue}>0</Text>
                         </View>
 
                         <View style={[styles.statCard, styles.statCardGray]}>
                             <View style={styles.statHeader}>
                                 <Text style={styles.statTitle}>Undelivered Packages</Text>
                                 <View style={styles.statIconContainer}>
-                                    <MaterialIcons name="trending-up" size={18} color="#059669" />
+                                    <Text style={styles.statIcon}>↗</Text>
                                 </View>
                             </View>
-                            <Text style={styles.statValue}>{stats.data?.undelivered.stat}</Text>
+                            <Text style={styles.statValue}>0</Text>
                         </View>
 
                         <View style={[styles.statCard, styles.statCardGray]}>
                             <View style={styles.statHeader}>
                                 <Text style={styles.statTitle}>Delivered Packages</Text>
                                 <View style={styles.statIconContainer}>
-                                    <MaterialIcons name="trending-up" size={18} color="#059669" />
+                                    <Text style={styles.statIcon}>↗</Text>
                                 </View>
                             </View>
-                            <Text style={styles.statValue}>{stats.data?.delivered.stat}</Text>
+                            <Text style={styles.statValue}>0</Text>
                         </View>
                     </View>
 
@@ -338,11 +190,11 @@ export default function DashboardScreen() {
                                     currentPageData.map((pkg, index) => (
                                         <View key={index} style={styles.tableRow}>
                                             <Text style={[styles.tableCell, styles.cellNo]}>{startIndex + index + 1}</Text>
-                                            <Text style={[styles.tableCell, styles.cellTracking]}>{pkg.trackingNumber}</Text>
+                                            <Text style={[styles.tableCell, styles.cellTracking]}>{pkg.tracking}</Text>
                                             <Text style={[styles.tableCell, styles.cellCustomer]}>{pkg.customer}</Text>
                                             <Text style={[styles.tableCell, styles.cellDate]}>{pkg.received}</Text>
                                             <Text style={[styles.tableCell, styles.cellDate]}>{pkg.loaded}</Text>
-                                            <Text style={[styles.tableCell, styles.cellDate]}>{pkg.eta}</Text>
+                                            <Text style={[styles.tableCell, styles.cellDate]}>{pkg.arrival}</Text>
                                             <Text style={[styles.tableCell, styles.cellPackage]}>{pkg.package}</Text>
                                             <Text style={[styles.tableCell, styles.cellQty]}>{pkg.quantity}</Text>
                                             <Text style={[styles.tableCell, styles.cellVessel]}>{pkg.vessel}</Text>
@@ -392,7 +244,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FA',
+        backgroundColor: colors.dark,
     },
     gradient: {
         flex: 1,
@@ -400,314 +252,233 @@ const styles = StyleSheet.create({
     content: {
         flexGrow: 1,
         paddingHorizontal: spacing.lg,
-        paddingTop: spacing.xl,
+        paddingTop: spacing.lg,
         paddingBottom: spacing.xxl,
     },
     welcomeCard: {
-        backgroundColor: '#1E3A8A',
-        padding: spacing.lg,
-        borderRadius: 16,
-        marginBottom: spacing.xl,
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        elevation: 8,
+        backgroundColor: colors.primary,
+        padding: spacing.md,
+        borderRadius: borderRadius.md,
+        marginBottom: spacing.lg,
     },
     welcomeTitle: {
-        fontSize: 18,
-        fontWeight: '700',
+        fontSize: 16,
+        fontWeight: '600',
         color: colors.white,
         marginBottom: spacing.sm,
-        letterSpacing: 0.3,
     },
     christmasMessage: {
-        fontSize: 15,
+        fontSize: 14,
         color: colors.white,
-        lineHeight: 22,
-        marginBottom: spacing.sm,
-        opacity: 0.95,
+        lineHeight: 20,
+        marginBottom: spacing.xs,
     },
     fromTeam: {
-        fontSize: 13,
+        fontSize: 12,
         color: colors.white,
         fontStyle: 'italic',
-        opacity: 0.85,
+        opacity: 0.9,
     },
     dashboardTitle: {
-        fontSize: 32,
-        fontWeight: '800',
-        color: '#1F2937',
-        marginBottom: spacing.lg,
-        letterSpacing: -0.5,
+        fontSize: typography.h1.fontSize,
+        fontWeight: typography.h1.fontWeight,
+        color: colors.textPrimary,
+        marginBottom: spacing.md,
     },
     disclaimerCard: {
-        backgroundColor: '#FEF3C7',
-        padding: spacing.lg,
-        borderRadius: 12,
-        marginBottom: spacing.xl,
-        borderLeftWidth: 4,
-        borderLeftColor: '#F59E0B',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-        elevation: 3,
+        backgroundColor: colors.white,
+        padding: spacing.md,
+        borderRadius: borderRadius.md,
+        marginBottom: spacing.lg,
+        borderWidth: 1,
+        borderColor: colors.border,
     },
     disclaimerText: {
         fontSize: 13,
-        color: '#78350F',
+        color: colors.textSecondary,
         lineHeight: 20,
-        fontWeight: '500',
     },
     shippingRateCard: {
-        backgroundColor: '#FFFFFF',
-        padding: spacing.lg,
-        borderRadius: 16,
-        marginBottom: spacing.xl,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        elevation: 6,
+        backgroundColor: '#FF9966',
+        padding: spacing.md,
+        borderRadius: borderRadius.md,
+        marginBottom: spacing.lg,
     },
     rateHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: spacing.lg,
-        paddingBottom: spacing.md,
-        borderBottomWidth: 2,
-        borderBottomColor: '#F3F4F6',
+        marginBottom: spacing.md,
     },
     rateTitle: {
         fontSize: 20,
-        fontWeight: '800',
-        color: '#1F2937',
-        letterSpacing: -0.3,
+        fontWeight: '700',
+        color: '#000',
     },
     currencyBadge: {
-        backgroundColor: '#EFF6FF',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#DBEAFE',
+        backgroundColor: colors.white,
+        paddingHorizontal: spacing.md,
+        paddingVertical: 6,
+        borderRadius: borderRadius.full,
     },
     currencyText: {
-        fontSize: 13,
-        fontWeight: '700',
-        color: '#1E40AF',
-        letterSpacing: 0.5,
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#000',
     },
     rateRow: {
         flexDirection: 'row',
-        marginBottom: spacing.lg,
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
+        gap: spacing.lg,
+        marginBottom: spacing.md,
     },
     rateItem: {
-        width: '48%',
-        backgroundColor: '#F9FAFB',
-        paddingVertical: spacing.xl,
-        paddingHorizontal: spacing.sm,
-        marginBottom: spacing.md,
-        borderRadius: 24,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    rateItemFull: {
-        width: '100%',
-    },
-    priceContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: spacing.md,
-        gap: 4,
-    },
-    currencySymbol: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#059669',
-        marginBottom: 4,
+        flex: 1,
     },
     ratePrice: {
-        fontSize: 20,
-        fontWeight: '800',
-        color: '#059669',
-        includeFontPadding: false,
-        textAlign: 'center',
+        fontSize: 32,
+        fontWeight: '700',
+        color: '#000',
+        marginBottom: 4,
     },
     rateDescription: {
         fontSize: 13,
-        color: '#6B7280',
+        color: '#000',
         lineHeight: 18,
-        fontWeight: '500',
-        textAlign: 'center',
-        marginTop: spacing.xs,
     },
     heavyDutySection: {
         marginTop: spacing.sm,
-        backgroundColor: '#FEF2F2',
-        padding: spacing.md,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#FEE2E2',
     },
     heavyDutyPrice: {
-        fontSize: 36,
-        fontWeight: '800',
-        color: '#DC2626',
-        marginBottom: 6,
-        letterSpacing: -1,
+        fontSize: 32,
+        fontWeight: '700',
+        color: '#000',
+        marginBottom: 4,
     },
     heavyDutyDescription: {
         fontSize: 13,
-        color: '#991B1B',
+        color: '#000',
         lineHeight: 18,
-        fontWeight: '500',
     },
     datePickerSection: {
         flexDirection: 'row',
-        gap: spacing.md,
-        marginBottom: spacing.xl,
+        gap: spacing.sm,
+        marginBottom: spacing.lg,
     },
     datePickerWrapper: {
         flex: 1,
     },
     dateLabel: {
         fontSize: 14,
-        fontWeight: '700',
-        color: '#374151',
-        marginBottom: spacing.sm,
-        letterSpacing: 0.2,
+        fontWeight: '600',
+        color: colors.textPrimary,
+        marginBottom: spacing.xs,
     },
     datePicker: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: colors.white,
         paddingHorizontal: spacing.md,
-        paddingVertical: 14,
-        borderRadius: 12,
-        borderWidth: 1.5,
-        borderColor: '#D1D5DB',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-        elevation: 2,
+        paddingVertical: spacing.sm,
+        borderRadius: borderRadius.md,
+        borderWidth: 1,
+        borderColor: colors.border,
     },
     datePickerIcon: {
-        fontSize: 20,
+        fontSize: 18,
         marginRight: spacing.sm,
     },
     datePickerText: {
         fontSize: 14,
-        color: '#6B7280',
-        fontWeight: '500',
-    },
-    datePickerTextSelected: {
-        color: '#1F2937',
-        fontWeight: '600',
+        color: colors.textSecondary,
     },
     statsGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: spacing.md,
-        marginBottom: spacing.xl,
+        gap: spacing.sm,
+        marginBottom: spacing.lg,
     },
     statCard: {
         flex: 1,
         minWidth: '47%',
-        padding: spacing.lg,
-        borderRadius: 16,
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        elevation: 6,
-        borderWidth: 1,
+        padding: spacing.md,
+        borderRadius: borderRadius.md,
     },
     statCardOrange: {
-        backgroundColor: '#FFFFFF',
-        borderColor: '#FED7AA',
+        backgroundColor: '#FF9966',
     },
     statCardGray: {
-        backgroundColor: '#FFFFFF',
-        borderColor: '#E5E7EB',
+        backgroundColor: '#D1D5DB',
     },
     statHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: spacing.md,
+        marginBottom: spacing.sm,
     },
     statTitle: {
-        fontSize: 13,
-        fontWeight: '700',
-        color: '#6B7280',
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#000',
         flex: 1,
-        letterSpacing: 0.3,
-        textTransform: 'uppercase',
     },
     statIconContainer: {
-        width: 32,
-        height: 32,
-        borderRadius: 8,
-        backgroundColor: '#F3F4F6',
+        width: 24,
+        height: 24,
+        borderRadius: borderRadius.sm,
+        backgroundColor: 'rgba(255,255,255,0.3)',
         alignItems: 'center',
         justifyContent: 'center',
     },
     statIcon: {
-        fontSize: 18,
-        color: '#059669',
-        fontWeight: '700',
+        fontSize: 16,
+        color: '#000',
     },
     statValue: {
-        fontSize: 23,
-        fontWeight: '800',
-        color: '#1F2937',
-        letterSpacing: -0.5,
+        fontSize: 24,
+        fontWeight: '700',
+        color: '#000',
     },
     packageReportSection: {
         marginTop: spacing.md,
     },
     packageReportTitle: {
-        fontSize: 22,
-        fontWeight: '800',
-        color: '#1F2937',
-        marginBottom: spacing.lg,
-        letterSpacing: -0.3,
+        fontSize: 18,
+        fontWeight: '600',
+        color: colors.textPrimary,
+        marginBottom: spacing.md,
     },
     table: {
         backgroundColor: colors.white,
-        borderRadius: 12,
+        borderRadius: borderRadius.md,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
         minWidth: 1200,
-        overflow: 'hidden',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-        elevation: 4,
     },
     tableHeader: {
         flexDirection: 'row',
-        borderBottomWidth: 2,
-        borderBottomColor: '#E5E7EB',
-        backgroundColor: '#F9FAFB',
-        paddingVertical: 14,
-        paddingHorizontal: spacing.md,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
+        backgroundColor: colors.darkGray,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.sm,
     },
     tableHeaderCell: {
         fontSize: 12,
-        fontWeight: '700',
-        color: '#374151',
+        fontWeight: '600',
+        color: colors.textPrimary,
         paddingHorizontal: spacing.xs,
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
     },
     tableRow: {
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
-        paddingVertical: 14,
-        paddingHorizontal: spacing.md,
-        backgroundColor: '#FFFFFF',
+        borderBottomColor: colors.border,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.sm,
     },
     tableCell: {
-        fontSize: 13,
-        color: '#4B5563',
+        fontSize: 12,
+        color: colors.textSecondary,
         paddingHorizontal: spacing.xs,
-        fontWeight: '500',
     },
     cellNo: { width: 40 },
     cellTracking: { width: 120 },
@@ -719,48 +490,42 @@ const styles = StyleSheet.create({
     cellStatus: { width: 100 },
     cellCBM: { width: 80 },
     noResults: {
-        paddingVertical: spacing.xxl,
+        paddingVertical: spacing.xl,
         alignItems: 'center',
     },
     noResultsText: {
-        fontSize: 15,
-        color: '#9CA3AF',
-        fontWeight: '500',
+        fontSize: 14,
+        color: colors.textSecondary,
     },
     paginationContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: spacing.lg,
-        marginTop: spacing.md,
+        paddingVertical: spacing.md,
+        marginTop: spacing.sm,
     },
     paginationButton: {
-        paddingHorizontal: spacing.lg,
-        paddingVertical: 12,
-        borderRadius: 10,
-        backgroundColor: '#1E3A8A',
-        minWidth: 110,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderRadius: borderRadius.md,
+        backgroundColor: colors.primary,
+        minWidth: 100,
         alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        elevation: 3,
     },
     paginationButtonDisabled: {
-        backgroundColor: '#E5E7EB',
-        shadowOpacity: 0,
-        elevation: 0,
+        backgroundColor: colors.darkGray,
     },
     paginationButtonText: {
         fontSize: 14,
-        fontWeight: '700',
+        fontWeight: '600',
         color: colors.white,
-        letterSpacing: 0.3,
     },
     paginationButtonTextDisabled: {
-        color: '#9CA3AF',
+        color: colors.textSecondary,
     },
     paginationInfo: {
         fontSize: 14,
-        fontWeight: '600',
-        color: '#374151',
+        fontWeight: '500',
+        color: colors.textPrimary,
     },
 });

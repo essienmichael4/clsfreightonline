@@ -12,7 +12,7 @@ export default function Index() {
     }, 0);
 
     return () => clearTimeout(timer);
-  }, []); // Empty dependency array - only run once on mount
+  }, [router]);
 
   return <View />;
 }

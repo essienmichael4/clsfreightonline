@@ -1,25 +1,21 @@
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '@/theme';
 
-// ... imports
-
-export default function CustomTabBar(_props: BottomTabBarProps) {
+export default function CustomTabBar() {
     const router = useRouter();
     const pathname = usePathname();
     const [menuVisible, setMenuVisible] = useState(false);
 
     const menuItems = [
-        { icon: 'inventory-2', title: 'Packages', route: '/(app)/packages' },
-        { icon: 'description', title: 'Our Policies', route: '/(app)/policies' },
-        { icon: 'location-on', title: 'Shipping Addresses', route: '/(app)/shipping-address' },
-        { icon: 'payment', title: 'Payments', route: '/(app)/payments' },
-        { icon: 'event', title: 'Schedule', route: '/(app)/schedule' },
-        { icon: 'play-circle-outline', title: 'Videos', route: '/(app)/videos' },
-        { icon: 'local-shipping', title: 'Deliveries', route: '/(app)/deliveries' },
+        { icon: '📦', title: 'Packages', route: '/(app)/packages' },
+        { icon: '📄', title: 'Our Policies', route: '/(app)/policies' },
+        { icon: '📍', title: 'Shipping Addresses', route: '/(app)/shipping-address' },
+        { icon: '💳', title: 'Payments', route: '/(app)/payments' },
+        { icon: '📅', title: 'Schedule', route: '/(app)/schedule' },
+        { icon: '🎥', title: 'Videos', route: '/(app)/videos' },
+        { icon: '💱', title: 'Buy RMB', route: '/(app)/buy-rmb' },
     ];
 
     const handleNavigate = (route: string) => {
@@ -37,11 +33,7 @@ export default function CustomTabBar(_props: BottomTabBarProps) {
                         onPress={() => router.push('/(app)/dashboard')}
                     >
                         <View style={styles.iconContainer}>
-                            <MaterialIcons
-                                name="home"
-                                size={26}
-                                color={pathname === '/(app)/dashboard' ? colors.primary : colors.textSecondary}
-                            />
+                            <Text style={styles.tabIcon}>🏠</Text>
                         </View>
                         <Text style={[styles.tabLabel, pathname === '/(app)/dashboard' && styles.tabLabelActive]}>
                             Home
@@ -62,11 +54,7 @@ export default function CustomTabBar(_props: BottomTabBarProps) {
                         onPress={() => router.push('/(app)/more')}
                     >
                         <View style={styles.iconContainer}>
-                            <MaterialIcons
-                                name="person"
-                                size={26}
-                                color={pathname === '/(app)/more' ? colors.primary : colors.textSecondary}
-                            />
+                            <Text style={styles.tabIcon}>👤</Text>
                         </View>
                         <Text style={[styles.tabLabel, pathname === '/(app)/more' && styles.tabLabelActive]}>
                             Profile
@@ -94,7 +82,7 @@ export default function CustomTabBar(_props: BottomTabBarProps) {
                         <View style={styles.menuHeader}>
                             <Text style={styles.menuTitle}>All Pages</Text>
                             <TouchableOpacity onPress={() => setMenuVisible(false)}>
-                                <MaterialIcons name="close" size={28} color={colors.textSecondary} />
+                                <Text style={styles.closeButton}>✕</Text>
                             </TouchableOpacity>
                         </View>
                         <ScrollView style={styles.menuList}>
@@ -105,10 +93,10 @@ export default function CustomTabBar(_props: BottomTabBarProps) {
                                     onPress={() => handleNavigate(item.route)}
                                 >
                                     <View style={styles.menuIconContainer}>
-                                        <MaterialIcons name={item.icon as any} size={24} color={colors.primary} />
+                                        <Text style={styles.menuIcon}>{item.icon}</Text>
                                     </View>
                                     <Text style={styles.menuItemText}>{item.title}</Text>
-                                    <MaterialIcons name="chevron-right" size={24} color={colors.textSecondary} />
+                                    <Text style={styles.menuArrow}>›</Text>
                                 </TouchableOpacity>
                             ))}
                         </ScrollView>
@@ -124,7 +112,10 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
-        boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
         elevation: 10,
         paddingBottom: 8,
     },
@@ -143,6 +134,9 @@ const styles = StyleSheet.create({
     iconContainer: {
         marginBottom: 4,
     },
+    tabIcon: {
+        fontSize: 24,
+    },
     tabLabel: {
         fontSize: 12,
         color: colors.textSecondary,
@@ -160,7 +154,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: -28,
-        boxShadow: `0 4px 8px ${colors.primary}4D`,
+        shadowColor: colors.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
         elevation: 8,
     },
     centerButtonIcon: {
@@ -202,6 +199,10 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: colors.textPrimary,
     },
+    closeButton: {
+        fontSize: 24,
+        color: colors.textSecondary,
+    },
     menuList: {
         padding: spacing.sm,
     },
@@ -222,10 +223,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginRight: spacing.sm,
     },
+    menuIcon: {
+        fontSize: 20,
+    },
     menuItemText: {
         flex: 1,
         fontSize: 14,
         fontWeight: '500',
         color: colors.textPrimary,
+    },
+    menuArrow: {
+        fontSize: 24,
+        color: colors.textSecondary,
     },
 });

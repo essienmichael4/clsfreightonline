@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     SafeAreaView,
+    Dimensions,
     TouchableOpacity,
     ScrollView,
     TextInput,
@@ -11,117 +12,23 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { colors, spacing, typography, borderRadius } from '@/theme';
-import { axios_instance } from 'app/_API/axios';
-import { saveTokens } from 'app/_auth/auth.storage';
-import useAuth from 'app/_hooks/useAuth';
+
+const { width, height } = Dimensions.get('window');
 
 export default function SignupScreen() {
     const router = useRouter();
-    const [shippingMark, setShippingMark] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [phone, setPhone] = useState('');
-    const [location, setLocation] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState('');
-    const { dispatch } = useAuth();
 
-    const validateEmail = (emailValue: string): boolean => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(emailValue);
-    };
+    const handleSignup = () => {
+        // TODO: Implement actual signup logic with API
+        // Add validation for matching passwords, etc.
+        console.log('Signup:', name, email, password);
 
-    const validatePassword = (pwd: string): string | null => {
-        if (pwd.length < 6) {
-            return 'Password must be at least 6 characters';
-        }
-        if (!/[A-Z]/.test(pwd)) {
-            return 'Password must contain at least one uppercase letter';
-        }
-        if (!/[0-9]/.test(pwd)) {
-            return 'Password must contain at least one number';
-        }
-        return null;
-    };
-
-    const handleSignup = async () => {
-        // Reset error state
-        setError('');
-
-        // Validate inputs
-        if (!shippingMark.trim()) {
-            setError('Full name is required');
-            return;
-        }
-
-        if (shippingMark.trim().length < 2) {
-            setError('Name must be at least 2 characters');
-            return;
-        }
-
-        if (!email.trim()) {
-            setError('Email is required');
-            return;
-        }
-
-        if (!validateEmail(email)) {
-            setError('Please enter a valid email address');
-            return;
-        }
-
-        if (!password.trim()) {
-            setError('Password is required');
-            return;
-        }
-
-        const passwordError = validatePassword(password);
-        if (passwordError) {
-            setError(passwordError);
-            return;
-        }
-
-        if (!confirmPassword.trim()) {
-            setError('Please confirm your password');
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            const { data } = await axios_instance.post('/auth/signup/client', {
-                shippingMark,
-                email,
-                phone,
-                location,
-                password,
-                confirmPassword,
-            });
-
-            setSuccess(data.message);
-
-            // Navigate to main app login
-            //router.replace('/(app)/login');
-        } catch (err: any) {
-            let errorMessage = 'Sign up failed. Please try again.';
-
-            if (err.response?.data?.message) {
-                errorMessage = err.response.data.message;
-            } else if (err.message === 'Network Error') {
-                errorMessage = 'Network error. Please check your connection.';
-            }
-
-            setError(errorMessage);
-            console.error('Signup error:', err);
-        } finally {
-            setLoading(false);
-        }
+        // Navigate to main app dashboard
+        router.replace('/(app)/dashboard');
     };
 
     return (
@@ -155,35 +62,18 @@ export default function SignupScreen() {
 
                     {/* Signup Form */}
                     <View style={styles.form}>
-                        {/* Error Alert */}
-                        {error ? (
-                            <View style={styles.errorContainer}>
-                                <Text style={styles.errorIcon}>⚠️</Text>
-                                <Text style={styles.errorText}>{error}</Text>
-                            </View>
-                        ) : null}
-
-                        {/* Success Alert */}
-                        {success ? (
-                            <View style={styles.successContainer}>
-                                <Text style={styles.successIcon}>⚠️</Text>
-                                <Text style={styles.successText}>{success}</Text>
-                            </View>
-                        ) : null}
-
                         {/* Name Input */}
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Shipping Mark</Text>
+                            <Text style={styles.label}>Full Name</Text>
                             <View style={styles.inputWrapper}>
-                                <Text style={styles.inputIcon}></Text>
+                                <Text style={styles.inputIcon}>👤</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="GH123457"
+                                    placeholder="John Doe"
                                     placeholderTextColor={colors.textSecondary}
-                                    value={shippingMark}
-                                    onChangeText={setShippingMark}
+                                    value={name}
+                                    onChangeText={setName}
                                     autoCapitalize="words"
-                                    editable={!loading}
                                 />
                             </View>
                         </View>
@@ -202,30 +92,9 @@ export default function SignupScreen() {
                                     keyboardType="email-address"
                                     autoCapitalize="none"
                                     autoCorrect={false}
-                                    editable={!loading}
                                 />
                             </View>
                         </View>
-
-                        {/* Phone */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Phone</Text>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.inputIcon}></Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="+2335454000"
-                                    placeholderTextColor={colors.textSecondary}
-                                    value={phone}
-                                    onChangeText={setPhone}
-                                    keyboardType="phone-pad"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                    editable={!loading}
-                                />
-                            </View>
-                        </View>
-
 
                         {/* Password Input */}
                         <View style={styles.inputGroup}>
@@ -240,12 +109,8 @@ export default function SignupScreen() {
                                     onChangeText={setPassword}
                                     secureTextEntry
                                     autoCapitalize="none"
-                                    editable={!loading}
                                 />
                             </View>
-                            <Text style={styles.passwordHint}>
-                                Min 6 chars, 1 uppercase letter & 1 number
-                            </Text>
                         </View>
 
                         {/* Confirm Password Input */}
@@ -261,49 +126,23 @@ export default function SignupScreen() {
                                     onChangeText={setConfirmPassword}
                                     secureTextEntry
                                     autoCapitalize="none"
-                                    editable={!loading}
-                                />
-                            </View>
-                        </View>
-
-                        {/* Location */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Location</Text>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.inputIcon}></Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Location"
-                                    placeholderTextColor={colors.textSecondary}
-                                    value={location}
-                                    onChangeText={setLocation}
-                                    keyboardType="default"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                    editable={!loading}
                                 />
                             </View>
                         </View>
 
                         {/* Sign Up Button */}
                         <TouchableOpacity
-                            style={[styles.signupButton, loading && styles.disabledButton]}
+                            style={styles.signupButton}
                             activeOpacity={0.8}
                             onPress={handleSignup}
-                            disabled={loading}
                         >
-                            <Text style={styles.signupButtonText}>
-                                {loading ? 'Creating Account...' : 'Sign Up'}
-                            </Text>
+                            <Text style={styles.signupButtonText}>Sign Up</Text>
                         </TouchableOpacity>
 
                         {/* Login Link */}
                         <View style={styles.loginContainer}>
                             <Text style={styles.loginText}>Already have an account? </Text>
-                            <TouchableOpacity
-                                onPress={() => router.push('/(onboarding)/login')}
-                                disabled={loading}
-                            >
+                            <TouchableOpacity onPress={() => router.push('/(onboarding)/login')}>
                                 <Text style={styles.loginLink}>Login</Text>
                             </TouchableOpacity>
                         </View>
@@ -325,13 +164,11 @@ const styles = StyleSheet.create({
     content: {
         flexGrow: 1,
         paddingHorizontal: spacing.lg,
-        paddingTop: spacing.xl,
+        paddingTop: spacing.md,
         paddingBottom: spacing.xxl,
     },
     backButton: {
-        marginBottom: spacing.lg,
-        marginTop: spacing.md,
-        paddingVertical: spacing.sm,
+        marginBottom: spacing.xl,
     },
     backButtonText: {
         color: colors.textSecondary,
@@ -339,7 +176,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     header: {
-        marginBottom: spacing.lg,
+        marginBottom: spacing.xl,
     },
     title: {
         fontSize: typography.h1.fontSize,
@@ -352,50 +189,6 @@ const styles = StyleSheet.create({
         color: colors.textSecondary,
     },
     form: {
-        flex: 1,
-    },
-    errorContainer: {
-        backgroundColor: '#FEE2E2',
-        borderRadius: borderRadius.md,
-        borderLeftWidth: 4,
-        borderLeftColor: '#EF4444',
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.md,
-        marginBottom: spacing.lg,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-    },
-    errorIcon: {
-        fontSize: 18,
-        marginRight: spacing.sm,
-        marginTop: 2,
-    },
-    errorText: {
-        color: '#DC2626',
-        fontSize: 14,
-        fontWeight: '500',
-        flex: 1,
-    },
-    successContainer: {
-        backgroundColor: '#DCFCE7',
-        borderRadius: borderRadius.md,
-        borderLeftWidth: 4,
-        borderLeftColor: '#22C55E',
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.md,
-        marginBottom: spacing.lg,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-    },
-    successIcon: {
-        fontSize: 18,
-        marginRight: spacing.sm,
-        marginTop: 2,
-    },
-    successText: {
-        color: '#15803D',
-        fontSize: 14,
-        fontWeight: '500',
         flex: 1,
     },
     inputGroup: {
@@ -426,12 +219,6 @@ const styles = StyleSheet.create({
         color: colors.textPrimary,
         fontSize: 16,
     },
-    passwordHint: {
-        fontSize: 12,
-        color: colors.textSecondary,
-        marginTop: spacing.xs,
-        fontStyle: 'italic',
-    },
     signupButton: {
         backgroundColor: colors.primary,
         paddingVertical: spacing.md,
@@ -440,9 +227,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: spacing.lg,
         marginTop: spacing.md,
-    },
-    disabledButton: {
-        opacity: 0.6,
     },
     signupButtonText: {
         color: colors.white,

@@ -3,13 +3,12 @@ import {
     View,
     Text,
     StyleSheet,
+    SafeAreaView,
     ScrollView,
     TouchableOpacity,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
 import { colors, spacing, typography, borderRadius } from '@/theme';
 
 export default function PoliciesScreen() {
@@ -18,22 +17,22 @@ export default function PoliciesScreen() {
     const policies = [
         {
             title: 'Shipping Policy',
-            icon: 'local-shipping',
+            icon: '📦',
             items: ['Standard delivery: 15-30 business days', 'Express delivery: 7-15 business days', 'Free shipping on orders over $500', 'Tracking available for all shipments'],
         },
         {
             title: 'Return Policy',
-            icon: 'keyboard-return',
+            icon: '↩️',
             items: ['30-day return window', 'Items must be unused and in original packaging', 'Return shipping costs covered for defective items', 'Refunds processed within 7-10 business days'],
         },
         {
             title: 'Privacy Policy',
-            icon: 'lock',
+            icon: '🔒',
             items: ['Your data is encrypted and secure', 'We never share personal information', 'You control your data preferences', 'Regular security audits conducted'],
         },
         {
             title: 'Payment Terms',
-            icon: 'payment',
+            icon: '💳',
             items: ['All major payment methods accepted', 'Secure payment processing', 'No hidden fees', 'Invoices provided for all transactions'],
         },
     ];
@@ -64,7 +63,7 @@ export default function PoliciesScreen() {
                         <View key={index} style={styles.policyCard}>
                             <View style={styles.policyHeader}>
                                 <View style={styles.policyIconContainer}>
-                                    <MaterialIcons name={policy.icon as any} size={24} color={colors.primary} />
+                                    <Text style={styles.policyIcon}>{policy.icon}</Text>
                                 </View>
                                 <Text style={styles.policyTitle}>{policy.title}</Text>
                             </View>
