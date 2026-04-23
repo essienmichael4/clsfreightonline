@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   MessageCircle,
   ChevronRight,
-  ImageOff,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
@@ -104,35 +103,26 @@ const ProductDetails = () => {
               />
             </div>
 
-            {/* Detail Images */}
-            <div className="col-span-3 rounded-lg overflow-hidden aspect-square bg-muted">
-              {product.detailImage1 ? (
+            {/* Detail Images (render only when present) */}
+            {product.detailImage1 && (
+              <div className="col-span-3 rounded-lg overflow-hidden aspect-square bg-muted">
                 <img
                   src={product.detailImage1}
                   alt="Product detail 1"
                   className="w-full h-full object-contain"
                 />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/40">
-                  <ImageOff size={32} strokeWidth={1.5} />
-                  <span className="text-xs mt-2">No image</span>
-                </div>
-              )}
-            </div>
-            <div className="col-span-3 rounded-lg overflow-hidden aspect-square bg-muted">
-              {product.detailImage2 ? (
+              </div>
+            )}
+
+            {product.detailImage2 && (
+              <div className="col-span-3 rounded-lg overflow-hidden aspect-square bg-muted">
                 <img
                   src={product.detailImage2}
                   alt="Product detail 2"
                   className="w-full h-full object-contain"
                 />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/40">
-                  <ImageOff size={32} strokeWidth={1.5} />
-                  <span className="text-xs mt-2">No image</span>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Product Content */}
