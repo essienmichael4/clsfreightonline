@@ -43,7 +43,7 @@ export class UploadService {
     }
 
     async getProductSignedUrl(filename:string){
-        return await this.fileService.getThumbnailPresignedUrl(filename)
+        return await this.fileService.getProductPresignedUrl(filename)
     }
 
     async getVideoSignedUrl(filename:string, contentType: string){

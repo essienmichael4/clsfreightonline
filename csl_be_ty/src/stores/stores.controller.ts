@@ -79,7 +79,8 @@ export class StoresController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update product (admin)' })
   update(@Param('id') id: string, @Body() dto: any) {
-    return this.storesService.update(id, dto);
+    const { images, ...safeDto } = dto;
+    return this.storesService.update(id, safeDto);
   }
 
   

@@ -1,6 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateStoreDto } from './dto/create-store.dto';
-import { UpdateStoreDto } from './dto/update-store.dto';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploadService } from 'src/upload/upload.service';
@@ -69,14 +67,32 @@ export class StoresService {
     )
 
     const imageUrls = await Promise.all(
-      filenames.map(f => this.uploadService.getThumbnailSignedUrl(f))
+      filenames.map(f => this.uploadService.getProductSignedUrl(f))
     )
 
     return { ...p, imageUrls }
   }
 
-  update(id: string, dto: Partial<Product>) {
-    return this.repo.update({ productId: id }, dto);
+  async update(id: string, dto: Partial<Product>) {
+    Logger.log(`Updating product ${id} with data: ${JSON.stringify(dto)}`);
+
+    const exists = await this.repo.findOne({ where: { productId: id } });
+    if (!exists) throw new NotFoundException();
+
+    const { images, ...rest } = dto;
+
+    // Build the update payload explicitly
+    const updatePayload: Partial<Product> = { ...rest };
+
+    // Only include images in the update if explicitly provided
+    if (images !== undefined && images !== null  && images.length > 0) {
+      updatePayload.images = images;
+    }
+
+    // Use update() instead of save() — only touches columns in the payload
+    await this.repo.update({ productId: id }, updatePayload);
+
+    return this.repo.findOne({ where: { productId: id } });
   }
 
   softDelete(id: string) {
@@ -93,7 +109,7 @@ export class StoresService {
     )
 
     const imageUrls = await Promise.all(
-      filenames.map(f => this.uploadService.getThumbnailSignedUrl(f))
+      filenames.map(f => this.uploadService.getProductSignedUrl(f))
     )
 
     return { ...product, imageUrls }

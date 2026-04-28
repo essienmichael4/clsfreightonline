@@ -31,6 +31,7 @@ import EditVideo from './pages/Video/EditVideo'
 import Departments from './pages/User/Departments'
 import PackageDate from './pages/Package/PackageDate'
 import AddPackages from './pages/Package/_components/AddPackages'
+import ShopProducts from './pages/ShopProducts/ShopProducts'
 
 function App() {
 
@@ -63,6 +64,7 @@ function App() {
             <Route path='/invoices/create' element={<Create />} />
             <Route path='/invoices/edit/:id' element={<EditInvoice />} />
             <Route path='/invoices/:id' element={<Invoice />} />
+            <Route path='/products' element={<ShopProducts />} />
             <Route path='/videos' element={<Videos />} />
             <Route path='/videos/results' element={<VideoSearch />} />
             <Route path='/videos/:id' element={<VideoPlayer />} />

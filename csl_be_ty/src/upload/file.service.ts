@@ -39,6 +39,16 @@ export class FileService {
         const url = await getSignedUrl(this.s3Client, command, {expiresIn: 3600})
         return url
     }
+    
+    async getProductPresignedUrl(filename:string){
+        const getObjectParams = {
+            Bucket: this.configService.getOrThrow('BUCKET_NAME'),
+            Key: `tests/${filename}`
+        }
+        const command = new GetObjectCommand(getObjectParams)
+        const url = await getSignedUrl(this.s3Client, command, {expiresIn: 3600})
+        return url
+    }
 
     async getVideoPresigned(filename:string, contentType: string){
         const key = `videos/${v4()}-${filename.replace(/\s+/g, '_')}`
@@ -128,7 +138,7 @@ export class FileService {
             new PutObjectCommand({
             Bucket: this.configService.getOrThrow('BUCKET_NAME'),
             Body: imageBuffer,
-            Key: `thumbnails/${filename}`
+            Key: `tests/${filename}`
         }))
     }
 

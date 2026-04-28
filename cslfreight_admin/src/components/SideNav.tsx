@@ -36,6 +36,11 @@ const SideNav = ({ isToggled }: SideNavProps) => {
         { name: 'Payments', icon: PiggyBank, path: '/payments' },
         { name: 'Invoices', icon: ReceiptText, path: '/invoices' },
       ],
+    },{
+      label: 'Commerce',
+      items: [
+        { name: 'Products', icon: Package, path: '/products' },
+      ],
     },
     {
       label: 'Administration',

@@ -37,6 +37,8 @@ import CookiesPolicy from './pages/Policies/CookiesPolicy'
 import PrivacyPolicy from './pages/Policies/PrivacyPolicy'
 import TermsOfUse from './pages/Policies/TermsOfUse'
 import PolicyLayout from './components/PolicyLayout'
+import Shop from './pages/Shop/shop'
+import ProductDetails from './pages/Product/productDetails'
 
 async function loadPreline() {
   return import('preline/dist/index.js');
@@ -72,6 +74,8 @@ function App() {
             <Route path='/address' element={<Address />} />
             <Route path='/terms' element={<Terms />} />
             <Route path='/container-loadings' element={<Loading />} />
+            <Route path='/shop' element={<Shop />} />
+            <Route path='/product/:productId' element={<ProductDetails />} />
             <Route path='/delete-account' element={<DeleteAccount />} />
             <Route path='*' element={<NotFound />} />
             <Route element={<PolicyLayout />}>

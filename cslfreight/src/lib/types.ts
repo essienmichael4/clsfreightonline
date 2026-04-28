@@ -186,6 +186,21 @@ export type Stats = {
     }
 }
 
+export type StoreProduct = {
+    id: number,
+    productId: string,
+    name: string,
+    description: string,
+    imageUrls: string[],
+    price: number,
+    images: string[],
+    category?: string,
+    tags?: string[],
+    status?: string,
+    createdAt?: string,
+    updatedAt?: string,
+}
+
 export type Video = {
     id: number,
     title?: string,

@@ -39,7 +39,7 @@ import { StoresModule } from './stores/stores.module';
         database: configService.get("DB_NAME"),
         // entities: [],
         entities: [join(process.cwd(), 'dist/**/*.entity.js')],
-        synchronize:true,
+        synchronize:false,
       })
     }),
     UserModule,
